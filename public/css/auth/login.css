@@ -1,18 +1,25 @@
 .login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 1rem;
 }
 
+.login-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 2rem;
+}
+
 .login-form {
     background: white;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 30px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 540px;
     margin: 0 auto;
 }
 
@@ -37,13 +44,13 @@
 
 .form-group input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #FF6666;
 }
 
 button {
     width: 100%;
     padding: 0.75rem;
-    background-color: #007bff;
+    background-color: #FF6666;
     color: white;
     border: none;
     border-radius: 4px;
@@ -54,7 +61,21 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #FF4444;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.auth-links a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
 /* 반응형 디자인 */
@@ -63,9 +84,14 @@ button:hover {
         padding: 1rem;
     }
     
+    .login-logo {
+        width: 100px;
+        margin-bottom: 1.5rem;
+    }
+    
     .login-form {
         padding: 1.5rem;
-        max-width: 350px;
+        max-width: 450px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
@@ -79,11 +105,16 @@ button:hover {
         padding: 0.75rem;
     }
     
+    .login-logo {
+        width: 80px;
+        margin-bottom: 1rem;
+    }
+    
     .login-form {
         padding: 1.25rem;
         max-width: 100%;
         margin: 0;
-        border-radius: 6px;
+        border-radius: 20px;
     }
     
     .login-form h2 {
@@ -116,8 +147,13 @@ button:hover {
         padding: 0.5rem;
     }
     
+    .login-logo {
+        width: 70px;
+    }
+    
     .login-form {
         padding: 1rem;
+        border-radius: 15px;
     }
     
     .login-form h2 {
@@ -129,17 +165,4 @@ button:hover {
         padding: 0.75rem;
         font-size: 14px;
     }
-}
-
-.auth-links {
-    text-align: center;
-}
-
-.auth-links a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.auth-links a:hover {
-    text-decoration: underline;
 }
