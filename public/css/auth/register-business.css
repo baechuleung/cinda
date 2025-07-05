@@ -1,0 +1,148 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.register-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.register-form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #6c5ce7;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #5a4fcf;
+}
+
+.auth-links {
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.auth-links a {
+    color: #6c5ce7;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.auth-links span {
+    color: #ddd;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .register-container {
+        padding: 1rem;
+    }
+    
+    .register-form {
+        padding: 1.5rem;
+        max-width: 400px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .register-form h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-container {
+        padding: 0.75rem;
+    }
+    
+    .register-form {
+        padding: 1.25rem;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 6px;
+    }
+    
+    .register-form h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-group {
+        margin-bottom: 0.875rem;
+    }
+    
+    .form-group input,
+    button {
+        padding: 0.875rem;
+        font-size: 15px;
+        border-radius: 6px;
+    }
+    
+    .auth-links {
+        margin-top: 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .register-container {
+        padding: 0.5rem;
+    }
+    
+    .register-form {
+        padding: 1rem;
+    }
+    
+    .register-form h2 {
+        font-size: 1.3rem;
+    }
+    
+    .form-group input,
+    button {
+        padding: 0.75rem;
+        font-size: 14px;
+    }
+}

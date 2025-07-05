@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업회원 가입</title>
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/auth/register-business.css">
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-form">
+            <h2>기업회원 가입</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" id="companyName" placeholder="회사명" autocomplete="organization" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="businessNumber" placeholder="사업자등록번호" autocomplete="off" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="representative" placeholder="대표자명" autocomplete="name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="회사 이메일" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="phone" placeholder="회사 전화번호" autocomplete="tel" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="비밀번호" autocomplete="new-password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" placeholder="비밀번호 확인" autocomplete="new-password" required>
+                </div>
+                <button type="submit">기업회원 가입</button>
+            </form>
+            <div class="auth-links">
+                <a href="register.html">← 가입 유형 선택으로 돌아가기</a>
+                <span>|</span>
+                <a href="login.html">로그인</a>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+
+    <script type="module" src="../../js/firebase-config.js"></script>
+    <script type="module" src="../../js/auth/register-business.js"></script>
+</body>
+</html>
