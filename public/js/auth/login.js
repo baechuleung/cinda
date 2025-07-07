@@ -10,7 +10,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = '../../dashboard.html';
+        window.location.href = '../../html/realtime-status/realtime-status.html';
     } catch (error) {
         errorMessage.textContent = '로그인에 실패했습니다.';
     }
