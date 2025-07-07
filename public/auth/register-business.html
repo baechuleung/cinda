@@ -20,15 +20,19 @@
                 <div class="form-group">
                     <label for="email">이메일 <span class="required">*</span></label>
                     <div class="input-with-dropdown">
-                        <input type="email" id="email" placeholder="이메일을 입력해주세요" autocomplete="email" required>
-                        <select id="emailDomain" class="email-dropdown">
-                            <option value="">직접입력</option>
-                            <option value="@naver.com">@naver.com</option>
-                            <option value="@gmail.com">@gmail.com</option>
-                            <option value="@daum.net">@daum.net</option>
-                            <option value="@hanmail.net">@hanmail.net</option>
+                        <input type="text" id="emailId" placeholder="이메일 아이디" required>
+                        <span class="at-symbol">@</span>
+                        <select id="emailDomainSelect" class="email-dropdown" onchange="updateEmailField()" required>
+                            <option value="">도메인 선택</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="daum.net">daum.net</option>
+                            <option value="hanmail.net">hanmail.net</option>
+                            <option value="direct">직접입력</option>
                         </select>
+                        <input type="text" id="emailDomainDirect" placeholder="직접입력" style="display:none;" onchange="updateEmailField()">
                     </div>
+                    <input type="hidden" id="email" name="email" required>
                     <div class="helper-text">* 비밀번호 분실 시, 임시비밀번호를 받을 수 있는 이메일을 입력해주세요.</div>
                 </div>
 
@@ -211,8 +215,39 @@
             });
         }
 
-        // 개별 체크박스 변경 시 전체동의 체크박스 상태 업데이트
+        function updateEmailField() {
+            const emailId = document.getElementById('emailId').value;
+            const select = document.getElementById('emailDomainSelect');
+            const directInput = document.getElementById('emailDomainDirect');
+            const emailField = document.getElementById('email');
+            
+            if (select.value === 'direct') {
+                directInput.style.display = 'block';
+                select.style.display = 'none';
+                directInput.focus();
+                
+                if (emailId && directInput.value) {
+                    emailField.value = emailId + '@' + directInput.value;
+                }
+            } else if (select.value) {
+                if (emailId) {
+                    emailField.value = emailId + '@' + select.value;
+                }
+            }
+        }
+
+        // 이메일 입력 시 실시간 업데이트
         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('emailId').addEventListener('input', updateEmailField);
+            
+            // 직접입력 필드에서 엔터나 포커스 아웃 시 드롭다운으로 돌아가기
+            const directInput = document.getElementById('emailDomainDirect');
+            directInput.addEventListener('blur', function() {
+                if (this.value) {
+                    updateEmailField();
+                }
+            });
+            
             const termCheckboxes = document.querySelectorAll('.term-checkbox');
             const allAgree = document.getElementById('allAgree');
             

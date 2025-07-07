@@ -133,15 +133,25 @@
 .input-with-dropdown {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
 }
 
-.input-with-dropdown input {
-    flex: 2;
+.input-with-dropdown input[type="text"]:first-child {
+    flex: 1.5;
+}
+
+.at-symbol {
+    color: #666;
+    font-weight: 500;
+    padding: 0 0.25rem;
 }
 
 .email-dropdown {
-    flex: 1;
-    max-width: 130px;
+    flex: 1.5;
+}
+
+#emailDomainDirect {
+    flex: 1.5;
 }
 
 /* 비밀번호 표시 */
@@ -342,11 +352,31 @@ input[type="checkbox"]:checked::before {
     }
     
     .input-with-dropdown {
-        flex-direction: column;
+        flex-wrap: wrap;
     }
     
-    .email-dropdown {
-        width: 100%;
+    .input-with-dropdown input[type="text"]:first-child {
+        flex: 1 1 60%;
+        min-width: 150px;
+    }
+    
+    .at-symbol {
+        flex: 0 0 auto;
+    }
+    
+    .email-dropdown,
+    #emailDomainDirect {
+        flex: 1 1 35%;
+        min-width: 120px;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    #termsFrame {
+        height: 60vh;
     }
 }
 
@@ -371,11 +401,55 @@ input[type="checkbox"]:checked::before {
         margin-bottom: 1.25rem;
     }
     
+    .form-group label {
+        font-size: 13px;
+    }
+    
     .form-group input,
     .form-group select,
     .submit-btn {
         padding: 0.875rem;
         font-size: 14px;
+    }
+    
+    /* 이메일 필드 모바일 최적화 */
+    .input-with-dropdown {
+        position: relative;
+    }
+    
+    .input-with-dropdown input[type="text"]:first-child {
+        flex: 1 1 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .at-symbol {
+        position: absolute;
+        right: 15px;
+        top: 14px;
+        background: white;
+        padding: 0 5px;
+    }
+    
+    .email-dropdown,
+    #emailDomainDirect {
+        flex: 1 1 100%;
+        margin-top: 0;
+    }
+    
+    /* 인증완료 텍스트 크기 조정 */
+    .checkbox-status {
+        font-size: 12px;
+    }
+    
+    /* 비밀번호 눈 아이콘 위치 조정 */
+    .show-password {
+        right: 0.75rem;
+    }
+    
+    /* 약관 섹션 */
+    .section-title {
+        font-size: 15px;
+        margin-top: 1.5rem;
     }
     
     .terms-group {
@@ -384,11 +458,57 @@ input[type="checkbox"]:checked::before {
     
     .term-item {
         padding: 0.5rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .term-left {
+        flex: 1;
+        margin-right: 0.5rem;
+    }
+    
+    .term-left label {
+        font-size: 13px;
     }
     
     .view-btn {
         padding: 0.2rem 0.5rem;
         font-size: 11px;
+        white-space: nowrap;
+    }
+    
+    /* 체크박스 크기 조정 */
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+    
+    input[type="checkbox"]::before {
+        width: 10px;
+        height: 10px;
+    }
+    
+    /* 모달 모바일 최적화 */
+    .modal-content {
+        margin: 20% auto;
+        width: 98%;
+        max-height: 90vh;
+    }
+    
+    .modal-close {
+        right: 10px;
+        top: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 24px;
+    }
+    
+    #termsFrame {
+        height: 75vh;
+    }
+    
+    .helper-text {
+        font-size: 11px;
+        line-height: 1.4;
     }
 }
 
@@ -414,5 +534,30 @@ input[type="checkbox"]:checked::before {
     .submit-btn {
         padding: 0.75rem;
         font-size: 13px;
+    }
+    
+    .section-title {
+        font-size: 14px;
+    }
+    
+    .term-left label {
+        font-size: 12px;
+    }
+    
+    .view-btn {
+        font-size: 10px;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    /* 초소형 화면에서 약관 항목 세로 정렬 */
+    .term-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .view-btn {
+        align-self: flex-end;
+        margin-top: -1.5rem;
     }
 }
