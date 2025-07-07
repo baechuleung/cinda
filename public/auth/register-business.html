@@ -37,7 +37,16 @@
                     <label for="password">비밀번호 <span class="required">*</span></label>
                     <div class="password-input">
                         <input type="password" id="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
-                        <span class="show-password">👁</span>
+                        <span class="show-password" onclick="togglePassword()">
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="3" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <svg class="eye-off-icon" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="1" y1="1" x2="23" y2="23" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </div>
                     <div class="helper-text">영문, 숫자, 특수문자가 모두 들어간 8~20자</div>
                 </div>
@@ -56,26 +65,48 @@
 
                 <!-- 이름 -->
                 <div class="form-group">
-                    <label for="name">이름</label>
-                    <div class="checkbox-group">
-                        <input type="text" id="name" value="홍길동" disabled>
+                    <div class="label-with-status">
+                        <label for="name">이름</label>
                         <span class="checkbox-status">✓ 인증완료</span>
                     </div>
+                    <input type="text" id="name" value="홍길동" disabled>
                 </div>
 
                 <!-- 생년월일 -->
                 <div class="form-group">
-                    <label for="birthdate">생년월일</label>
+                    <div class="label-with-status">
+                        <label for="birthdate">생년월일</label>
+                        <span class="checkbox-status">✓ 인증완료</span>
+                    </div>
                     <input type="text" id="birthdate" value="1999년 02월 12일" disabled>
                 </div>
 
                 <!-- 휴대폰 번호 -->
                 <div class="form-group">
-                    <label for="phone">휴대폰 번호</label>
-                    <div class="checkbox-group">
-                        <input type="tel" id="phone" value="010-1234-5678" disabled>
+                    <div class="label-with-status">
+                        <label for="phone">휴대폰 번호</label>
                         <span class="checkbox-status">✓ 인증완료</span>
                     </div>
+                    <input type="tel" id="phone" value="010-1234-5678" disabled>
+                </div>
+
+                <!-- 업종 -->
+                <div class="form-group">
+                    <label for="businessType">업종</label>
+                    <select id="businessType" class="full-dropdown">
+                        <option value="">업종을 선택해주세요.</option>
+                        <option value="public">퍼블릭</option>
+                        <option value="bar">바</option>
+                        <option value="leggings">레깅스룸</option>
+                        <option value="shirt">셔츠룸</option>
+                        <option value="1pro">일프로</option>
+                        <option value="jeom5">쩜오</option>
+                        <option value="club">클럽</option>
+                        <option value="tencafe">텐카페</option>
+                        <option value="tenpro">텐프로</option>
+                        <option value="hyperpublic">하이퍼블릭</option>
+                        <option value="hoba">호빠</option>
+                    </select>
                 </div>
 
                 <!-- 가게명 -->
@@ -84,31 +115,32 @@
                     <input type="text" id="storeName" placeholder="달토(강남점)">
                 </div>
 
-                <!-- 업종 -->
-                <div class="form-group">
-                    <label for="businessType">업종</label>
-                    <select id="businessType" class="full-dropdown">
-                        <option value="">업종을 선택해주세요.</option>
-                        <option value="restaurant">음식점</option>
-                        <option value="cafe">카페</option>
-                        <option value="retail">소매업</option>
-                        <option value="service">서비스업</option>
-                    </select>
-                </div>
-
                 <!-- 전체동의 -->
-                <div class="section-title">전체동의</div>
+                <div class="section-title">
+                    <input type="checkbox" id="allAgree" onclick="toggleAllCheckboxes()">
+                    <label for="allAgree">전체동의</label>
+                </div>
                 <div class="terms-group">
                     <div class="term-item">
-                        <span>이용약관 동의</span>
-                        <button type="button" class="view-btn">전문보기</button>
+                        <div class="term-left">
+                            <input type="checkbox" id="terms1" class="term-checkbox" required>
+                            <label for="terms1">이용약관 동의 <span class="required">*</span></label>
+                        </div>
+                        <button type="button" class="view-btn" onclick="showTermsPopup('terms-of-service')">전문보기</button>
                     </div>
                     <div class="term-item">
-                        <span>개인정보 수집 및 이용 동의</span>
-                        <button type="button" class="view-btn">전문보기</button>
+                        <div class="term-left">
+                            <input type="checkbox" id="terms2" class="term-checkbox" required>
+                            <label for="terms2">개인정보 수집 및 이용 동의 <span class="required">*</span></label>
+                        </div>
+                        <button type="button" class="view-btn" onclick="showTermsPopup('privacy-policy')">전문보기</button>
                     </div>
                     <div class="term-item">
-                        <span>마케팅 정보 이용 및 수신동의 <span class="optional">(선택)</span></span>
+                        <div class="term-left">
+                            <input type="checkbox" id="terms3" class="term-checkbox">
+                            <label for="terms3">마케팅 정보 이용 및 수신동의 <span class="optional">(선택)</span></label>
+                        </div>
+                        <button type="button" class="view-btn" onclick="showTermsPopup('marketing-agreement')">전문보기</button>
                     </div>
                 </div>
 
@@ -118,7 +150,79 @@
         </div>
     </div>
 
+    <!-- 약관 모달 -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeTermsModal()">&times;</span>
+            <iframe id="termsFrame" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+
     <script type="module" src="../../js/firebase-config.js"></script>
     <script type="module" src="../../js/auth/register-business.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const eyeIcon = document.querySelector('.eye-icon');
+            const eyeOffIcon = document.querySelector('.eye-off-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                confirmPasswordInput.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+            } else {
+                passwordInput.type = 'password';
+                confirmPasswordInput.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+            }
+        }
+
+        function showTermsPopup(termsType) {
+            const modal = document.getElementById('termsModal');
+            const frame = document.getElementById('termsFrame');
+            frame.src = `../../terms/${termsType}.html`;
+            modal.style.display = 'block';
+        }
+
+        function closeTermsModal() {
+            const modal = document.getElementById('termsModal');
+            const frame = document.getElementById('termsFrame');
+            modal.style.display = 'none';
+            frame.src = '';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('termsModal');
+            if (event.target == modal) {
+                closeTermsModal();
+            }
+        }
+
+        function toggleAllCheckboxes() {
+            const allAgree = document.getElementById('allAgree');
+            const checkboxes = document.querySelectorAll('.term-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = allAgree.checked;
+            });
+        }
+
+        // 개별 체크박스 변경 시 전체동의 체크박스 상태 업데이트
+        document.addEventListener('DOMContentLoaded', function() {
+            const termCheckboxes = document.querySelectorAll('.term-checkbox');
+            const allAgree = document.getElementById('allAgree');
+            
+            termCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(termCheckboxes).every(cb => cb.checked);
+                    allAgree.checked = allChecked;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
