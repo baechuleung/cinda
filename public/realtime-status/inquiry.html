@@ -10,6 +10,9 @@
     
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/realtime-status/inquiry.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="../js/config.js"></script>
 </head>
 <body>
     <!-- 메인 헤더 포함 -->
@@ -67,10 +70,7 @@
         fetch('../header.html')
             .then(response => response.text())
             .then(data => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const headerContent = doc.querySelector('header').outerHTML;
-                document.getElementById('header-container').innerHTML = headerContent;
+                document.getElementById('header-container').innerHTML = data;
             })
             .catch(error => console.error('헤더 로딩 오류:', error));
     </script>

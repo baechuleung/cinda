@@ -22,9 +22,6 @@
 
 /* 실시간 현황판 페이지 헤더 */
 .status-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 0 2rem;
     max-width: 1400px;
     margin: 0 auto 2rem;
@@ -34,10 +31,23 @@
     font-size: 24px;
     color: #333;
     font-weight: 600;
-    margin: 0;
+    margin: 0 0 1rem 0;
 }
 
-.header-info {
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.right-controls {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -67,6 +77,59 @@
 }
 
 .refresh-btn .icon {
+    font-size: 16px;
+}
+
+/* 필터 버튼 */
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #f5f5f5;
+}
+
+.filter-btn.active {
+    background: #5368ff;
+    color: white;
+    border-color: #5368ff;
+}
+
+/* 검색 박스 */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.search-input {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    width: 200px;
+    outline: none;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
     font-size: 16px;
 }
 
@@ -230,6 +293,27 @@
     flex-direction: column;
     height: fit-content;
     max-height: 80vh;
+    position: sticky;
+    top: 80px;
+}
+
+/* 모바일용 액션 영역 */
+.mobile-action-area {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .right-section {
+        display: none;
+    }
+    
+    .mobile-action-area {
+        display: block !important;
+    }
 }
 
 .chat-header {
@@ -383,10 +467,40 @@
     
     .right-section {
         width: 100%;
+        position: static;
+        display: none;
     }
 }
 
 @media (max-width: 768px) {
+    .header-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .left-controls {
+        justify-content: space-between;
+    }
+    
+    .right-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .filter-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
     .ad-banner-container {
         flex-direction: column;
         padding: 1rem;
@@ -411,19 +525,18 @@
     .main-nav {
         display: none;
     }
-    
-    .date-selector {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .new-post-btn {
-        width: 100%;
-    }
 }
 
 @media (max-width: 480px) {
+    .status-header {
+        padding: 0 1rem;
+    }
+    
+    .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 13px;
+    }
+    
     .stat .number {
         font-size: 20px;
     }
