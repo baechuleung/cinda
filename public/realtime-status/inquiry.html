@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의하기 - CINDA</title>
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="../js/seo-manager.js"></script>
+    
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/realtime-status/inquiry.css">
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="inquiry-container">
+        <div class="inquiry-form">
+            <h2>문의하기</h2>
+            <p class="subtitle">날짜(강남)에 대한 문의사항을 작성해주세요.</p>
+            
+            <form id="inquiryForm">
+                <div class="form-group">
+                    <label for="inquiryType">문의 유형</label>
+                    <select id="inquiryType" required>
+                        <option value="">선택해주세요</option>
+                        <option value="reservation">예약 문의</option>
+                        <option value="service">서비스 문의</option>
+                        <option value="price">가격 문의</option>
+                        <option value="other">기타 문의</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" placeholder="이름을 입력해주세요" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">연락처</label>
+                    <input type="tel" id="phone" placeholder="010-0000-0000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" id="title" placeholder="문의 제목을 입력해주세요" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">문의 내용</label>
+                    <textarea id="content" rows="6" placeholder="문의하실 내용을 상세히 작성해주세요" required></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+                    <button type="submit" class="submit-btn">문의하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../js/firebase-config.js"></script>
+    <script type="module" src="../js/realtime-status/inquiry.js"></script>
+    <script>
+        // 메인 헤더 로드
+        fetch('../header.html')
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data, 'text/html');
+                const headerContent = doc.querySelector('header').outerHTML;
+                document.getElementById('header-container').innerHTML = headerContent;
+            })
+            .catch(error => console.error('헤더 로딩 오류:', error));
+    </script>
+</body>
+</html>
