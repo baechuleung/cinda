@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대시보드</title>
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="js/seo-manager.js"></script>
+    
     <link rel="stylesheet" href="css/common.css">
 </head>
 <body>
@@ -19,7 +23,7 @@
 
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module">
-        import { auth } from 'js/firebase-config.js';
+        import { auth } from './js/firebase-config.js';
         import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
         // 인증 상태 확인

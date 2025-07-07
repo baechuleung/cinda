@@ -7,6 +7,6 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'dashboard.html';
     } else {
         // 로그인되지 않은 상태
-        window.location.href = 'html/auth/login.html';
+        window.location.href = 'auth/login.html';
     }
 });
