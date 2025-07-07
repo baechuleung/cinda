@@ -14,36 +14,106 @@
 <body>
     <div class="register-container">
         <div class="register-form">
-            <h2>기업회원 가입</h2>
+            <h2>기업 회원가입</h2>
             <form id="registerForm">
+                <!-- 이메일 -->
                 <div class="form-group">
-                    <input type="text" id="companyName" placeholder="회사명" autocomplete="organization" required>
+                    <label for="email">이메일 <span class="required">*</span></label>
+                    <div class="input-with-dropdown">
+                        <input type="email" id="email" placeholder="이메일을 입력해주세요" autocomplete="email" required>
+                        <select id="emailDomain" class="email-dropdown">
+                            <option value="">직접입력</option>
+                            <option value="@naver.com">@naver.com</option>
+                            <option value="@gmail.com">@gmail.com</option>
+                            <option value="@daum.net">@daum.net</option>
+                            <option value="@hanmail.net">@hanmail.net</option>
+                        </select>
+                    </div>
+                    <div class="helper-text">* 비밀번호 분실 시, 임시비밀번호를 받을 수 있는 이메일을 입력해주세요.</div>
                 </div>
+
+                <!-- 비밀번호 -->
                 <div class="form-group">
-                    <input type="text" id="businessNumber" placeholder="사업자등록번호" autocomplete="off" required>
+                    <label for="password">비밀번호 <span class="required">*</span></label>
+                    <div class="password-input">
+                        <input type="password" id="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
+                        <span class="show-password">👁</span>
+                    </div>
+                    <div class="helper-text">영문, 숫자, 특수문자가 모두 들어간 8~20자</div>
                 </div>
+
+                <!-- 비밀번호 확인 -->
                 <div class="form-group">
-                    <input type="text" id="representative" placeholder="대표자명" autocomplete="name" required>
+                    <label for="confirmPassword">비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" placeholder="비밀번호 확인을 위해 한번 더 입력해 주세요" autocomplete="new-password" required>
                 </div>
+
+                <!-- 커뮤니티 전용 닉네임 -->
                 <div class="form-group">
-                    <input type="email" id="email" placeholder="회사 이메일" autocomplete="email" required>
+                    <label for="nickname">커뮤니티 전용 닉네임 <span class="required">*</span></label>
+                    <input type="text" id="nickname" placeholder="커뮤니티에서 사용할 닉네임을 적어주세요" required>
                 </div>
+
+                <!-- 이름 -->
                 <div class="form-group">
-                    <input type="tel" id="phone" placeholder="회사 전화번호" autocomplete="tel" required>
+                    <label for="name">이름</label>
+                    <div class="checkbox-group">
+                        <input type="text" id="name" value="홍길동" disabled>
+                        <span class="checkbox-status">✓ 인증완료</span>
+                    </div>
                 </div>
+
+                <!-- 생년월일 -->
                 <div class="form-group">
-                    <input type="password" id="password" placeholder="비밀번호" autocomplete="new-password" required>
+                    <label for="birthdate">생년월일</label>
+                    <input type="text" id="birthdate" value="1999년 02월 12일" disabled>
                 </div>
+
+                <!-- 휴대폰 번호 -->
                 <div class="form-group">
-                    <input type="password" id="confirmPassword" placeholder="비밀번호 확인" autocomplete="new-password" required>
+                    <label for="phone">휴대폰 번호</label>
+                    <div class="checkbox-group">
+                        <input type="tel" id="phone" value="010-1234-5678" disabled>
+                        <span class="checkbox-status">✓ 인증완료</span>
+                    </div>
                 </div>
-                <button type="submit">기업회원 가입</button>
+
+                <!-- 가게명 -->
+                <div class="form-group">
+                    <label for="storeName">가게명</label>
+                    <input type="text" id="storeName" placeholder="달토(강남점)">
+                </div>
+
+                <!-- 업종 -->
+                <div class="form-group">
+                    <label for="businessType">업종</label>
+                    <select id="businessType" class="full-dropdown">
+                        <option value="">업종을 선택해주세요.</option>
+                        <option value="restaurant">음식점</option>
+                        <option value="cafe">카페</option>
+                        <option value="retail">소매업</option>
+                        <option value="service">서비스업</option>
+                    </select>
+                </div>
+
+                <!-- 전체동의 -->
+                <div class="section-title">전체동의</div>
+                <div class="terms-group">
+                    <div class="term-item">
+                        <span>이용약관 동의</span>
+                        <button type="button" class="view-btn">전문보기</button>
+                    </div>
+                    <div class="term-item">
+                        <span>개인정보 수집 및 이용 동의</span>
+                        <button type="button" class="view-btn">전문보기</button>
+                    </div>
+                    <div class="term-item">
+                        <span>마케팅 정보 이용 및 수신동의 <span class="optional">(선택)</span></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">회원가입</button>
             </form>
-            <div class="auth-links">
-                <a href="register.html">← 가입 유형 선택으로 돌아가기</a>
-                <span>|</span>
-                <a href="login.html">로그인</a>
-            </div>
             <div id="error-message" class="error-message"></div>
         </div>
     </div>
