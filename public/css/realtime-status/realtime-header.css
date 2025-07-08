@@ -153,26 +153,26 @@
 
 /* 슬라이더 위치 및 색상 */
 .filter-toggle input[id="filter-all"]:checked ~ .toggle-slider {
-    width: 25%;
+    width: calc(25% - 2px);
     transform: translateX(0);
     background: #F8F8F8;
 }
 
 .filter-toggle input[id="filter-available"]:checked ~ .toggle-slider {
-    width: 25%;
-    transform: translateX(100%);
+    width: calc(25% - 2px);
+    transform: translateX(calc(100% + 2px));
     background: #00C33A;
 }
 
 .filter-toggle input[id="filter-normal"]:checked ~ .toggle-slider {
-    width: 25%;
-    transform: translateX(200%);
+    width: calc(25% - 2px);
+    transform: translateX(calc(200% + 4px));
     background: #FFB938;
 }
 
 .filter-toggle input[id="filter-busy"]:checked ~ .toggle-slider {
-    width: 25%;
-    transform: translateX(300%);
+    width: calc(25% - 2px);
+    transform: translateX(calc(300% + 6px));
     background: #FF4141;
 }
 
@@ -180,12 +180,16 @@
 .business-type-select {
     width: 200px;
     height: 40px;
-    padding: 0 1rem;
+    padding: 0 2.5rem 0 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
     background: white;
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
 }
 
 .business-type-select:focus {
