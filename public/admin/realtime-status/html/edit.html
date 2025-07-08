@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="../css/edit.css">
 </head>
 <body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
     <div class="admin-container">
         <div class="admin-header">
             <h1>실시간 현황판 - 가게 수정</h1>
@@ -139,5 +142,14 @@
 
     <script type="module" src="../../../js/firebase-config.js"></script>
     <script type="module" src="../js/edit.js"></script>
+    <script>
+        // 헤더 로드
+        fetch('/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로딩 오류:', error));
+    </script>
 </body>
 </html>
