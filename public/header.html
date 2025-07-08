@@ -15,8 +15,28 @@
                 <li><a href="#">구직</a></li>
                 <li><a href="#">제휴서비스</a></li>
                 <li><a href="#">내 정보</a></li>
+                <li class="admin-menu" style="display: none;"><a href="/admin/dashboard.html">관리자</a></li>
             </ul>
         </nav>
     </header>
+    
+    <script>
+        // CONFIG를 사용해서 경로 설정
+        if (typeof CONFIG !== 'undefined') {
+            const rootPath = CONFIG.getRootPath();
+            
+            // Firebase config 로드
+            const firebaseScript = document.createElement('script');
+            firebaseScript.type = 'module';
+            firebaseScript.src = CONFIG.getJSPath('firebase-config.js');
+            document.body.appendChild(firebaseScript);
+            
+            // Header.js 로드
+            const headerScript = document.createElement('script');
+            headerScript.type = 'module';
+            headerScript.src = CONFIG.getJSPath('header.js');
+            document.body.appendChild(headerScript);
+        }
+    </script>
 </body>
 </html>
