@@ -1,3 +1,13 @@
+/* 모바일 액션 영역 */
+.mobile-action-area {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 1400px) {
     .main-container.right-active .status-grid {
@@ -104,6 +114,11 @@
     .right-section,
     .main-container.right-active .right-section {
         display: none !important;
+    }
+    
+    /* 모바일에서 액션 영역 표시 */
+    .status-card.active .mobile-action-area {
+        display: block;
     }
     
     .header-container {

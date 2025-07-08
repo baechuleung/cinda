@@ -55,8 +55,68 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Chat button clicked for:', location);
             
-            // PC에서만 동작
-            if (window.innerWidth > 768) {
+            // 모바일에서 처리
+            if (window.innerWidth <= 768) {
+                // 이미 열려있는 액션 영역이 있으면 닫기
+                document.querySelectorAll('.mobile-action-area').forEach(area => {
+                    area.remove();
+                });
+                document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 이미 활성화된 버튼을 다시 클릭하면 닫기만 하고 종료
+                if (this.classList.contains('active')) {
+                    return;
+                }
+                
+                // 현재 카드와 버튼 활성화
+                card.classList.add('active');
+                this.classList.add('active');
+                
+                // 모바일 액션 영역 생성
+                const mobileActionArea = document.createElement('div');
+                mobileActionArea.className = 'mobile-action-area';
+                mobileActionArea.innerHTML = `
+                    <div class="chat-header">
+                        <h3>실시간 채팅룸</h3>
+                        <span class="location-tag">${location} 180번</span>
+                    </div>
+                    
+                    <div class="chat-notice">
+                        <div class="notice-icon">🏠</div>
+                        <div class="notice-content">
+                            <strong>공지사항</strong>
+                            <p>아래는 익명 나나나 단지를 위한/클래/호를, 서비스 접서제 안하는 내용, 분발</p>
+                            <p>등 조직기 안돈 경우, 은행충책에 피고버와 마신기 달에 계좌 잘 수 있으시기 주</p>
+                            <p>은행드립니다.</p>
+                        </div>
+                        <button class="close-btn" onclick="this.parentElement.style.display='none'">감추기 ⌃</button>
+                    </div>
+                    
+                    <div class="chat-messages">
+                        <div class="chat-message">
+                            <div class="message-info">
+                                <span class="author">듀우진 팀슬기</span>
+                                <span class="time">오후 11:39</span>
+                            </div>
+                            <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="메세지를 입력하세요..." class="chat-input">
+                        <button class="send-btn">전송</button>
+                    </div>
+                `;
+                
+                // 카드 아래에 추가
+                card.appendChild(mobileActionArea);
+                
+                // 채팅 이벤트 설정
+                setupChatEvents();
+                
+            } else {
+                // PC에서 처리 (기존 코드)
                 // 이미 활성화된 채팅 버튼을 다시 클릭하면 닫기
                 if (this.classList.contains('active')) {
                     this.classList.remove('active');
@@ -133,7 +193,67 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Inquiry button clicked for:', location);
             
-            if (window.innerWidth > 768) {
+            // 모바일에서 처리
+            if (window.innerWidth <= 768) {
+                // 이미 열려있는 액션 영역이 있으면 닫기
+                document.querySelectorAll('.mobile-action-area').forEach(area => {
+                    area.remove();
+                });
+                document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 이미 활성화된 버튼을 다시 클릭하면 닫기만 하고 종료
+                if (this.classList.contains('active')) {
+                    return;
+                }
+                
+                // 현재 카드와 버튼 활성화
+                card.classList.add('active');
+                this.classList.add('active');
+                
+                // 모바일 액션 영역 생성
+                const mobileActionArea = document.createElement('div');
+                mobileActionArea.className = 'mobile-action-area';
+                mobileActionArea.innerHTML = `
+                    <div class="inquiry-header">
+                        <h3>문의하기</h3>
+                        <span class="location-tag">${location}</span>
+                    </div>
+                    
+                    <div class="inquiry-form-container">
+                        <form class="right-inquiry-form">
+                            <div class="form-group">
+                                <label>문의 유형</label>
+                                <select required>
+                                    <option value="">선택해주세요</option>
+                                    <option value="reservation">예약 문의</option>
+                                    <option value="service">서비스 문의</option>
+                                    <option value="price">가격 문의</option>
+                                    <option value="other">기타 문의</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>이름</label>
+                                <input type="text" placeholder="이름을 입력해주세요" required>
+                            </div>
+                            <div class="form-group">
+                                <label>연락처</label>
+                                <input type="tel" placeholder="010-0000-0000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>문의 내용</label>
+                                <textarea rows="4" placeholder="문의하실 내용을 입력해주세요" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-inquiry-btn">문의하기</button>
+                        </form>
+                    </div>
+                `;
+                
+                // 카드 아래에 추가
+                card.appendChild(mobileActionArea);
+                
+            } else {
+                // PC에서 처리 (기존 코드)
                 // 이미 활성화된 문의 버튼을 다시 클릭하면 닫기
                 if (this.classList.contains('active')) {
                     this.classList.remove('active');
