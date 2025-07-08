@@ -116,48 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 채팅 입력 이벤트 설정
                 setupChatEvents();
-            } else {
-                // 모바일: 카드 아래에 채팅 영역 표시
-                const mobileArea = card.querySelector('.mobile-action-area');
-                
-                // 이미 열려있으면 닫기
-                if (mobileArea.style.display === 'block' && this.classList.contains('active')) {
-                    mobileArea.style.display = 'none';
-                    this.classList.remove('active');
-                    return;
-                }
-                
-                // 다른 모든 모바일 영역 숨기기
-                document.querySelectorAll('.mobile-action-area').forEach(area => {
-                    area.style.display = 'none';
-                    area.innerHTML = '';
-                });
-                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-                
-                // 현재 카드의 모바일 영역에 채팅 표시
-                this.classList.add('active');
-                mobileArea.style.display = 'block';
-                mobileArea.innerHTML = `
-                    <div class="mobile-chat">
-                        <h4>${location} 채팅방</h4>
-                        <div class="mobile-chat-messages">
-                            <div class="chat-message">
-                                <div class="message-info">
-                                    <span class="author">듀우진 팀슬기</span>
-                                    <span class="time">오후 11:39</span>
-                                </div>
-                                <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
-                            </div>
-                        </div>
-                        <div class="mobile-chat-input">
-                            <input type="text" placeholder="메시지 입력..." class="mobile-chat-input-field">
-                            <button class="mobile-send-btn">전송</button>
-                        </div>
-                    </div>
-                `;
-                
-                // 모바일 채팅 이벤트 설정
-                setupMobileChatEvents(mobileArea);
             }
         });
     });
@@ -234,38 +192,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 오른쪽 섹션 표시
                 rightSection.style.display = 'flex';
-            } else {
-                // 모바일: 카드 아래에 문의 폼 표시
-                const mobileArea = card.querySelector('.mobile-action-area');
-                
-                // 이미 열려있으면 닫기
-                if (mobileArea.style.display === 'block' && this.classList.contains('active')) {
-                    mobileArea.style.display = 'none';
-                    this.classList.remove('active');
-                    return;
-                }
-                
-                // 다른 모든 모바일 영역 숨기기
-                document.querySelectorAll('.mobile-action-area').forEach(area => {
-                    area.style.display = 'none';
-                    area.innerHTML = '';
-                });
-                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-                
-                // 현재 카드의 모바일 영역에 문의 폼 표시
-                this.classList.add('active');
-                mobileArea.style.display = 'block';
-                mobileArea.innerHTML = `
-                    <div class="mobile-inquiry">
-                        <h4>${location} 문의하기</h4>
-                        <form class="mobile-inquiry-form">
-                            <input type="text" placeholder="이름" required>
-                            <input type="tel" placeholder="연락처" required>
-                            <textarea placeholder="문의내용" rows="3" required></textarea>
-                            <button type="submit">문의하기</button>
-                        </form>
-                    </div>
-                `;
             }
         });
     });
@@ -323,39 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-    }
-    
-    // 모바일 채팅 이벤트 설정
-    function setupMobileChatEvents(mobileArea) {
-        const input = mobileArea.querySelector('.mobile-chat-input-field');
-        const sendBtn = mobileArea.querySelector('.mobile-send-btn');
-        
-        if (sendBtn) {
-            sendBtn.onclick = function() {
-                if (input && input.value.trim()) {
-                    const messagesDiv = mobileArea.querySelector('.mobile-chat-messages');
-                    const messageHTML = `
-                        <div class="chat-message">
-                            <div class="message-info">
-                                <span class="author">나</span>
-                                <span class="time">${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
-                            </div>
-                            <div class="message-content">${input.value}</div>
-                        </div>
-                    `;
-                    messagesDiv.innerHTML += messageHTML;
-                    input.value = '';
-                }
-            };
-        }
-        
-        if (input) {
-            input.onkeypress = function(e) {
-                if (e.key === 'Enter' && this.value.trim()) {
-                    sendBtn.click();
-                }
-            };
         }
     }
     
