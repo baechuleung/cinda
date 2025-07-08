@@ -35,45 +35,30 @@ const CONFIG = {
 // 헤더 로드 함수
 async function loadHeader(containerId = 'header-container') {
     try {
-        // 현재 위치에서 header.html까지의 상대 경로 계산
-        const rootPath = CONFIG.getRootPath();
-        const response = await fetch(rootPath + 'header.html');
+        // 절대 경로로 header.html 로드
+        const response = await fetch('/header.html');
         const text = await response.text();
         
         // 헤더 내용 삽입
         document.getElementById(containerId).innerHTML = text;
         
-        // 삽입 후 경로 수정
+        // innerHTML로 삽입된 스크립트는 실행되지 않으므로 재실행
         const container = document.getElementById(containerId);
+        const scripts = container.querySelectorAll('script');
         
-        // CSS 링크 경로 수정
-        const cssLinks = container.querySelectorAll('link[rel="stylesheet"]');
-        cssLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('css/')) {
-                link.setAttribute('href', rootPath + href);
+        scripts.forEach(oldScript => {
+            const newScript = document.createElement('script');
+            newScript.type = oldScript.type || 'text/javascript';
+            
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
+            } else {
+                // 인라인 스크립트 내용 복사
+                newScript.textContent = oldScript.textContent;
             }
-        });
-        
-        // 이미지 경로 수정
-        const images = container.querySelectorAll('img');
-        images.forEach(img => {
-            const src = img.getAttribute('src');
-            if (src && (src.startsWith('img/') || src.startsWith('../img/'))) {
-                const filename = src.split('/').pop();
-                img.setAttribute('src', rootPath + 'img/' + filename);
-            }
-        });
-        
-        // 링크 경로 수정
-        const links = container.querySelectorAll('a');
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('/')) {
-                if (href.includes('.html')) {
-                    link.setAttribute('href', rootPath + href);
-                }
-            }
+            
+            // 기존 스크립트를 새 스크립트로 교체
+            oldScript.parentNode.replaceChild(newScript, oldScript);
         });
         
     } catch (error) {

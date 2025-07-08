@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신다</title>
-    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
     <header>
         <nav>
             <ul>
-                <li><a href="#">실시간 현황판</a></li>
+                <li><a href="/realtime-status/realtime-status.html">실시간 현황판</a></li>
                 <li><a href="#">구인</a></li>
                 <li><a href="#">구직</a></li>
                 <li><a href="#">제휴서비스</a></li>
@@ -21,22 +21,20 @@
     </header>
     
     <script>
-        // CONFIG를 사용해서 경로 설정
-        if (typeof CONFIG !== 'undefined') {
-            const rootPath = CONFIG.getRootPath();
-            
-            // Firebase config 로드
-            const firebaseScript = document.createElement('script');
-            firebaseScript.type = 'module';
-            firebaseScript.src = CONFIG.getJSPath('firebase-config.js');
-            document.body.appendChild(firebaseScript);
-            
-            // Header.js 로드
-            const headerScript = document.createElement('script');
-            headerScript.type = 'module';
-            headerScript.src = CONFIG.getJSPath('header.js');
-            document.body.appendChild(headerScript);
-        }
+        // 절대 경로로 스크립트 동적 로드
+        const origin = window.location.origin;
+        
+        // Firebase config 로드
+        const firebaseScript = document.createElement('script');
+        firebaseScript.type = 'module';
+        firebaseScript.src = origin + '/js/firebase-config.js';
+        document.body.appendChild(firebaseScript);
+        
+        // Header.js 로드
+        const headerScript = document.createElement('script');
+        headerScript.type = 'module';
+        headerScript.src = origin + '/js/header.js';
+        document.body.appendChild(headerScript);
     </script>
 </body>
 </html>
