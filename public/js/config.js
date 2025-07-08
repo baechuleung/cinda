@@ -35,6 +35,25 @@ const CONFIG = {
 // 헤더 로드 함수
 async function loadHeader(containerId = 'header-container') {
     try {
+        // 헤더 CSS가 이미 로드되었는지 확인
+        const headerCSSExists = Array.from(document.styleSheets).some(sheet => 
+            sheet.href && sheet.href.includes('/css/header.css')
+        );
+        
+        if (!headerCSSExists) {
+            // 헤더 CSS 먼저 로드
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '/css/header.css';
+            document.head.appendChild(link);
+            
+            // CSS 로드 대기
+            await new Promise(resolve => {
+                link.onload = resolve;
+                setTimeout(resolve, 100); // 최대 100ms 대기
+            });
+        }
+        
         // 절대 경로로 header.html 로드
         const response = await fetch('/header.html');
         const text = await response.text();

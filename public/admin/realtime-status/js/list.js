@@ -1,4 +1,4 @@
-import { auth, db } from '../../../firebase-config.js';
+import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { collection, getDocs, doc, getDoc, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
@@ -8,7 +8,7 @@ let allStores = [];
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         alert('로그인이 필요합니다.');
-        window.location.href = '../../../auth/login.html';
+        window.location.href = '/admin/realtime-status/html/list.html';
         return;
     }
     
@@ -16,7 +16,7 @@ onAuthStateChanged(auth, async (user) => {
     const adminDoc = await getDoc(doc(db, 'admin_users', user.uid));
     if (!adminDoc.exists() || adminDoc.data().level !== 10) {
         alert('관리자 권한이 필요합니다.');
-        window.location.href = '../../../index.html';
+        window.location.href = '/index.html';
         return;
     }
     

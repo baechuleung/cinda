@@ -35,6 +35,7 @@
     font-size: 14px;
     font-weight: 500;
     color: #333;
+    flex: 1;
 }
 
 .badge {
@@ -54,9 +55,36 @@
     color: #FF0000;
 }
 
-.star {
-    margin-left: auto;
-    font-size: 16px;
+.badge.green {
+    background: #E5FFE5;
+    color: #00AA00;
+}
+
+/* 즐겨찾기 버튼 */
+.favorite-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: transform 0.2s ease;
+}
+
+.favorite-btn .star {
+    font-size: 20px;
+    color: #999;
+    transition: color 0.2s ease;
+}
+
+.favorite-btn:hover .star {
+    color: #FFD700;
+}
+
+.favorite-btn.active .star {
+    color: #FFD700;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
 }
 
 .card-stats {
