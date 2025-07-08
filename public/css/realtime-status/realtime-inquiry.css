@@ -1,0 +1,55 @@
+/* 문의하기 폼 스타일 */
+.inquiry-header {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inquiry-header h3 {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+.inquiry-form-container {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.right-inquiry-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.right-inquiry-form label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.right-inquiry-form input,
+.right-inquiry-form select,
+.right-inquiry-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.submit-inquiry-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: #5368ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.submit-inquiry-btn:hover {
+    background: #4053e0;
+}

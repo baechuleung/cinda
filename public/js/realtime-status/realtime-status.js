@@ -1,135 +1,373 @@
-// 탭 메뉴 기능
+// 페이지 기능
 document.addEventListener('DOMContentLoaded', function() {
-    // 탭 전환
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            tabs.forEach(t => t.classList.remove('active'));
+    console.log('DOM loaded, initializing...');
+    
+    // 필터 버튼 기능
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
-            // 탭에 따른 데이터 필터링 로직 추가 가능
-            const tabType = this.dataset.tab;
-            filterCards(tabType);
+            const filterType = this.dataset.filter;
+            filterCardsByStatus(filterType);
         });
     });
     
-    // 카드 필터링
-    function filterCards(type) {
-        // 실제 구현 시 카드를 필터링하는 로직 추가
-        console.log('Filtering by:', type);
+    // 검색 기능
+    const searchInput = document.querySelector('.search-input');
+    const searchBtn = document.querySelector('.search-btn');
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performSearch);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+    
+    function performSearch() {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            console.log('Searching for:', searchTerm);
+        }
+    }
+    
+    // 카드 상태별 필터링
+    function filterCardsByStatus(status) {
+        console.log('Filtering by status:', status);
     }
     
     // 채팅하기 버튼 클릭
     const chatButtons = document.querySelectorAll('.action-btn.chat');
     chatButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
             const card = this.closest('.status-card');
+            const location = this.dataset.location || card.querySelector('.location').textContent;
+            const rightSection = document.querySelector('.right-section');
+            const mainContainer = document.querySelector('.main-container');
             
-            // 모든 카드와 채팅 버튼의 active 제거
-            document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.action-btn.chat').forEach(b => b.classList.remove('active'));
+            console.log('Chat button clicked for:', location);
             
-            // 클릭한 카드와 버튼에 active 추가
-            card.classList.add('active');
-            this.classList.add('active');
-            
-            // 채팅방 정보 업데이트
-            updateChatRoom(card);
+            // PC에서만 동작
+            if (window.innerWidth > 768) {
+                // 이미 활성화된 채팅 버튼을 다시 클릭하면 닫기
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                    card.classList.remove('active');
+                    rightSection.style.display = 'none';
+                    mainContainer.classList.remove('right-active');
+                    return;
+                }
+                
+                // 모든 active 상태 제거
+                document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 현재 카드와 버튼 활성화
+                card.classList.add('active');
+                this.classList.add('active');
+                
+                // 메인 컨테이너에 right-active 클래스 추가
+                mainContainer.classList.add('right-active');
+                
+                // 오른쪽 섹션에 채팅 표시
+                rightSection.innerHTML = `
+                    <div class="chat-header">
+                        <h3>실시간 채팅룸</h3>
+                        <span class="location-tag">${location} 180번</span>
+                    </div>
+                    
+                    <div class="chat-notice">
+                        <div class="notice-icon">🏠</div>
+                        <div class="notice-content">
+                            <strong>공지사항</strong>
+                            <p>아래는 익명 나나나 단지를 위한/클래/호를, 서비스 접서제 안하는 내용, 분발</p>
+                            <p>등 조직기 안돈 경우, 은행충책에 피고버와 마신기 달에 계좌 잘 수 있으시기 주</p>
+                            <p>은행드립니다.</p>
+                        </div>
+                        <button class="close-btn" onclick="this.parentElement.style.display='none'">감추기 ⌃</button>
+                    </div>
+                    
+                    <div class="chat-messages">
+                        <div class="chat-message">
+                            <div class="message-info">
+                                <span class="author">듀우진 팀슬기</span>
+                                <span class="time">오후 11:39</span>
+                            </div>
+                            <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <input type="text" placeholder="메세지를 입력하세요..." class="chat-input">
+                        <button class="send-btn">전송</button>
+                    </div>
+                `;
+                
+                // 오른쪽 섹션 표시
+                rightSection.style.display = 'flex';
+                
+                // 채팅 입력 이벤트 설정
+                setupChatEvents();
+            } else {
+                // 모바일: 카드 아래에 채팅 영역 표시
+                const mobileArea = card.querySelector('.mobile-action-area');
+                
+                // 이미 열려있으면 닫기
+                if (mobileArea.style.display === 'block' && this.classList.contains('active')) {
+                    mobileArea.style.display = 'none';
+                    this.classList.remove('active');
+                    return;
+                }
+                
+                // 다른 모든 모바일 영역 숨기기
+                document.querySelectorAll('.mobile-action-area').forEach(area => {
+                    area.style.display = 'none';
+                    area.innerHTML = '';
+                });
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 현재 카드의 모바일 영역에 채팅 표시
+                this.classList.add('active');
+                mobileArea.style.display = 'block';
+                mobileArea.innerHTML = `
+                    <div class="mobile-chat">
+                        <h4>${location} 채팅방</h4>
+                        <div class="mobile-chat-messages">
+                            <div class="chat-message">
+                                <div class="message-info">
+                                    <span class="author">듀우진 팀슬기</span>
+                                    <span class="time">오후 11:39</span>
+                                </div>
+                                <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
+                            </div>
+                        </div>
+                        <div class="mobile-chat-input">
+                            <input type="text" placeholder="메시지 입력..." class="mobile-chat-input-field">
+                            <button class="mobile-send-btn">전송</button>
+                        </div>
+                    </div>
+                `;
+                
+                // 모바일 채팅 이벤트 설정
+                setupMobileChatEvents(mobileArea);
+            }
         });
     });
     
     // 문의하기 버튼 클릭
     const inquiryButtons = document.querySelectorAll('.action-btn.inquiry');
     inquiryButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // 문의하기 페이지로 이동 또는 모달 오픈
-            window.location.href = 'inquiry.html';
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const card = this.closest('.status-card');
+            const location = this.dataset.location || card.querySelector('.location').textContent;
+            const rightSection = document.querySelector('.right-section');
+            const mainContainer = document.querySelector('.main-container');
+            
+            console.log('Inquiry button clicked for:', location);
+            
+            if (window.innerWidth > 768) {
+                // 이미 활성화된 문의 버튼을 다시 클릭하면 닫기
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                    card.classList.remove('active');
+                    rightSection.style.display = 'none';
+                    mainContainer.classList.remove('right-active');
+                    return;
+                }
+                
+                // 모든 active 상태 제거
+                document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 현재 카드와 버튼 활성화
+                card.classList.add('active');
+                this.classList.add('active');
+                
+                // 메인 컨테이너에 right-active 클래스 추가
+                mainContainer.classList.add('right-active');
+                
+                // 오른쪽 섹션에 문의 폼 표시
+                rightSection.innerHTML = `
+                    <div class="inquiry-header">
+                        <h3>문의하기</h3>
+                        <span class="location-tag">${location}</span>
+                    </div>
+                    
+                    <div class="inquiry-form-container">
+                        <form class="right-inquiry-form">
+                            <div class="form-group">
+                                <label>문의 유형</label>
+                                <select required>
+                                    <option value="">선택해주세요</option>
+                                    <option value="reservation">예약 문의</option>
+                                    <option value="service">서비스 문의</option>
+                                    <option value="price">가격 문의</option>
+                                    <option value="other">기타 문의</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>이름</label>
+                                <input type="text" placeholder="이름을 입력해주세요" required>
+                            </div>
+                            <div class="form-group">
+                                <label>연락처</label>
+                                <input type="tel" placeholder="010-0000-0000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>문의 내용</label>
+                                <textarea rows="4" placeholder="문의하실 내용을 입력해주세요" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-inquiry-btn">문의하기</button>
+                        </form>
+                    </div>
+                `;
+                
+                // 오른쪽 섹션 표시
+                rightSection.style.display = 'flex';
+            } else {
+                // 모바일: 카드 아래에 문의 폼 표시
+                const mobileArea = card.querySelector('.mobile-action-area');
+                
+                // 이미 열려있으면 닫기
+                if (mobileArea.style.display === 'block' && this.classList.contains('active')) {
+                    mobileArea.style.display = 'none';
+                    this.classList.remove('active');
+                    return;
+                }
+                
+                // 다른 모든 모바일 영역 숨기기
+                document.querySelectorAll('.mobile-action-area').forEach(area => {
+                    area.style.display = 'none';
+                    area.innerHTML = '';
+                });
+                document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
+                
+                // 현재 카드의 모바일 영역에 문의 폼 표시
+                this.classList.add('active');
+                mobileArea.style.display = 'block';
+                mobileArea.innerHTML = `
+                    <div class="mobile-inquiry">
+                        <h4>${location} 문의하기</h4>
+                        <form class="mobile-inquiry-form">
+                            <input type="text" placeholder="이름" required>
+                            <input type="tel" placeholder="연락처" required>
+                            <textarea placeholder="문의내용" rows="3" required></textarea>
+                            <button type="submit">문의하기</button>
+                        </form>
+                    </div>
+                `;
+            }
         });
     });
     
-    // 채팅방 정보 업데이트
-    function updateChatRoom(card) {
-        const location = card.querySelector('.location').textContent;
-        const locationTag = document.querySelector('.location-tag');
-        locationTag.textContent = `${location} 180번`;
+    // 채팅 이벤트 설정 함수
+    function setupChatEvents() {
+        const chatInput = document.querySelector('.chat-input');
+        const sendBtn = document.querySelector('.send-btn');
         
-        // 채팅 메시지 초기화 또는 로드
-        loadChatMessages(location);
-    }
-    
-    // 채팅 메시지 로드
-    function loadChatMessages(location) {
-        // 실제 구현 시 서버에서 메시지 로드
-        console.log('Loading messages for:', location);
-    }
-    
-    // 채팅 전송
-    const chatInput = document.querySelector('.chat-input');
-    const sendBtn = document.querySelector('.send-btn');
-    
-    sendBtn.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
+        if (sendBtn) {
+            sendBtn.onclick = function() {
+                sendMessage();
+            };
         }
-    });
+        
+        if (chatInput) {
+            chatInput.onkeypress = function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            };
+        }
+    }
     
+    // 메시지 전송
     function sendMessage() {
+        const chatInput = document.querySelector('.chat-input');
+        if (!chatInput) return;
+        
         const message = chatInput.value.trim();
         if (message) {
-            // 메시지 추가
             addMessageToChat({
                 author: '나',
                 time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
                 content: message
             });
             
-            // 입력창 초기화
             chatInput.value = '';
-            
-            // 서버로 메시지 전송 (실제 구현 시)
-            // sendToServer(message);
         }
     }
     
     // 채팅 메시지 추가
     function addMessageToChat(data) {
         const messagesContainer = document.querySelector('.chat-messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'chat-message';
-        messageDiv.innerHTML = `
-            <div class="message-info">
-                <span class="author">${data.author}</span>
-                <span class="time">${data.time}</span>
-            </div>
-            <div class="message-content">${data.content}</div>
-        `;
-        
-        messagesContainer.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        if (messagesContainer) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.innerHTML = `
+                <div class="message-info">
+                    <span class="author">${data.author}</span>
+                    <span class="time">${data.time}</span>
+                </div>
+                <div class="message-content">${data.content}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
     }
     
-    // 공지사항 닫기
-    const closeBtn = document.querySelector('.close-btn');
-    closeBtn.addEventListener('click', function() {
-        const notice = document.querySelector('.chat-notice');
-        notice.style.display = 'none';
-    });
-    
-    // 새로글쓰기 버튼
-    const newPostBtn = document.querySelector('.new-post-btn');
-    newPostBtn.addEventListener('click', function() {
-        // 새 글 작성 페이지로 이동 또는 모달 오픈
-        window.location.href = 'new-post.html';
-    });
+    // 모바일 채팅 이벤트 설정
+    function setupMobileChatEvents(mobileArea) {
+        const input = mobileArea.querySelector('.mobile-chat-input-field');
+        const sendBtn = mobileArea.querySelector('.mobile-send-btn');
+        
+        if (sendBtn) {
+            sendBtn.onclick = function() {
+                if (input && input.value.trim()) {
+                    const messagesDiv = mobileArea.querySelector('.mobile-chat-messages');
+                    const messageHTML = `
+                        <div class="chat-message">
+                            <div class="message-info">
+                                <span class="author">나</span>
+                                <span class="time">${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                            <div class="message-content">${input.value}</div>
+                        </div>
+                    `;
+                    messagesDiv.innerHTML += messageHTML;
+                    input.value = '';
+                }
+            };
+        }
+        
+        if (input) {
+            input.onkeypress = function(e) {
+                if (e.key === 'Enter' && this.value.trim()) {
+                    sendBtn.click();
+                }
+            };
+        }
+    }
     
     // 실시간 시간 업데이트
     function updateTime() {
         const dateTime = document.querySelector('.date-time');
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        dateTime.textContent = `오늘 ${hours}:${minutes} 기준`;
+        if (dateTime) {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            dateTime.textContent = `오늘 ${hours}:${minutes} 기준`;
+        }
     }
     
     // 초기 시간 설정 및 1분마다 업데이트

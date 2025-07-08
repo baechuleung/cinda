@@ -10,6 +10,11 @@
     
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/realtime-status/realtime-status.css">
+    <link rel="stylesheet" href="../css/realtime-status/realtime-header.css">
+    <link rel="stylesheet" href="../css/realtime-status/realtime-card.css">
+    <link rel="stylesheet" href="../css/realtime-status/realtime-chat.css">
+    <link rel="stylesheet" href="../css/realtime-status/realtime-inquiry.css">
+    <link rel="stylesheet" href="../css/realtime-status/realtime-responsive.css">
     
     <!-- 전역 설정 스크립트 -->
     <script src="../js/config.js"></script>
@@ -27,10 +32,10 @@
         <div class="left-section">
             <!-- 현황 카드 그리드 -->
             <div class="status-grid">
-                <!-- 날짜(강남) 주황 -->
+                <!-- 달토(강남) 주황 -->
                 <div class="status-card orange">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge orange">주황</span>
                         <span class="star">⭐</span>
                     </div>
@@ -54,10 +59,10 @@
                     </div>
                 </div>
 
-                <!-- 날짜(강남) 주황 -->
+                <!-- 달토(강남) 주황 -->
                 <div class="status-card orange">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge orange">주황</span>
                         <span class="star">⭐</span>
                     </div>
@@ -81,10 +86,10 @@
                     </div>
                 </div>
 
-                <!-- 날짜(강남) 주황 active -->
+                <!-- 달토(강남) 주황 active -->
                 <div class="status-card orange active">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge orange">주황</span>
                         <span class="star">⭐</span>
                     </div>
@@ -108,10 +113,10 @@
                     </div>
                 </div>
 
-                <!-- 날짜(강남) 빨강 -->
+                <!-- 달토(강남) 빨강 -->
                 <div class="status-card red">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge red">빨강</span>
                         <span class="star">⭐</span>
                     </div>
@@ -135,10 +140,10 @@
                     </div>
                 </div>
 
-                <!-- 날짜(강남) 주황 -->
+                <!-- 달토(강남) 주황 -->
                 <div class="status-card orange">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge orange">주황</span>
                         <span class="star">⭐</span>
                     </div>
@@ -162,10 +167,10 @@
                     </div>
                 </div>
 
-                <!-- 날짜(강남) 빨강 -->
+                <!-- 달토(강남) 빨강 -->
                 <div class="status-card red">
                     <div class="card-header">
-                        <span class="location">날짜(강남)</span>
+                        <span class="location">달토(강남)</span>
                         <span class="badge red">빨강</span>
                         <span class="star">⭐</span>
                     </div>
@@ -191,60 +196,9 @@
             </div>
         </div>
         
-        <!-- 오른쪽 영역: 실시간 채팅 -->
-        <div class="right-section">
-            <div class="chat-header">
-                <h3>실시간 채팅룸</h3>
-                <span class="location-tag">날짜(강남) 180번</span>
-            </div>
-            
-            <div class="chat-notice">
-                <div class="notice-icon">🏠</div>
-                <div class="notice-content">
-                    <strong>글지사항</strong>
-                    <p>아래는 익명 나나나 단지를 위한/클래/호를, 서비스 접서제 안하는 내용, 분발</p>
-                    <p>등 조직기 안돈 경우, 은행충책에 피고버와 마신기 달에 계좌 잘 수 있으시기 주</p>
-                    <p>은행드립니다.</p>
-                </div>
-                <button class="close-btn">감추기 ⌃</button>
-            </div>
-            
-            <div class="chat-messages">
-                <!-- 채팅 메시지들 -->
-                <div class="chat-message">
-                    <div class="message-info">
-                        <span class="author">듀우진 팀슬기</span>
-                        <span class="time">오후 11:39</span>
-                    </div>
-                    <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
-                </div>
-                
-                <div class="chat-message">
-                    <div class="message-info">
-                        <span class="author">본이미지</span>
-                        <span class="time">오후 11:39</span>
-                    </div>
-                    <div class="message-content">슈앤티는 어랑 - 탑라이 파도 탈 수</div>
-                </div>
-                
-                <div class="chat-message">
-                    <div class="message-info">
-                        <span class="author">아침의 수체</span>
-                        <span class="time">오후 11:39</span>
-                    </div>
-                    <div class="message-content">슈앤티는 어랑통가 - 천천히 오서도 괜찮아요</div>
-                </div>
-                
-                <div class="notice-message">
-                    <span>녹자리레로</span>
-                    <div class="notice-tag">슈앤티는 어랑통가 - 천천히 오서도 괜찮아요</div>
-                </div>
-            </div>
-            
-            <div class="chat-input-area">
-                <input type="text" placeholder="메세지를 입력하세요..." class="chat-input">
-                <button class="send-btn">전송</button>
-            </div>
+        <!-- 오른쪽 영역: 실시간 채팅/문의 -->
+        <div class="right-section" style="display: none;">
+            <!-- 채팅 또는 문의 내용이 동적으로 삽입됨 -->
         </div>
     </div>
 
@@ -255,6 +209,11 @@
         fetch('../header.html')
             .then(response => response.text())
             .then(data => {
+                // CSS 경로를 현재 위치에 맞게 수정
+                data = data.replace(/href="css\//g, 'href="../css/');
+                data = data.replace(/src="img\//g, 'src="../img/');
+                data = data.replace(/href="(?!http|#|\.\.)/g, 'href="../');
+                
                 document.getElementById('header-container').innerHTML = data;
             })
             .catch(error => console.error('헤더 로딩 오류:', error));

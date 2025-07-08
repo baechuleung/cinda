@@ -1,0 +1,134 @@
+/* 광고 배너 */
+.ad-banner-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.ad-banner {
+    flex: 1;
+    height: 80px;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 14px;
+}
+
+/* 실시간 현황판 페이지 헤더 */
+.status-header {
+    padding: 0 2rem;
+    max-width: 1400px;
+    margin: 0 auto 2rem;
+}
+
+.status-header h1 {
+    font-size: 24px;
+    color: #333;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.right-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.date-time {
+    font-size: 14px;
+    color: #666;
+}
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+    background: #f5f5f5;
+}
+
+.refresh-btn .icon {
+    font-size: 16px;
+}
+
+/* 필터 버튼 */
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #f5f5f5;
+}
+
+.filter-btn.active {
+    background: #5368ff;
+    color: white;
+    border-color: #5368ff;
+}
+
+/* 검색 박스 */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.search-input {
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    width: 200px;
+    outline: none;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 16px;
+}

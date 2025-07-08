@@ -1,0 +1,118 @@
+/* 현황 카드 그리드 */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 기본 4개 */
+    gap: 1rem;
+    transition: grid-template-columns 0.3s ease;
+}
+
+/* 오른쪽 섹션이 활성화되면 3개로 변경 */
+.main-container.right-active .status-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.status-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.status-card.active {
+    border-color: #5368ff;
+    box-shadow: 0 0 0 2px rgba(83, 104, 255, 0.2);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.location {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge.orange {
+    background: #FFF0E5;
+    color: #FF6B00;
+}
+
+.badge.red {
+    background: #FFE5E5;
+    color: #FF0000;
+}
+
+.star {
+    margin-left: auto;
+    font-size: 16px;
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat .number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.stat .label {
+    font-size: 12px;
+    color: #666;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: #f5f5f5;
+}
+
+.action-btn.active {
+    background: #5368ff;
+    color: white;
+    border-color: #5368ff;
+}
+
+/* 모바일용 액션 영역 */
+.mobile-action-area {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: none;
+}

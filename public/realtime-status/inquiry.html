@@ -70,6 +70,11 @@
         fetch('../header.html')
             .then(response => response.text())
             .then(data => {
+                // CSS 경로를 현재 위치에 맞게 수정
+                data = data.replace(/href="css\//g, 'href="../css/');
+                data = data.replace(/src="img\//g, 'src="../img/');
+                data = data.replace(/href="(?!http|#|\.\.)/g, 'href="../');
+                
                 document.getElementById('header-container').innerHTML = data;
             })
             .catch(error => console.error('헤더 로딩 오류:', error));
