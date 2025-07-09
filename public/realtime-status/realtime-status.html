@@ -62,10 +62,24 @@
                 document.getElementById('realtime-header-container').innerHTML = data;
                 console.log('실시간 헤더 로드 완료');
                 
-                // 헤더 로드 후 슬라이더 재초기화
-                if (window.initializeSlider) {
-                    window.initializeSlider();
-                }
+                // DOM 업데이트 후 약간의 지연을 두고 슬라이더 초기화
+                setTimeout(() => {
+                    console.log('슬라이더 초기화 시도');
+                    console.log('realtime-header-container 내용 확인:', document.getElementById('realtime-header-container').children.length);
+                    
+                    if (window.initializeSlider) {
+                        window.initializeSlider();
+                    } else {
+                        console.error('initializeSlider 함수를 찾을 수 없습니다');
+                    }
+                    
+                    // slideAds 함수도 확인
+                    if (window.slideAds) {
+                        console.log('slideAds 함수 사용 가능');
+                    } else {
+                        console.error('slideAds 함수를 찾을 수 없습니다');
+                    }
+                }, 500); // 시간을 500ms로 늘림
             })
             .catch(error => console.error('실시간 헤더 로딩 오류:', error));
     </script>

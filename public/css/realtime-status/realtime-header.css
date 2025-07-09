@@ -46,6 +46,7 @@
     width: 100%;
 }
 
+/* PC용 스타일 */
 .ad-banner-wrapper {
     display: flex;
     gap: 1rem;
@@ -140,6 +141,13 @@
     gap: 0.5rem;
 }
 
+/* PC에서 search-controls */
+.search-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 /* 필터 토글 컨테이너 */
 .filter-toggle-container {
     background: white;
@@ -229,6 +237,7 @@
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
+    color: #999; /* 텍스트 색상 변경 */
     background: white;
     cursor: pointer;
     appearance: none;
@@ -258,9 +267,14 @@
     border: none;
     padding: 0 1rem;
     font-size: 14px;
+    color: #333; /* 입력 텍스트는 검은색 유지 */
     width: 100%;
     height: 100%;
     outline: none;
+}
+
+.search-input::placeholder {
+    color: #999; /* placeholder 색상 변경 */
 }
 
 .search-btn {
@@ -295,24 +309,40 @@
     }
 }
 
+/* 모바일 전용 스타일 */
 @media (max-width: 768px) {
     .ad-banner-section {
-        padding: 1rem;
+        padding: 0.5rem 0; /* 상하 패딩만 */
+        overflow: hidden;
     }
     
     .slide-btn {
-        display: none; /* 모바일에서는 슬라이드 버튼 숨김 */
+        display: none;
+    }
+    
+    .ad-banner-container {
+        overflow: hidden;
+        width: calc(100% - 2rem); /* 좌우 마진 */
+        margin: 0 1rem;
     }
     
     .ad-banner-wrapper {
+        display: flex;
         flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        gap: 0; /* gap 제거 */
+        transition: transform 0.3s ease;
     }
     
     .ad-banner {
-        flex: 0 0 80%; /* 모바일에서는 한 번에 하나씩 보임 */
-        height: 60px;
+        flex: 0 0 100%; /* 컨테이너의 100% */
+        min-width: 100%;
+        height: 120px;
+        margin-right: 1rem; /* 배너 사이 간격 */
+        font-size: 14px;
+    }
+    
+    .ad-banner:last-child {
+        margin-right: 0;
     }
     
     .status-header-wrapper {
@@ -324,24 +354,34 @@
     }
     
     .header-right {
-        flex-direction: column;
+        flex-direction: column; /* 세로 정렬 */
         align-items: stretch;
+        gap: 0.5rem;
+        width: 100%;
     }
     
-    .filter-buttons {
+    .filter-toggle-container {
+        width: 100%; /* 필터는 전체 너비 */
+        margin-bottom: 0.5rem;
+    }
+    
+    /* 업종선택과 매장검색을 감싸는 컨테이너 */
+    .search-controls {
+        display: flex;
+        gap: 0.5rem;
         width: 100%;
-        justify-content: space-between;
     }
     
     .business-type-select {
-        width: 100%;
+        width: calc(50% - 0.25rem); /* 반반 나누기 */
+        font-size: 14px;
     }
     
     .search-box {
-        width: 100%;
+        width: calc(50% - 0.25rem); /* 반반 나누기 */
     }
     
     .search-input {
-        width: 100%;
+        font-size: 14px; /* 모바일에서도 14px */
     }
 }
