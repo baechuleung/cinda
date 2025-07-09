@@ -50,6 +50,7 @@
 
     <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="/js/realtime-status/realtime-main.js"></script>
+    <script src="/js/realtime-status/realtime-header.js"></script>
     <script>
         // config.js의 loadHeader 함수 사용
         loadHeader('header-container');
@@ -60,6 +61,11 @@
             .then(data => {
                 document.getElementById('realtime-header-container').innerHTML = data;
                 console.log('실시간 헤더 로드 완료');
+                
+                // 헤더 로드 후 슬라이더 재초기화
+                if (window.initializeSlider) {
+                    window.initializeSlider();
+                }
             })
             .catch(error => console.error('실시간 헤더 로딩 오류:', error));
     </script>

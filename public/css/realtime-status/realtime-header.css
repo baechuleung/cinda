@@ -1,14 +1,59 @@
-/* 광고 배너 */
-.ad-banner-container {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem 2rem;
+/* 광고 배너 섹션 */
+.ad-banner-section {
+    position: relative;
     max-width: 1400px;
     margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* 슬라이드 버튼 */
+.slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-btn:hover {
+    background: #f5f5f5;
+}
+
+.slide-btn.prev {
+    left: 1rem;
+}
+
+.slide-btn.next {
+    right: 1rem;
+}
+
+/* 광고 배너 컨테이너 */
+.ad-banner-container {
+    overflow: hidden;
+    width: 100%;
+}
+
+.ad-banner-wrapper {
+    display: flex;
+    gap: 1rem;
+    transition: transform 0.3s ease;
 }
 
 .ad-banner {
-    flex: 1;
+    flex: 0 0 calc(25% - 0.75rem);
     height: 80px;
     background: #f5f5f5;
     border: 1px solid #e0e0e0;
@@ -194,7 +239,7 @@
 
 .business-type-select:focus {
     outline: none;
-    border-color: #5368ff;
+    border-color: #e0e0e0;
 }
 
 /* 검색 박스 */
@@ -251,12 +296,22 @@
 }
 
 @media (max-width: 768px) {
-    .ad-banner-container {
-        flex-direction: column;
+    .ad-banner-section {
         padding: 1rem;
     }
     
+    .slide-btn {
+        display: none; /* 모바일에서는 슬라이드 버튼 숨김 */
+    }
+    
+    .ad-banner-wrapper {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
     .ad-banner {
+        flex: 0 0 80%; /* 모바일에서는 한 번에 하나씩 보임 */
         height: 60px;
     }
     
