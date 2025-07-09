@@ -39,7 +39,9 @@ function openMobileChat(card, location, button) {
     
     // 채팅 영역 생성
     const chatArea = createMobileChatArea(location);
-    card.appendChild(chatArea);
+    
+    // 선택된 카드 바로 다음에 삽입
+    card.parentNode.insertBefore(chatArea, card.nextSibling);
     
     // 이벤트 연결
     setupChatEvents(chatArea);
@@ -66,7 +68,7 @@ function openDesktopChat(card, location, button) {
     button.classList.add('active');
     mainContainer.classList.add('right-active');
     
-    // 채팅 내용 넣기
+    // 채팅 내용 넣기 - 모바일과 동일한 HTML 사용
     rightSection.innerHTML = createChatHTML(location);
     rightSection.style.display = 'flex';
     
@@ -84,36 +86,46 @@ function createMobileChatArea(location) {
 
 // 채팅 HTML 생성
 function createChatHTML(location) {
+    // 고양이 스타일만 사용
+    const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${Math.random()}`;
+    
     return `
-        <div class="chat-header">
-            <h3>실시간 채팅룸</h3>
-            <span class="location-tag">${location} 180번</span>
-        </div>
-        
-        <div class="chat-notice">
-            <div class="notice-icon">🏠</div>
-            <div class="notice-content">
-                <strong>공지사항</strong>
-                <p>아래는 익명 나나나 단지를 위한/클래/호를, 서비스 접서제 안하는 내용, 분발</p>
-                <p>등 조직기 안돈 경우, 은행충책에 피고버와 마신기 달에 계좌 잘 수 있으시기 주</p>
-                <p>은행드립니다.</p>
+        <div class="mobile-action-container">
+            <div class="chat-header">
+                <h3>실시간 채팅톡</h3>
+                <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
             </div>
-            <button class="close-btn" onclick="this.parentElement.style.display='none'">감추기 ⌃</button>
-        </div>
-        
-        <div class="chat-messages">
-            <div class="chat-message">
-                <div class="message-info">
-                    <span class="author">듀우진 팀슬기</span>
-                    <span class="time">오후 11:39</span>
+            
+            <div class="chat-info">
+                <span class="store-info">${location} 23명</span>
+            </div>
+            
+            <div class="chat-content-area">
+                <div class="chat-messages">
+                    <div class="chat-notice-box">
+                        <span class="notice-label">공지</span>
+                        <span class="notice-text">이곳은 익명 채팅방입니다. 욕설 및 비방은 자제해주세요.</span>
+                    </div>
+                    
+                    <div class="chat-message">
+                        <div class="message-header">
+                            <img src="${avatarUrl}" alt="프로필" class="profile-icon">
+                            <span class="author">듀우진 팀슬기</span>
+                        </div>
+                        <div class="message-wrapper">
+                            <div class="message-box">
+                                <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
+                            </div>
+                            <span class="time">오후 11:39</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="message-content">지금 갈때 강남 할지 분당햄싶대서 37명🤗</div>
             </div>
-        </div>
-        
-        <div class="chat-input-area">
-            <input type="text" placeholder="메세지를 입력하세요..." class="chat-input">
-            <button class="send-btn">전송</button>
+            
+            <div class="chat-input-area">
+                <input type="text" placeholder="메세지를 입력하세요..." class="chat-input">
+                <button class="send-btn">전송</button>
+            </div>
         </div>
     `;
 }
@@ -142,14 +154,17 @@ function sendMessage(container) {
     if (!message) return;
     
     const messagesArea = container.querySelector('.chat-messages');
+    
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'chat-message';
+    messageDiv.className = 'chat-message my-message';
+    
     messageDiv.innerHTML = `
-        <div class="message-info">
-            <span class="author">나</span>
-            <span class="time">${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+        <div class="message-wrapper">
+            <span class="time">오후 ${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <div class="message-box">
+                <div class="message-content">${message}</div>
+            </div>
         </div>
-        <div class="message-content">${message}</div>
     `;
     
     messagesArea.appendChild(messageDiv);
@@ -164,6 +179,9 @@ function closeAllMobilePopups() {
         el.classList.remove('active');
     });
 }
+
+// 전역 함수로 등록
+window.closeAllMobilePopups = closeAllMobilePopups;
 
 // PC 팝업 닫기
 function closeDesktopPopup() {

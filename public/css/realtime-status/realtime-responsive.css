@@ -1,11 +1,20 @@
 /* 모바일 액션 영역 */
 .mobile-action-area {
     display: none;
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    padding: 0 1rem;
+    background: transparent;
+    border: none;
+    margin-top: 0;
+    position: relative;
+}
+
+.mobile-action-container {
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: none;
+    position: relative;
 }
 
 /* 반응형 디자인 */
@@ -116,9 +125,26 @@
         display: none !important;
     }
     
+    /* 모바일에서 카드를 relative로 설정 */
+    .status-card {
+        position: relative;
+    }
+    
     /* 모바일에서 액션 영역 표시 */
-    .status-card.active .mobile-action-area {
-        display: block;
+    .mobile-action-area {
+        display: block !important;
+        width: 100%;
+        margin-top: 0;
+        background: transparent;
+        border: none;
+        padding: 0;
+    }
+    
+    .mobile-action-container {
+        background: white;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: none;
     }
     
     .header-container {

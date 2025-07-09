@@ -37,7 +37,21 @@ function openMobileInquiry(card, location, button) {
     
     // 문의 영역 생성
     const inquiryArea = createMobileInquiryArea(location);
-    card.appendChild(inquiryArea);
+    
+    // 카드의 위치를 기준으로 절대 위치 설정
+    const cardIndex = Array.from(card.parentNode.children).indexOf(card);
+    const nextCard = card.parentNode.children[cardIndex + 1];
+    
+    // 그리드 컨테이너의 바로 다음에 삽입 (그리드 밖에)
+    const grid = card.parentNode;
+    
+    if (nextCard) {
+        // 다음 카드가 있으면 그 전에 삽입
+        grid.parentNode.insertBefore(inquiryArea, grid.nextSibling);
+    } else {
+        // 마지막 카드면 그리드 다음에 삽입
+        grid.parentNode.insertBefore(inquiryArea, grid.nextSibling);
+    }
     
     // 이벤트 연결
     setupInquiryEvents(inquiryArea);
@@ -64,7 +78,7 @@ function openDesktopInquiry(card, location, button) {
     button.classList.add('active');
     mainContainer.classList.add('right-active');
     
-    // 문의 내용 넣기
+    // 문의 내용 넣기 - 모바일과 동일한 HTML 사용
     rightSection.innerHTML = createInquiryHTML(location);
     rightSection.style.display = 'flex';
     
@@ -83,37 +97,39 @@ function createMobileInquiryArea(location) {
 // 문의 HTML 생성
 function createInquiryHTML(location) {
     return `
-        <div class="inquiry-header">
-            <h3>문의하기</h3>
-            <span class="location-tag">${location}</span>
-        </div>
-        
-        <div class="inquiry-form-container">
-            <form class="right-inquiry-form">
-                <div class="form-group">
-                    <label>문의 유형</label>
-                    <select name="type" required>
-                        <option value="">선택해주세요</option>
-                        <option value="reservation">예약 문의</option>
-                        <option value="service">서비스 문의</option>
-                        <option value="price">가격 문의</option>
-                        <option value="other">기타 문의</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>이름</label>
-                    <input type="text" name="name" placeholder="이름을 입력해주세요" required>
-                </div>
-                <div class="form-group">
-                    <label>연락처</label>
-                    <input type="tel" name="phone" placeholder="010-0000-0000" required>
-                </div>
-                <div class="form-group">
-                    <label>문의 내용</label>
-                    <textarea name="content" rows="4" placeholder="문의하실 내용을 입력해주세요" required></textarea>
-                </div>
-                <button type="submit" class="submit-inquiry-btn">문의하기</button>
-            </form>
+        <div class="mobile-action-container">
+            <div class="inquiry-header">
+                <h3>문의하기</h3>
+                <span class="location-tag">${location}</span>
+            </div>
+            
+            <div class="inquiry-form-container">
+                <form class="right-inquiry-form">
+                    <div class="form-group">
+                        <label>문의 유형</label>
+                        <select name="type" required>
+                            <option value="">선택해주세요</option>
+                            <option value="reservation">예약 문의</option>
+                            <option value="service">서비스 문의</option>
+                            <option value="price">가격 문의</option>
+                            <option value="other">기타 문의</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" name="name" placeholder="이름을 입력해주세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>연락처</label>
+                        <input type="tel" name="phone" placeholder="010-0000-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label>문의 내용</label>
+                        <textarea name="content" rows="4" placeholder="문의하실 내용을 입력해주세요" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-inquiry-btn">문의하기</button>
+                </form>
+            </div>
         </div>
     `;
 }

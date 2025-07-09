@@ -65,6 +65,28 @@ function subscribeToStores() {
     }
 }
 
+// 날짜 포맷 함수
+function formatUpdateTime(timestamp) {
+    if (!timestamp) return '';
+    
+    let date;
+    if (timestamp.toDate) {
+        date = timestamp.toDate();
+    } else if (timestamp.seconds) {
+        date = new Date(timestamp.seconds * 1000);
+    } else {
+        date = new Date(timestamp);
+    }
+    
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}.${month}.${day} ${hours}:${minutes} 기준`;
+}
+
 // 가게 카드 표시
 function displayStores(stores) {
     const statusGrid = document.querySelector('.status-grid');
@@ -100,7 +122,10 @@ function displayStores(stores) {
     statusGrid.innerHTML = sortedStores.map(store => `
         <div class="status-card ${store.status}">
             <div class="card-header">
-                <span class="location">${store.storeName} - ${store.businessType}</span>
+                <div class="card-info">
+                    <span class="location">${store.storeName} - ${store.businessType}</span>
+                    <span class="update-time">${formatUpdateTime(store.lastUpdate)}</span>
+                </div>
                 <span class="badge ${store.status}">${getStatusText(store.status)}</span>
                 <button class="favorite-btn ${favorites.includes(store.id) ? 'active' : ''}" data-store-id="${store.id}" onclick="toggleFavorite('${store.id}')">
                     <span class="star">${favorites.includes(store.id) ? '★' : '☆'}</span>
