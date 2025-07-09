@@ -18,12 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // 필터 초기화
         initializeFilters();
         
-        // 검색 초기화
-        initializeSearch();
-        
-        // 업종 필터 초기화
-        initializeBusinessTypeFilter();
-        
         // 채팅 팝업 초기화
         initializeChatPopup();
         
@@ -32,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 시간 업데이트
         initializeTime();
+        
+        // 지역 검색 이벤트 리스너 추가
+        document.addEventListener('locationSearch', handleLocationSearch);
     }, 1000);
 });
 
@@ -82,13 +79,31 @@ function displayStores(stores) {
         return;
     }
     
-    statusGrid.innerHTML = stores.map(store => `
+    // 즐겨찾기 목록 가져오기
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    // 즐겨찾기된 가게와 일반 가게 분리
+    const favoriteStores = [];
+    const normalStores = [];
+    
+    stores.forEach(store => {
+        if (favorites.includes(store.id)) {
+            favoriteStores.push(store);
+        } else {
+            normalStores.push(store);
+        }
+    });
+    
+    // 즐겨찾기 가게를 먼저, 그 다음 일반 가게 표시
+    const sortedStores = [...favoriteStores, ...normalStores];
+    
+    statusGrid.innerHTML = sortedStores.map(store => `
         <div class="status-card ${store.status}">
             <div class="card-header">
                 <span class="location">${store.storeName} - ${store.businessType}</span>
                 <span class="badge ${store.status}">${getStatusText(store.status)}</span>
-                <button class="favorite-btn" data-store-id="${store.id}" onclick="toggleFavorite('${store.id}')">
-                    <span class="star">☆</span>
+                <button class="favorite-btn ${favorites.includes(store.id) ? 'active' : ''}" data-store-id="${store.id}" onclick="toggleFavorite('${store.id}')">
+                    <span class="star">${favorites.includes(store.id) ? '★' : '☆'}</span>
                 </button>
             </div>
             <div class="card-stats">
@@ -115,9 +130,6 @@ function displayStores(stores) {
     // 이벤트 리스너 재설정
     initializeChatPopup();
     initializeInquiryPopup();
-    
-    // 즐겨찾기 상태 복원
-    restoreFavorites();
 }
 
 // 상태 텍스트 변환
@@ -139,66 +151,22 @@ function initializeFilters() {
         input.addEventListener('change', function() {
             console.log('필터 변경:', this.value);
             
-            // 필터링 실행
-            const filterType = this.value;
-            applyAllFilters(filterType);
+            // 상태 필터만 적용
+            applyStatusFilter();
         });
     });
 }
 
-// 업종 필터 기능
-function initializeBusinessTypeFilter() {
-    const businessTypeSelect = document.getElementById('businessTypeSelect');
-    console.log('업종 선택 드롭다운:', businessTypeSelect);
+// 상태 필터 적용
+function applyStatusFilter() {
+    const checkedFilter = document.querySelector('input[name="filter"]:checked');
+    const statusFilter = checkedFilter ? checkedFilter.value : 'all';
     
-    if (businessTypeSelect) {
-        businessTypeSelect.addEventListener('change', function() {
-            console.log('업종 선택:', this.value);
-            applyAllFilters();
-        });
-    }
-}
-
-// 검색 기능
-function initializeSearch() {
-    const searchInput = document.querySelector('.search-input');
-    const searchBtn = document.querySelector('.search-btn');
+    // 검색 필터가 적용된 경우 해당 결과에서 필터링, 아니면 전체에서 필터링
+    let baseStores = window.searchFilteredStores || allStores;
+    let filteredStores = [...baseStores];
     
-    console.log('검색 입력:', searchInput);
-    console.log('검색 버튼:', searchBtn);
-    
-    if (searchBtn) {
-        searchBtn.addEventListener('click', performSearch);
-    }
-    
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-    }
-}
-
-// 모든 필터 적용
-function applyAllFilters(statusFilter = null) {
-    // 현재 필터 상태 가져오기
-    if (!statusFilter) {
-        const checkedFilter = document.querySelector('input[name="filter"]:checked');
-        statusFilter = checkedFilter ? checkedFilter.value : 'all';
-    }
-    
-    const businessTypeSelect = document.getElementById('businessTypeSelect');
-    const businessType = businessTypeSelect ? businessTypeSelect.value : '';
-    
-    let filteredStores = [...allStores];
-    
-    console.log('필터 적용 - 상태:', statusFilter, '업종:', businessType);
-    
-    // 업종 필터 적용
-    if (businessType) {
-        filteredStores = filteredStores.filter(store => store.businessType === businessType);
-    }
+    console.log('상태 필터 적용 - 상태:', statusFilter, '기본 가게 수:', baseStores.length);
     
     // 상태 필터 적용
     if (statusFilter !== 'all') {
@@ -216,60 +184,53 @@ function applyAllFilters(statusFilter = null) {
         });
     }
     
-    console.log('필터링 결과:', filteredStores.length + '개');
+    console.log('상태 필터링 결과:', filteredStores.length + '개');
     displayStores(filteredStores);
 }
 
-// 검색 실행
-function performSearch() {
-    const searchInput = document.querySelector('.search-input');
-    const searchTerm = searchInput.value.trim().toLowerCase();
-    
-    console.log('검색어:', searchTerm);
-    
-    // 현재 필터 상태 가져오기
-    const checkedFilter = document.querySelector('input[name="filter"]:checked');
-    const statusFilter = checkedFilter ? checkedFilter.value : 'all';
-    const businessTypeSelect = document.getElementById('businessTypeSelect');
-    const businessType = businessTypeSelect ? businessTypeSelect.value : '';
+// 지역 검색 핸들러
+function handleLocationSearch(event) {
+    const searchParams = event.detail;
+    console.log('지역 검색 파라미터:', searchParams);
     
     let filteredStores = [...allStores];
     
-    // 검색어 필터
-    if (searchTerm) {
-        filteredStores = filteredStores.filter(store => {
-            const storeName = store.storeName.toLowerCase();
-            const region1 = store.region1.toLowerCase();
-            const region2 = store.region2.toLowerCase();
-            
-            return storeName.includes(searchTerm) || 
-                   region1.includes(searchTerm) || 
-                   region2.includes(searchTerm);
-        });
-    }
-    
     // 업종 필터
-    if (businessType) {
-        filteredStores = filteredStores.filter(store => store.businessType === businessType);
+    if (searchParams.businessType) {
+        filteredStores = filteredStores.filter(store => 
+            store.businessType === searchParams.businessType
+        );
     }
     
-    // 상태 필터
-    if (statusFilter !== 'all') {
-        filteredStores = filteredStores.filter(store => {
-            switch(statusFilter) {
-                case 'available':
-                    return store.status === 'green';
-                case 'normal':
-                    return store.status === 'orange';
-                case 'busy':
-                    return store.status === 'red';
-                default:
-                    return true;
-            }
-        });
+    // 지역1 필터
+    if (searchParams.region1) {
+        filteredStores = filteredStores.filter(store => 
+            store.region1 === searchParams.region1
+        );
     }
     
-    displayStores(filteredStores);
+    // 지역2 필터
+    if (searchParams.region2) {
+        filteredStores = filteredStores.filter(store => 
+            store.region2 === searchParams.region2
+        );
+    }
+    
+    // 매장명 필터
+    if (searchParams.storeName) {
+        const searchTerm = searchParams.storeName.toLowerCase();
+        filteredStores = filteredStores.filter(store => 
+            store.storeName.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    console.log('검색 필터링 결과:', filteredStores.length + '개');
+    
+    // 검색 결과를 저장 (상태 필터와 독립적으로 동작하도록)
+    window.searchFilteredStores = filteredStores;
+    
+    // 현재 상태 필터 적용
+    applyStatusFilter();
 }
 
 // 시간 업데이트
@@ -310,25 +271,22 @@ window.toggleFavorite = function(storeId) {
     
     // 로컬스토리지 업데이트
     localStorage.setItem('favorites', JSON.stringify(favorites));
-};
-
-// 즐겨찾기 상태 복원
-function restoreFavorites() {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     
-    favorites.forEach(storeId => {
-        const btn = document.querySelector(`button[data-store-id="${storeId}"]`);
-        if (btn) {
-            const star = btn.querySelector('.star');
-            star.textContent = '★';
-            btn.classList.add('active');
-        }
-    });
-}
+    // 현재 필터/검색 상태 유지하면서 다시 표시
+    if (window.searchFilteredStores) {
+        applyStatusFilter();
+    } else {
+        const checkedFilter = document.querySelector('input[name="filter"]:checked');
+        const statusFilter = checkedFilter ? checkedFilter.value : 'all';
+        applyStatusFilter();
+    }
+};
 
 // 페이지 언로드 시 리스너 해제
 window.addEventListener('beforeunload', () => {
     if (unsubscribe) {
         unsubscribe();
     }
+    // 이벤트 리스너 제거
+    document.removeEventListener('locationSearch', handleLocationSearch);
 });

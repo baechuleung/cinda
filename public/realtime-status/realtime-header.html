@@ -1,5 +1,3 @@
-<!-- 파일 경로: public/realtime-status/realtime-header.html -->
-
 <!-- 광고 배너 영역 -->
 <div class="ad-banner-section">
     <button class="slide-btn prev" onclick="slideAds('prev')">‹</button>
@@ -22,10 +20,6 @@
         <div class="header-left">
             <h1>실시간 현황판</h1>
             <span class="date-time">오늘 20:37 기준</span>
-            <button class="refresh-btn" onclick="location.reload()">
-                <span class="icon">↻</span>
-                <span>새로고침</span>
-            </button>
         </div>
         <div class="header-right">
             <div class="filter-toggle-container">
@@ -45,9 +39,15 @@
                     <div class="toggle-slider"></div>
                 </div>
             </div>
-            <div class="search-controls">
-                <select id="businessTypeSelect" class="business-type-select">
-                    <option value="">업종을 선택해주세요.</option>
+            <div class="location-inputs">
+                <select id="region1Search" class="location-select">
+                    <option value="">지역을 선택하세요</option>
+                </select>
+                <select id="region2Search" class="location-select">
+                    <option value="">도시를 선택하세요</option>
+                </select>
+                <select id="businessTypeSearch" class="location-select">
+                    <option value="">업종을 선택하세요</option>
                     <option value="퍼블릭">퍼블릭</option>
                     <option value="바">바</option>
                     <option value="레깅스룸">레깅스룸</option>
@@ -60,10 +60,8 @@
                     <option value="하이퍼블릭">하이퍼블릭</option>
                     <option value="호빠">호빠</option>
                 </select>
-                <div class="search-box">
-                    <input type="text" placeholder="매장명을 검색해주세요" class="search-input" id="searchInput">
-                    <button class="search-btn">🔍</button>
-                </div>
+                <input type="text" id="storeNameSearch" class="location-input" placeholder="매장명을 입력하세요">
+                <button class="location-search-btn" onclick="searchByLocation()">검색</button>
             </div>
         </div>
     </div>

@@ -2,7 +2,7 @@
 .main-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0 2rem 2rem; /* 위 패딩 제거 */
     display: flex;
     gap: 2rem;
 }

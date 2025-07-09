@@ -1,5 +1,3 @@
-/* 파일 경로: public/css/realtime-status/realtime-header.css */
-
 /* 광고 배너 섹션 */
 .ad-banner-section {
     position: relative;
@@ -80,17 +78,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 0;
+    padding: 0; /* 모든 패딩 제거 */
 }
 
 .header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .status-header h1 {
-    font-size: 24px;
+    font-size: 20px;
     color: #333;
     font-weight: 600;
     margin: 0;
@@ -104,31 +102,6 @@
     border-radius: 4px;
 }
 
-.refresh-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #F2F7FF;
-    color: #0065F6;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-family: Pretendard;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.refresh-btn:hover {
-    background: #e1edff;
-}
-
-.refresh-btn .icon {
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: 10px;
-}
-
 /* 헤더 오른쪽 */
 .header-right {
     display: flex;
@@ -136,11 +109,60 @@
     gap: 1rem;
 }
 
-/* search-controls 추가 */
-.search-controls {
+/* location-inputs를 header-right로 이동 */
+.location-inputs {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     align-items: center;
+}
+
+.location-select,
+.location-input {
+    width: 160px;
+    height: 44px;
+    padding: 0 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    color: #999; /* PC에서도 텍스트 색상 #999 */
+}
+
+.location-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+.location-select:focus,
+.location-input:focus {
+    outline: none;
+    border-color: #5368ff;
+}
+
+.location-input::placeholder {
+    color: #999; /* placeholder 색상 #999 */
+}
+
+.location-search-btn {
+    height: 44px;
+    padding: 0 2rem;
+    background: #FF6666;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    white-space: nowrap;
+}
+
+.location-search-btn:hover {
+    background: #FF5555;
 }
 
 /* 필터 토글 컨테이너 */
@@ -224,70 +246,11 @@
     background: #FF4141;
 }
 
-/* 업종 선택 드롭다운 */
-.business-type-select {
-    width: 200px;
-    height: 40px;
-    padding: 0 2.5rem 0 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #999; /* 텍스트 색상 변경 */
-    background: white;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-}
-
-.business-type-select:focus {
-    outline: none;
-    border-color: #e0e0e0;
-}
-
-/* 검색 박스 */
-.search-box {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    overflow: hidden;
-    width: 305px;
-    height: 40px;
-}
-
-.search-input {
-    border: none;
-    padding: 0 1rem;
-    font-size: 14px;
-    color: #333; /* 입력 텍스트는 검은색 유지 */
-    width: 100%;
-    height: 100%;
-    outline: none;
-}
-
-.search-input::placeholder {
-    color: #999; /* placeholder 색상 변경 */
-}
-
-.search-btn {
-    background: none;
-    border: none;
-    padding: 0 1rem;
-    cursor: pointer;
-    font-size: 16px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-
 /* 구분선 */
 .header-divider {
     height: 1px;
     background: #FF666680;
-    margin-bottom: 2rem;
+    margin: 1rem 0; /* 위아래 동일한 여백 */
 }
 
 /* 반응형 */
@@ -344,8 +307,25 @@
         padding: 0 1rem;
     }
     
+    .status-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 0; /* 모든 패딩 제거 */
+    }
+    
     .header-left {
-        flex-wrap: wrap;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .status-header h1 {
+        font-size: 16px;
+    }
+    
+    .date-time {
+        font-size: 12px;
+        padding: 0.2rem 0.5rem;
     }
     
     .header-right {
@@ -359,23 +339,47 @@
         width: 100%; /* 필터는 전체 너비 */
     }
     
-    /* 업종선택과 매장검색을 감싸는 컨테이너 */
-    .search-controls {
-        display: flex;
+    /* 모바일에서 location-inputs */
+    .location-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 0.5rem;
         width: 100%;
     }
     
-    .business-type-select {
-        width: calc(50% - 0.25rem); /* 반반 나누기 */
-        font-size: 14px;
+    .location-select,
+    .location-input {
+        width: 100%;
+        height: 48px;
+        color: #999; /* 텍스트 색상 #999 */
     }
     
-    .search-box {
-        width: calc(50% - 0.25rem); /* 반반 나누기 */
+    /* 지역1과 지역2를 첫 줄에 배치 */
+    #region1Search {
+        grid-column: 1;
+        grid-row: 1;
     }
     
-    .search-input {
-        font-size: 14px; /* 모바일에서도 14px */
+    #region2Search {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    
+    /* 업종과 매장명을 둘째 줄에 배치 */
+    #businessTypeSearch {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    #storeNameSearch {
+        grid-column: 2;
+        grid-row: 2;
+    }
+    
+    .location-search-btn {
+        grid-column: 1 / -1; /* 전체 너비 사용 */
+        width: 100%;
+        height: 48px;
+        margin-top: 0.5rem;
     }
 }
