@@ -13,7 +13,7 @@ function slideAds(direction) {
         currentSlide--;
     }
     
-    const translateValue = currentSlide * (25 + 1); // 25% + gap
+    const translateValue = currentSlide * 25; // 각 슬라이드는 25%씩 이동
     wrapper.style.transform = `translateX(-${translateValue}%)`;
     
     // 버튼 활성화/비활성화
@@ -38,14 +38,8 @@ function updateSlideButtons() {
 // 전역 함수로 등록 (onclick에서 사용하기 위해)
 window.slideAds = slideAds;
 
-// DOM 로드 후 초기화
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeSlider);
-} else {
-    initializeSlider();
-}
-
-function initializeSlider() {
+// 초기화 함수를 전역으로 노출
+window.initializeSlider = function() {
     // 초기 버튼 상태 설정
     updateSlideButtons();
     
@@ -77,4 +71,11 @@ function initializeSlider() {
             }
         }
     }
+}
+
+// DOM 로드 후 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.initializeSlider);
+} else {
+    window.initializeSlider();
 }
