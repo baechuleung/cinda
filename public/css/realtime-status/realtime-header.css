@@ -1,3 +1,5 @@
+/* 파일 경로: public/css/realtime-status/realtime-header.css */
+
 /* 광고 배너 섹션 */
 .ad-banner-section {
     position: relative;
@@ -134,14 +136,7 @@
     gap: 1rem;
 }
 
-/* 헤더 오른쪽 */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* PC에서 search-controls */
+/* search-controls 추가 */
 .search-controls {
     display: flex;
     gap: 0.5rem;
@@ -362,7 +357,6 @@
     
     .filter-toggle-container {
         width: 100%; /* 필터는 전체 너비 */
-        margin-bottom: 0.5rem;
     }
     
     /* 업종선택과 매장검색을 감싸는 컨테이너 */
