@@ -1,21 +1,4 @@
-/* 내 메시지 스타일 */
-.chat-message.my-message {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.chat-message.my-message .message-wrapper {
-    flex-direction: row-reverse;
-}
-
-.chat-message.my-message .message-box {
-    background: #5368ff;
-    color: white;
-}
-
-.chat-message.my-message .time {
-    text-align: right;
-}/* 채팅 관련 스타일 */
+/* 채팅 관련 스타일 */
 .chat-header {
     padding: 1rem;
     display: flex;
@@ -198,4 +181,27 @@
     border-radius: 6px;
     font-size: 12px;
     cursor: pointer;
+}
+
+/* 내 메시지 스타일 - 오른쪽 정렬 */
+.chat-message.my-message {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.chat-message.my-message .message-header {
+    display: none; /* 내 메시지는 프로필 헤더 숨김 */
+}
+
+.chat-message.my-message .message-wrapper {
+    flex-direction: row-reverse;
+}
+
+.chat-message.my-message .message-box {
+    background: #5368ff;
+    color: white;
+}
+
+.chat-message.my-message .time {
+    text-align: right;
 }
