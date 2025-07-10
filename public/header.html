@@ -32,6 +32,24 @@
         </nav>
     </header>
     
+    <!-- 광고 배너 영역 (header 밖으로 분리) -->
+    <div class="ad-banner-wrapper-container">
+        <div class="ad-banner-section">
+            <button class="slide-btn prev" onclick="slideAds('prev')">‹</button>
+            <div class="ad-banner-container">
+                <div class="ad-banner-wrapper">
+                    <div class="ad-banner">advertising_banner_1</div>
+                    <div class="ad-banner">advertising_banner_2</div>
+                    <div class="ad-banner">advertising_banner_3</div>
+                    <div class="ad-banner">advertising_banner_4</div>
+                    <div class="ad-banner">advertising_banner_5</div>
+                    <div class="ad-banner">advertising_banner_6</div>
+                </div>
+            </div>
+            <button class="slide-btn next" onclick="slideAds('next')">›</button>
+        </div>
+    </div>
+    
     <script>
         // 즉시 실행되는 인라인 스크립트로 로고 설정
         (function() {
@@ -49,7 +67,7 @@
         firebaseScript.src = origin + '/js/firebase-config.js';
         document.body.appendChild(firebaseScript);
         
-        // Header.js 로드
+        // Header.js 로드 (광고 슬라이드 기능 포함)
         const headerScript = document.createElement('script');
         headerScript.type = 'module';
         headerScript.src = origin + '/js/header.js';

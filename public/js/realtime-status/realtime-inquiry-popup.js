@@ -38,20 +38,8 @@ function openMobileInquiry(card, location, button) {
     // 문의 영역 생성
     const inquiryArea = createMobileInquiryArea(location);
     
-    // 카드의 위치를 기준으로 절대 위치 설정
-    const cardIndex = Array.from(card.parentNode.children).indexOf(card);
-    const nextCard = card.parentNode.children[cardIndex + 1];
-    
-    // 그리드 컨테이너의 바로 다음에 삽입 (그리드 밖에)
-    const grid = card.parentNode;
-    
-    if (nextCard) {
-        // 다음 카드가 있으면 그 전에 삽입
-        grid.parentNode.insertBefore(inquiryArea, grid.nextSibling);
-    } else {
-        // 마지막 카드면 그리드 다음에 삽입
-        grid.parentNode.insertBefore(inquiryArea, grid.nextSibling);
-    }
+    // 선택된 카드 바로 다음에 삽입
+    card.parentNode.insertBefore(inquiryArea, card.nextSibling);
     
     // 이벤트 연결
     setupInquiryEvents(inquiryArea);
