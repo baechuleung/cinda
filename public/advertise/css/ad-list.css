@@ -1,0 +1,416 @@
+/* 광고 관리 페이지 스타일 */
+.advertise-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* 탭 메뉴 */
+.tab-menu {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+    padding: 1rem 2rem;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.tab-btn:hover {
+    color: #FF6666;
+}
+
+.tab-btn.active {
+    color: #FF6666;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #FF6666;
+}
+
+.advertise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.advertise-header h1 {
+    font-size: 28px;
+    color: #333;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.new-ad-btn {
+    background: #FF6666;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.new-ad-btn:hover {
+    background: #FF5555;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filter-select {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+
+/* 광고 리스트 */
+.ad-list-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.ad-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 광고 카드 */
+.ad-card {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.ad-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ad-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.ad-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.ad-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.ad-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.ad-status.approved {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.ad-status.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.ad-status.expired {
+    background: #e0e0e0;
+    color: #666;
+}
+
+.ad-status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.ad-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.info-label {
+    color: #666;
+}
+
+.info-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.ad-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #e0e0e0;
+    color: #333;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.ad-type-badge.top {
+    background: #FFE5E5;
+    color: #FF0000;
+}
+
+.ad-type-badge.vip {
+    background: #F0E5FF;
+    color: #6B00FF;
+}
+
+.ad-type-badge.premium {
+    background: #E5F0FF;
+    color: #0066FF;
+}
+
+.ad-type-badge.basic {
+    background: #E5FFE5;
+    color: #00AA00;
+}
+
+.ad-type-badge.inquiry {
+    background: #FFF0E5;
+    color: #FF6600;
+}
+
+/* 날짜 정보 */
+.date-info {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* 진행률 표시 */
+.progress-section {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #FF6666;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 0.5rem;
+}
+
+.date-row:last-child {
+    margin-bottom: 0;
+}
+
+.date-label {
+    color: #666;
+}
+
+.date-value {
+    color: #333;
+}
+
+/* 금액 정보 */
+.amount-info {
+    background: #FFE5E5;
+    border: 1px solid #FFB3B3;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.amount-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.amount-row:last-child {
+    margin-bottom: 0;
+}
+
+.amount-row.total {
+    font-weight: bold;
+    border-top: 1px solid #FFB3B3;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.amount-label {
+    color: #666;
+}
+
+.amount-value {
+    color: #FF6666;
+    font-weight: 500;
+}
+
+/* 액션 버튼 */
+.ad-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background: #f5f5f5;
+}
+
+.action-btn.primary {
+    background: #FF6666;
+    color: white;
+    border-color: #FF6666;
+}
+
+.action-btn.primary:hover {
+    background: #FF5555;
+}
+
+/* 데이터 없음 메시지 */
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+    font-size: 16px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .advertise-container {
+        padding: 1rem;
+    }
+    
+    .tab-menu {
+        margin-bottom: 1.5rem;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+    }
+    
+    .advertise-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+    }
+    
+    .ad-list-container {
+        padding: 1.5rem;
+    }
+    
+    .ad-list-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .advertise-container {
+        padding: 0.5rem;
+    }
+    
+    .ad-list-container {
+        padding: 1rem;
+    }
+    
+    .ad-card {
+        padding: 1rem;
+    }
+    
+    .info-row,
+    .date-row,
+    .amount-row {
+        font-size: 12px;
+    }
+    
+    .ad-actions {
+        flex-direction: column;
+    }
+}

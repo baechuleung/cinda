@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>광고신청 - CINDA</title>
+    <title>광고추가 - CINDA</title>
     
     <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
     <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/advertise/css/advertise.css">
+    <link rel="stylesheet" href="/advertise/css/ad-add.css">
     
     <!-- 전역 설정 스크립트 -->
     <script src="/js/config.js"></script>
@@ -19,6 +19,12 @@
     <div id="header-container"></div>
     
     <div class="advertise-container">
+        <!-- 탭 메뉴 -->
+        <div class="tab-menu">
+            <a href="/advertise/html/ad-add.html" class="tab-btn active">광고추가</a>
+            <a href="/advertise/html/ad-list.html" class="tab-btn">광고상태</a>
+        </div>
+        
         <div class="advertise-header">
             <h1>광고신청</h1>
             <p class="subtitle">CINDA 광고 배너를 통해 더 많은 고객에게 다가가세요</p>
@@ -250,7 +256,7 @@
     </div>
 
     <script type="module" src="/js/firebase-config.js"></script>
-    <script type="module" src="/advertise/js/advertise.js"></script>
+    <script type="module" src="/advertise/js/ad-add.js"></script>
     <script>
         // 메인 헤더 로드
         loadHeader('header-container');
