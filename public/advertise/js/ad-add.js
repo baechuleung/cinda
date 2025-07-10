@@ -107,7 +107,7 @@ window.updateTotalAmount = function() {
 };
 
 // 기간 선택 시 금액 업데이트
-document.getElementById('duration').addEventListener('change', updateTotalAmount);
+document.getElementById('duration')?.addEventListener('change', updateTotalAmount);
 
 // 오늘 날짜로 최소 날짜 설정
 document.addEventListener('DOMContentLoaded', function() {
@@ -116,12 +116,15 @@ document.addEventListener('DOMContentLoaded', function() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
-    document.getElementById('startDate').setAttribute('min', tomorrowStr);
-    document.getElementById('startDate').value = tomorrowStr;
+    const startDateInput = document.getElementById('startDate');
+    if (startDateInput) {
+        startDateInput.setAttribute('min', tomorrowStr);
+        startDateInput.value = tomorrowStr;
+    }
 });
 
 // 폼 제출 처리
-document.getElementById('advertiseForm').addEventListener('submit', async (e) => {
+document.getElementById('advertiseForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     if (!selectedAdType) {
@@ -187,7 +190,7 @@ document.getElementById('advertiseForm').addEventListener('submit', async (e) =>
 });
 
 // 파일 업로드 유효성 검사
-document.getElementById('adImage').addEventListener('change', function(e) {
+document.getElementById('adImage')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
         // 파일 크기 체크 (5MB)

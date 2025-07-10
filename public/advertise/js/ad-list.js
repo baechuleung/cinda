@@ -231,8 +231,8 @@ function formatDateString(dateString) {
 }
 
 // 필터링
-document.getElementById('statusFilter').addEventListener('change', filterAds);
-document.getElementById('typeFilter').addEventListener('change', filterAds);
+document.getElementById('statusFilter')?.addEventListener('change', filterAds);
+document.getElementById('typeFilter')?.addEventListener('change', filterAds);
 
 function filterAds() {
     const statusFilter = document.getElementById('statusFilter').value;
@@ -324,3 +324,6 @@ window.viewStats = function(adId) {
     
     alert(stats);
 };
+
+// 전역으로 loadAdList 함수 등록 (ad-header.js에서 사용)
+window.loadAdList = loadAdList;

@@ -1,0 +1,92 @@
+/* 광고관리 공통 헤더 스타일 */
+.advertise-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* 탭 메뉴 */
+.tab-menu {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+    padding: 1rem 2rem;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.tab-btn:hover {
+    color: #FF6666;
+}
+
+.tab-btn.active {
+    color: #FF6666;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #FF6666;
+}
+
+/* 공통 헤더 스타일 */
+.advertise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    min-height: 60px;
+}
+
+.advertise-header h1 {
+    font-size: 28px;
+    color: #333;
+    margin: 0;
+    margin-bottom: 0.5rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .advertise-container {
+        padding: 1rem;
+    }
+    
+    .tab-menu {
+        margin-bottom: 1.5rem;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+    }
+    
+    .advertise-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .advertise-container {
+        padding: 0.5rem;
+    }
+}
