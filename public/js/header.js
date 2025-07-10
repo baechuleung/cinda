@@ -199,14 +199,19 @@ function initializeSlider() {
     }
 }
 
-// 사용자 인증 상태 확인 및 관리자 메뉴 표시
+// 사용자 인증 상태 확인 및 메뉴 표시
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         // 관리자 여부 확인
         const isAdmin = await checkAdminStatus(user.uid);
-        
         if (isAdmin) {
             showAdminMenu();
+        }
+        
+        // 기업회원 여부 확인
+        const isBusinessUser = await checkBusinessUserStatus(user.uid);
+        if (isBusinessUser) {
+            showAdvertiseMenu();
         }
     }
 });
@@ -229,12 +234,33 @@ async function checkAdminStatus(uid) {
     }
 }
 
+// 기업회원 상태 확인
+async function checkBusinessUserStatus(uid) {
+    try {
+        const businessDoc = await getDoc(doc(db, 'business_users', uid));
+        return businessDoc.exists();
+    } catch (error) {
+        console.error('기업회원 확인 오류:', error);
+        return false;
+    }
+}
+
 // 관리자 메뉴 표시
 function showAdminMenu() {
     // 모든 .admin-menu 찾기
     const adminMenus = document.querySelectorAll('.admin-menu');
     
     adminMenus.forEach(menu => {
+        menu.style.cssText = 'display: block !important;';
+    });
+}
+
+// 광고관리 메뉴 표시
+function showAdvertiseMenu() {
+    // 모든 .advertise-menu 찾기
+    const advertiseMenus = document.querySelectorAll('.advertise-menu');
+    
+    advertiseMenus.forEach(menu => {
         menu.style.cssText = 'display: block !important;';
     });
 }

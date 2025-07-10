@@ -175,6 +175,16 @@ nav a:hover {
     color: #4053e0;
 }
 
+/* 광고관리 메뉴 특별 스타일 */
+.advertise-menu a {
+    color: #FF6666;
+    font-weight: 600;
+}
+
+.advertise-menu a:hover {
+    color: #FF5555;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
     .ad-banner-section {
@@ -277,5 +287,10 @@ nav a:hover {
     /* 관리자 메뉴 모바일 스타일 */
     .admin-menu {
         background-color: #f8f9fa;
+    }
+    
+    /* 광고관리 메뉴 모바일 스타일 */
+    .advertise-menu {
+        background-color: #fff5f5;
     }
 }
