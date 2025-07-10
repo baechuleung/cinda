@@ -1,6 +1,6 @@
 import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 let storeId = null;
 
@@ -51,7 +51,6 @@ async function loadStoreData() {
         document.getElementById('region1').value = data.region1 || '';
         document.getElementById('region2').value = data.region2 || '';
         document.getElementById('businessType').value = data.businessType || '';
-        document.getElementById('businessUserEmail').value = data.businessUserEmail || '';
         document.getElementById('status').value = data.status || 'orange';
         document.getElementById('isOpen').value = data.isOpen ? 'true' : 'false';
         document.getElementById('isActive').value = data.isActive ? 'true' : 'false';
@@ -82,31 +81,13 @@ function formatDate(timestamp) {
 document.getElementById('editStoreForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // 이메일로 사업자 회원 찾기
-    const businessUserEmail = document.getElementById('businessUserEmail').value.trim();
-    
     try {
-        // business_user 이메일로 검색
-        const q = query(collection(db, 'business_users'), where('email', '==', businessUserEmail));
-        const querySnapshot = await getDocs(q);
-        
-        if (querySnapshot.empty) {
-            alert('존재하지 않는 기업회원 이메일입니다.');
-            return;
-        }
-        
-        // 첫 번째 결과의 UID 가져오기
-        const businessUserDoc = querySnapshot.docs[0];
-        const businessUserId = businessUserDoc.id;
-        
         // 폼 데이터 수집
         const formData = {
             storeName: document.getElementById('storeName').value.trim(),
             region1: document.getElementById('region1').value,
             region2: document.getElementById('region2').value.trim(),
             businessType: document.getElementById('businessType').value,
-            businessUserId: businessUserId,
-            businessUserEmail: businessUserEmail, // 이메일도 저장
             status: document.getElementById('status').value,
             isOpen: document.getElementById('isOpen').value === 'true',
             isActive: document.getElementById('isActive').value === 'true',
