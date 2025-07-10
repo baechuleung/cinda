@@ -123,10 +123,12 @@ function displayStores(stores) {
         <div class="status-card ${store.status}">
             <div class="card-header">
                 <div class="card-info">
-                    <span class="location">${store.storeName} - ${store.businessType}</span>
+                    <div class="location-row">
+                        <span class="location">${store.storeName} - ${store.businessType}</span>
+                        <span class="badge ${store.status}">${getStatusText(store.status)}</span>
+                    </div>
                     <span class="update-time">${formatUpdateTime(store.lastUpdate)}</span>
                 </div>
-                <span class="badge ${store.status}">${getStatusText(store.status)}</span>
                 <button class="favorite-btn ${favorites.includes(store.id) ? 'active' : ''}" data-store-id="${store.id}" onclick="toggleFavorite('${store.id}')">
                     <span class="star">${favorites.includes(store.id) ? '★' : '☆'}</span>
                 </button>

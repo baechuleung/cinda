@@ -37,11 +37,16 @@
     min-width: 0;
 }
 
+.location-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .location {
     font-size: 14px;
     font-weight: 500;
     color: #333;
-    display: block;
 }
 
 .update-time {
@@ -52,25 +57,26 @@
 }
 
 .badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .badge.orange {
-    background: #FFF0E5;
-    color: #FF6B00;
+    background: #FFB938;
+    color: white;
 }
 
 .badge.red {
-    background: #FFE5E5;
-    color: #FF0000;
+    background: #FF4141;
+    color: white;
 }
 
 .badge.green {
-    background: #E5FFE5;
-    color: #00AA00;
+    background: #00C33A;
+    color: white;
 }
 
 /* 즐겨찾기 버튼 */

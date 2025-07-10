@@ -93,11 +93,10 @@ function createChatHTML(location) {
         <div class="mobile-action-container">
             <div class="chat-header">
                 <h3>실시간 채팅톡</h3>
-                <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
             </div>
             
             <div class="chat-info">
-                <span class="store-info">${location} 23명</span>
+                <span class="store-info">${location} <span class="count">23명</span></span>
             </div>
             
             <div class="chat-content-area">
@@ -146,6 +145,19 @@ function setupChatEvents(container) {
     }
 }
 
+// 현재 시간을 오전/오후 형식으로 반환
+function getCurrentTimeString() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    
+    const period = hours < 12 ? '오전' : '오후';
+    const displayHours = hours === 0 ? 12 : (hours > 12 ? hours - 12 : hours);
+    const displayMinutes = minutes.toString().padStart(2, '0');
+    
+    return `${period} ${displayHours}:${displayMinutes}`;
+}
+
 // 메시지 전송
 function sendMessage(container) {
     const input = container.querySelector('.chat-input');
@@ -160,7 +172,7 @@ function sendMessage(container) {
     
     messageDiv.innerHTML = `
         <div class="message-wrapper">
-            <span class="time">오후 ${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span class="time">${getCurrentTimeString()}</span>
             <div class="message-box">
                 <div class="message-content">${message}</div>
             </div>
