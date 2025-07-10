@@ -68,7 +68,7 @@ window.selectOption = function(type) {
 };
 
 // 총 금액 계산 및 업데이트
-function updateTotalAmount() {
+window.updateTotalAmount = function() {
     if (!selectedAdType) {
         document.getElementById('monthlyAmount').textContent = '0원';
         document.getElementById('adDuration').textContent = '0개월';
@@ -104,7 +104,7 @@ function updateTotalAmount() {
     document.getElementById('bannerCost').textContent = bannerCost.toLocaleString() + '원';
     document.getElementById('designCost').textContent = designCost.toLocaleString() + '원';
     document.getElementById('totalAmount').textContent = totalPrice.toLocaleString() + '원';
-}
+};
 
 // 기간 선택 시 금액 업데이트
 document.getElementById('duration').addEventListener('change', updateTotalAmount);
@@ -177,13 +177,8 @@ document.getElementById('advertiseForm').addEventListener('submit', async (e) =>
         
         alert('광고 신청이 완료되었습니다.\n검토 후 연락드리겠습니다.');
         
-        // 폼 초기화
-        document.getElementById('advertiseForm').reset();
-        document.querySelectorAll('.ad-option-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        selectedAdType = null;
-        updateTotalAmount();
+        // 광고 상태 페이지로 이동
+        window.location.href = '/advertise/html/ad-list.html';
         
     } catch (error) {
         console.error('광고 신청 오류:', error);
