@@ -4,7 +4,7 @@
     margin: 0 auto;
     padding: 0 2rem 2rem; /* 위 패딩 제거 */
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 /* 왼쪽 섹션 */
@@ -33,7 +33,6 @@
 .main-container.right-active .right-section {
     display: flex;
     width: calc((100% - 3rem) / 4); /* 카드와 같은 너비 */
-    margin-left: 1rem;
 }
 
 /* PC에서도 모바일과 동일한 컨테이너 스타일 적용 */
