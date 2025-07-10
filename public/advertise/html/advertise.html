@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>광고신청 - CINDA</title>
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/advertise/css/advertise.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="advertise-container">
+        <div class="advertise-header">
+            <h1>광고신청</h1>
+            <p class="subtitle">CINDA 광고 배너를 통해 더 많은 고객에게 다가가세요</p>
+        </div>
+        
+        <div class="advertise-content">
+            <!-- 광고 옵션 섹션 -->
+            <div class="ad-options-section">
+                <h2>광고 옵션</h2>
+                <div class="ad-options-grid">
+                    <div class="ad-option-card" data-type="top">
+                        <div class="option-header">
+                            <h3>탑광고</h3>
+                            <span class="price">월 500,000원</span>
+                        </div>
+                        <div class="limit-badge">선착순 10개</div>
+                        <ul class="option-features">
+                            <li>메인 페이지 최상단 노출</li>
+                            <li>640px x 160px 배너</li>
+                            <li>최고 시인성 보장</li>
+                            <li>클릭 통계 제공</li>
+                        </ul>
+                        <button class="select-btn" onclick="selectOption('top')">선택하기</button>
+                    </div>
+                    
+                    <div class="ad-option-card" data-type="vip">
+                        <div class="option-header">
+                            <h3>VIP 채용관</h3>
+                            <span class="price">월 300,000원</span>
+                        </div>
+                        <div class="limit-badge">선착순 40개</div>
+                        <ul class="option-features">
+                            <li>채용 페이지 VIP 영역</li>
+                            <li>우선 노출 순서</li>
+                            <li>특별 VIP 배지</li>
+                            <li>강조된 디자인</li>
+                        </ul>
+                        <button class="select-btn" onclick="selectOption('vip')">선택하기</button>
+                    </div>
+                    
+                    <div class="ad-option-card" data-type="premium">
+                        <div class="option-header">
+                            <h3>Premium 채용관</h3>
+                            <span class="price">월 150,000원</span>
+                        </div>
+                        <div class="limit-badge">선착순 120개</div>
+                        <ul class="option-features">
+                            <li>채용 페이지 Premium 영역</li>
+                            <li>일반보다 상위 노출</li>
+                            <li>Premium 배지</li>
+                            <li>향상된 가독성</li>
+                        </ul>
+                        <button class="select-btn" onclick="selectOption('premium')">선택하기</button>
+                    </div>
+                    
+                    <div class="ad-option-card" data-type="basic">
+                        <div class="option-header">
+                            <h3>Basic 채용관</h3>
+                            <span class="price">월 70,000원</span>
+                        </div>
+                        <ul class="option-features">
+                            <li>채용 페이지 Basic 영역</li>
+                            <li>기본 노출 순서</li>
+                            <li>표준 디자인</li>
+                            <li>합리적인 가격</li>
+                        </ul>
+                        <button class="select-btn" onclick="selectOption('basic')">선택하기</button>
+                    </div>
+                    
+                    <div class="ad-option-card" data-type="inquiry">
+                        <div class="option-header">
+                            <h3>실시간 현황 문의하기 광고</h3>
+                            <span class="price">월 300,000원</span>
+                        </div>
+                        <div class="limit-badge">제한 없음</div>
+                        <ul class="option-features">
+                            <li>실시간 현황판 문의하기 버튼</li>
+                            <li>1구좌당 월 30만원</li>
+                            <li>직접적인 고객 유입</li>
+                            <li>실시간 문의 연결</li>
+                        </ul>
+                        <button class="select-btn" onclick="selectOption('inquiry')">선택하기</button>
+                    </div>
+                </div>
+                
+                <!-- 추가 비용 안내 -->
+                <div class="additional-cost-section">
+                    <h3>추가 비용 안내</h3>
+                    <div class="cost-info">
+                        <div class="cost-item">
+                            <span class="cost-label">첫 광고 집행시 배너 제작비용:</span>
+                            <span class="cost-value">20,000원</span>
+                        </div>
+                        <div class="cost-item">
+                            <span class="cost-label">상세페이지 디자인 의뢰시:</span>
+                            <span class="cost-value">50,000원 추가</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 광고신청 폼 -->
+            <div class="ad-form-section">
+                <h2>광고신청서</h2>
+                <form id="advertiseForm" class="advertise-form">
+                    <div class="form-group">
+                        <label for="adType">선택한 광고 유형</label>
+                        <input type="text" id="adType" readonly placeholder="광고 유형을 선택해주세요">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="businessName">업체명 <span class="required">*</span></label>
+                            <input type="text" id="businessName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactName">담당자명 <span class="required">*</span></label>
+                            <input type="text" id="contactName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactPhone">연락처 <span class="required">*</span></label>
+                            <input type="tel" id="contactPhone" placeholder="010-0000-0000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">이메일 <span class="required">*</span></label>
+                            <input type="email" id="contactEmail" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adContent">광고 내용 <span class="required">*</span></label>
+                        <textarea id="adContent" rows="4" placeholder="광고하실 내용을 간단히 작성해주세요" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adImage">광고 이미지 업로드</label>
+                        <input type="file" id="adImage" accept="image/*">
+                        <div class="helper-text">권장 사이즈: 1200x300px, 최대 5MB</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">광고 시작일 <span class="required">*</span></label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration">광고 기간 <span class="required">*</span></label>
+                            <select id="duration" required>
+                                <option value="">선택하세요</option>
+                                <option value="1">1개월</option>
+                                <option value="3">3개월</option>
+                                <option value="6">6개월</option>
+                                <option value="12">12개월</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetUrl">연결 URL</label>
+                        <input type="url" id="targetUrl" placeholder="https://example.com">
+                        <div class="helper-text">광고 클릭 시 이동할 웹사이트 주소</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kakaoLink">카카오톡 채팅방 링크</label>
+                        <input type="url" id="kakaoLink" placeholder="https://open.kakao.com/o/...">
+                        <div class="helper-text">카카오톡 오픈채팅방 또는 채널 링크</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalRequest">추가 요청사항</label>
+                        <textarea id="additionalRequest" rows="3" placeholder="추가로 요청하실 사항이 있으시면 작성해주세요"></textarea>
+                    </div>
+                    
+                    <!-- 추가 서비스 체크박스 -->
+                    <div class="additional-services">
+                        <h3>추가 서비스</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="bannerDesign" onchange="updateTotalAmount()">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">첫 광고 집행시 배너 제작 (+20,000원)</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="pageDesign" onchange="updateTotalAmount()">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">상세페이지 디자인 의뢰 (+50,000원)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 총 금액 표시 -->
+                    <div class="total-amount">
+                        <h3>총 광고비용</h3>
+                        <div class="amount-breakdown">
+                            <div class="amount-row">
+                                <span>월 광고비:</span>
+                                <span id="monthlyAmount">0원</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>광고 기간:</span>
+                                <span id="adDuration">0개월</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>배너 제작비:</span>
+                                <span id="bannerCost">0원</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>페이지 디자인비:</span>
+                                <span id="designCost">0원</span>
+                            </div>
+                            <div class="amount-row total">
+                                <span>총 결제금액:</span>
+                                <span id="totalAmount">0원</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+                        <button type="submit" class="submit-btn">광고 신청하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="/advertise/js/advertise.js"></script>
+    <script>
+        // 메인 헤더 로드
+        loadHeader('header-container');
+    </script>
+</body>
+</html>
