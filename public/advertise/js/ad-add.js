@@ -16,11 +16,11 @@ const adPrices = {
 
 // 광고 유형별 이름
 const adTypeNames = {
-    top: '탑광고',
+    top: 'Top 광고',
     vip: 'VIP 채용관',
     premium: 'Premium 채용관',
     basic: 'Basic 채용관',
-    inquiry: '실시간 현황 문의하기 광고'
+    inquiry: '실시간현황판'
 };
 
 // 인증 상태 확인

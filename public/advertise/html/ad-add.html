@@ -37,17 +37,12 @@
                 <div class="ad-options-grid">
                     <div class="ad-option-card" data-type="top">
                         <div class="option-header">
-                            <h3>탑광고</h3>
+                            <h3>Top 광고</h3>
                             <span class="price">월 500,000원</span>
                         </div>
                         <div class="limit-badge">선착순 10개</div>
-                        <ul class="option-features">
-                            <li>메인 페이지 최상단 노출</li>
-                            <li>640px x 160px 배너</li>
-                            <li>최고 시인성 보장</li>
-                            <li>클릭 통계 제공</li>
-                        </ul>
                         <button class="select-btn" onclick="selectOption('top')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('top')">설명보기</button>
                     </div>
                     
                     <div class="ad-option-card" data-type="vip">
@@ -56,13 +51,8 @@
                             <span class="price">월 300,000원</span>
                         </div>
                         <div class="limit-badge">선착순 40개</div>
-                        <ul class="option-features">
-                            <li>채용 페이지 VIP 영역</li>
-                            <li>우선 노출 순서</li>
-                            <li>특별 VIP 배지</li>
-                            <li>강조된 디자인</li>
-                        </ul>
                         <button class="select-btn" onclick="selectOption('vip')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('vip')">설명보기</button>
                     </div>
                     
                     <div class="ad-option-card" data-type="premium">
@@ -71,13 +61,8 @@
                             <span class="price">월 150,000원</span>
                         </div>
                         <div class="limit-badge">선착순 120개</div>
-                        <ul class="option-features">
-                            <li>채용 페이지 Premium 영역</li>
-                            <li>일반보다 상위 노출</li>
-                            <li>Premium 배지</li>
-                            <li>향상된 가독성</li>
-                        </ul>
                         <button class="select-btn" onclick="selectOption('premium')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('premium')">설명보기</button>
                     </div>
                     
                     <div class="ad-option-card" data-type="basic">
@@ -85,28 +70,19 @@
                             <h3>Basic 채용관</h3>
                             <span class="price">월 70,000원</span>
                         </div>
-                        <ul class="option-features">
-                            <li>채용 페이지 Basic 영역</li>
-                            <li>기본 노출 순서</li>
-                            <li>표준 디자인</li>
-                            <li>합리적인 가격</li>
-                        </ul>
+                        <div class="limit-badge">제한 없음</div>
                         <button class="select-btn" onclick="selectOption('basic')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('basic')">설명보기</button>
                     </div>
                     
                     <div class="ad-option-card" data-type="inquiry">
                         <div class="option-header">
-                            <h3>실시간 현황 문의하기 광고</h3>
+                            <h3>실시간현황판</h3>
                             <span class="price">월 300,000원</span>
                         </div>
                         <div class="limit-badge">제한 없음</div>
-                        <ul class="option-features">
-                            <li>실시간 현황판 문의하기 버튼</li>
-                            <li>1구좌당 월 30만원</li>
-                            <li>직접적인 고객 유입</li>
-                            <li>실시간 문의 연결</li>
-                        </ul>
                         <button class="select-btn" onclick="selectOption('inquiry')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('inquiry')">설명보기</button>
                     </div>
                 </div>
                 
@@ -255,12 +231,98 @@
         </div>
     </div>
 
+    <!-- 설명 팝업 모달 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeDetailModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
     <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="/advertise/js/ad-add.js"></script>
     <script src="/advertise/js/ad-header.js"></script>
     <script>
         // 메인 헤더 로드
         loadHeader('header-container');
+        
+        // 광고 상세 설명 데이터
+        const adDetails = {
+            top: {
+                title: 'Top 광고',
+                features: [
+                    '메인 페이지 최상단 노출',
+                    '640px x 160px 배너',
+                    '최고 시인성 보장',
+                    '클릭 통계 제공'
+                ]
+            },
+            vip: {
+                title: 'VIP 채용관',
+                features: [
+                    '채용 페이지 VIP 영역',
+                    '우선 노출 순서',
+                    '특별 VIP 배지',
+                    '강조된 디자인'
+                ]
+            },
+            premium: {
+                title: 'Premium 채용관',
+                features: [
+                    '채용 페이지 Premium 영역',
+                    '일반보다 상위 노출',
+                    'Premium 배지',
+                    '향상된 가독성'
+                ]
+            },
+            basic: {
+                title: 'Basic 채용관',
+                features: [
+                    '채용 페이지 Basic 영역',
+                    '기본 노출 순서',
+                    '표준 디자인',
+                    '합리적인 가격'
+                ]
+            },
+            inquiry: {
+                title: '실시간현황판',
+                features: [
+                    '실시간 현황판 출근하기 버튼',
+                    '1구좌당 월 30만원',
+                    '직접적인 고객 유입',
+                    '실시간 문의 연결'
+                ]
+            }
+        };
+        
+        // 설명 보기 함수
+        function showDetail(type) {
+            const modal = document.getElementById('detailModal');
+            const detail = adDetails[type];
+            
+            document.getElementById('modalTitle').textContent = detail.title;
+            document.getElementById('modalContent').innerHTML = `
+                <ul class="modal-features">
+                    ${detail.features.map(feature => `<li>${feature}</li>`).join('')}
+                </ul>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        // 모달 닫기
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+        
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target == modal) {
+                closeDetailModal();
+            }
+        }
     </script>
 </body>
 </html>
