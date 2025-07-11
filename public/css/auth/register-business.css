@@ -129,184 +129,80 @@
     color: #999;
 }
 
-/* 가게 선택 커스텀 UI */
-.store-select-container {
-    position: relative;
-}
-
-.custom-select-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.store-search-combo {
+/* 가게 선택 커스텀 드롭다운 */
+.store-dropdown-select {
     width: 100%;
-    padding: 0.875rem 2.5rem 0.875rem 1rem;
+    padding: 0.875rem 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     font-size: 14px;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease;
     background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    appearance: none;
+    cursor: pointer;
 }
 
-.store-search-combo:focus {
+.store-dropdown-select:focus {
     outline: none;
     border-color: #6c5ce7;
-    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
 }
 
-.dropdown-toggle {
-    position: absolute;
-    right: 1px;
-    top: 1px;
-    bottom: 1px;
-    padding: 0 1rem;
-    background: #f8f9fa;
-    border: none;
-    border-radius: 0 7px 7px 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* 가게명 직접 입력 그룹 */
+.store-name-group {
+    margin-top: 1rem;
 }
 
-.dropdown-toggle:hover {
-    background: #e9ecef;
+/* 검색 가능한 드롭다운을 위한 Select2 스타일 오버라이드 */
+.select2-container {
+    width: 100% !important;
 }
 
-.dropdown-toggle svg {
-    transition: transform 0.3s ease;
+.select2-container .select2-selection--single {
+    height: 48px;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
-.dropdown-toggle.active svg {
-    transform: rotate(180deg);
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #333;
+    line-height: 20px;
 }
 
-/* 드롭다운 */
-.store-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 4px;
-    background: white;
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 46px;
+    right: 10px;
+}
+
+.select2-dropdown {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    max-height: 300px;
-    overflow: hidden;
-    z-index: 1000;
 }
 
-.dropdown-item {
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.dropdown-item:hover {
-    background: #f8f9fa;
-}
-
-.dropdown-item.selected {
-    background: #e7f5ff;
-    color: #1971c2;
-}
-
-.special-item {
-    background: #f8f9fa;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.special-item:hover {
-    background: #e9ecef;
-}
-
-.item-icon {
-    font-size: 20px;
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.item-text {
-    flex: 1;
-}
-
-.item-title {
-    font-weight: 500;
-    font-size: 14px;
-    color: #333;
-}
-
-.item-subtitle {
-    font-size: 12px;
-    color: #666;
-    margin-top: 2px;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background: #e0e0e0;
-    margin: 0;
-}
-
-.dropdown-search-info {
-    padding: 0.5rem 1rem;
-    font-size: 12px;
-    color: #666;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.dropdown-list {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-/* 가게 아이템 */
-.store-item {
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.store-item:hover {
-    background: #f8f9fa;
-}
-
-.store-item.selected {
-    background: #e7f5ff;
-}
-
-.store-name {
-    font-weight: 500;
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 2px;
-}
-
-.store-info {
-    font-size: 12px;
-    color: #666;
-    display: flex;
-    gap: 0.5rem;
-}
-
-.store-badge {
-    background: #e9ecef;
-    padding: 2px 6px;
+.select2-search--dropdown .select2-search__field {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 14px;
+}
+
+.select2-results__option {
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+}
+
+.select2-results__option--highlighted {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.select2-results__option--selected {
+    background-color: #e7f5ff;
 }
 
 /* 비활성화 스타일 */

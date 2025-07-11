@@ -97,38 +97,12 @@
                 <!-- 가게 선택 -->
                 <div class="form-group">
                     <label for="storeSelect">가게 선택 <span class="required">*</span></label>
-                    <div class="store-select-container">
-                        <div class="custom-select-wrapper">
-                            <input type="text" 
-                                   id="storeSearchInput" 
-                                   class="store-search-combo"
-                                   placeholder="가게명을 입력하거나 선택하세요"
-                                   autocomplete="off">
-                            <button type="button" class="dropdown-toggle" id="dropdownToggle">
-                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="store-dropdown" id="storeDropdown" style="display: none;">
-                            <div class="dropdown-item special-item" data-value="none">
-                                <div class="item-icon">➕</div>
-                                <div class="item-text">
-                                    <div class="item-title">직접 입력하기</div>
-                                    <div class="item-subtitle">등록된 가게가 없는 경우</div>
-                                </div>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-search-info">
-                                <span id="searchResultCount">0</span>개의 가게
-                            </div>
-                            <div class="dropdown-list" id="storeList">
-                                <!-- 가게 목록이 여기에 동적으로 추가됨 -->
-                            </div>
-                        </div>
-                        <input type="hidden" id="storeSelect" name="storeSelect" required>
-                    </div>
-                    <div class="helper-text">가게명을 검색하거나 목록에서 선택해주세요</div>
+                    <select id="storeSelect" class="store-dropdown-select" required>
+                        <option value="">가게를 선택하세요</option>
+                        <option value="none">해당 가게 없음</option>
+                        <!-- 가게 목록이 여기에 동적으로 추가됩니다 -->
+                    </select>
+                    <div class="helper-text">등록된 가게를 선택하거나 '해당 가게 없음'을 선택하세요</div>
                 </div>
                 
                 <div class="form-group store-name-group" style="display: none;">
