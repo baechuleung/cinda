@@ -130,21 +130,26 @@
         position: relative;
     }
     
-    /* 모바일에서 액션 영역 표시 */
+    /* 모바일에서 액션 영역 표시 - 하단 고정 */
     .mobile-action-area {
         display: block !important;
         width: 100%;
-        margin-top: 0;
-        background: transparent;
-        border: none;
-        padding: 0;
+        padding: 0 1rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
     }
     
     .mobile-action-container {
         background: white;
         border-radius: 20px;
         padding: 0;
-        box-shadow: none;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
     }
     
     .header-container {
