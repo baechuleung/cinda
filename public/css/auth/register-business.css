@@ -273,7 +273,7 @@ input:disabled {
     padding: 0 0.25rem;
 }
 
-.email-dropdown {
+.email-domain-dropdown {
     flex: 1.5;
 }
 
@@ -463,6 +463,30 @@ input[type="checkbox"]:checked::before {
     text-align: center;
 }
 
+/* 모바일에서 자동 확대 방지를 위해 최소 16px - 하지만 시각적으로 작게 보이도록 조정 */
+@media (max-width: 768px) {
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        /* 시각적으로 작게 보이도록 조정 */
+        transform: scale(0.875); /* 14px처럼 보이도록 */
+        transform-origin: left center;
+        width: 114.3%; /* scale 보정 */
+    }
+    
+    /* 드롭다운 텍스트는 14px */
+    .selected-text,
+    .dropdown-option {
+        font-size: 14px !important;
+    }
+    
+    /* 드롭다운 컨테이너 조정 */
+    .dropdown-selected {
+        padding: 0.75rem 0.875rem;
+    }
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .register-container {
@@ -491,7 +515,7 @@ input[type="checkbox"]:checked::before {
         flex: 0 0 auto;
     }
     
-    .email-dropdown,
+    .email-domain-dropdown,
     #emailDomainDirect {
         flex: 1 1 35%;
         min-width: 120px;
@@ -539,6 +563,21 @@ input[type="checkbox"]:checked::before {
         font-size: 14px;
     }
     
+    /* 480px 이하에서도 자동 확대 방지 */
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        transform: scale(0.875);
+        transform-origin: left center;
+        width: 114.3%;
+    }
+    
+    .selected-text,
+    .dropdown-option {
+        font-size: 14px !important;
+    }
+    
     /* 이메일 필드 모바일 최적화 */
     .input-with-dropdown {
         position: relative;
@@ -557,7 +596,7 @@ input[type="checkbox"]:checked::before {
         padding: 0 5px;
     }
     
-    .email-dropdown,
+    .email-domain-dropdown,
     #emailDomainDirect {
         flex: 1 1 100%;
         margin-top: 0;
@@ -661,6 +700,21 @@ input[type="checkbox"]:checked::before {
     .submit-btn {
         padding: 0.75rem;
         font-size: 13px;
+    }
+    
+    /* 360px 이하에서도 자동 확대 방지 */
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        transform: scale(0.8125);
+        transform-origin: left center;
+        width: 123%;
+    }
+    
+    .selected-text,
+    .dropdown-option {
+        font-size: 13px !important;
     }
     
     .section-title {

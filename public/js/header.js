@@ -199,9 +199,26 @@ function initializeSlider() {
     }
 }
 
+// 로그인 필요한 페이지 목록
+const protectedPages = [
+    '/realtime-status/realtime-status.html',
+    '/admin/',
+    '/advertise/',
+    '/dashboard.html'
+];
+
+// 현재 페이지가 보호된 페이지인지 확인
+function isProtectedPage() {
+    const currentPath = window.location.pathname;
+    return protectedPages.some(page => currentPath.includes(page));
+}
+
 // 사용자 인증 상태 확인 및 메뉴 표시
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+        // 로그인한 경우 로그아웃 메뉴 표시
+        showLogoutMenu();
+        
         // 관리자 여부 확인
         const isAdmin = await checkAdminStatus(user.uid);
         if (isAdmin) {
@@ -212,6 +229,15 @@ onAuthStateChanged(auth, async (user) => {
         const isBusinessUser = await checkBusinessUserStatus(user.uid);
         if (isBusinessUser) {
             showAdvertiseMenu();
+        }
+    } else {
+        // 로그인하지 않은 경우
+        hideLogoutMenu();
+        
+        // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
+        if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
+            alert('로그인이 필요한 서비스입니다.');
+            window.location.href = '/auth/login.html';
         }
     }
 });
@@ -263,6 +289,36 @@ function showAdvertiseMenu() {
     advertiseMenus.forEach(menu => {
         menu.style.cssText = 'display: block !important;';
     });
+}
+
+// 로그아웃 메뉴 표시
+function showLogoutMenu() {
+    const logoutMenus = document.querySelectorAll('.logout-menu');
+    logoutMenus.forEach(menu => {
+        menu.style.cssText = 'display: block !important;';
+    });
+}
+
+// 로그아웃 메뉴 숨김
+function hideLogoutMenu() {
+    const logoutMenus = document.querySelectorAll('.logout-menu');
+    logoutMenus.forEach(menu => {
+        menu.style.cssText = 'display: none !important;';
+    });
+}
+
+// 로그아웃 처리
+window.handleLogout = async function() {
+    if (confirm('로그아웃 하시겠습니까?')) {
+        try {
+            await auth.signOut();
+            alert('로그아웃되었습니다.');
+            window.location.href = '/';
+        } catch (error) {
+            console.error('로그아웃 오류:', error);
+            alert('로그아웃 중 오류가 발생했습니다.');
+        }
+    }
 }
 
 // 로고 이미지 변경 함수

@@ -13,12 +13,6 @@
       "keywords": ["바", "bar"]
     },
     {
-      "code": "leggings",
-      "name": "레깅스룸",
-      "description": "레깅스룸",
-      "keywords": ["레깅스", "레깅스룸", "leggings"]
-    },
-    {
       "code": "shirt",
       "name": "셔츠룸",
       "description": "셔츠룸",
@@ -65,36 +59,6 @@
       "name": "호빠",
       "description": "호빠",
       "keywords": ["호빠", "호스트바", "hobba"]
-    },
-    {
-      "code": "hongdae-bodo",
-      "name": "홍대보도",
-      "description": "홍대보도",
-      "keywords": ["홍대보도", "홍대 보도", "hongdae bodo"]
-    },
-    {
-      "code": "garak-bodo",
-      "name": "가락보도",
-      "description": "가락보도",
-      "keywords": ["가락보도", "가락 보도", "garak bodo"]
-    },
-    {
-      "code": "suyu-bodo",
-      "name": "수유보도",
-      "description": "수유보도",
-      "keywords": ["수유보도", "수유 보도", "suyu bodo"]
-    },
-    {
-      "code": "sillim-bodo",
-      "name": "신림보도",
-      "description": "신림보도",
-      "keywords": ["신림보도", "신림 보도", "sillim bodo"]
-    },
-    {
-      "code": "sinchon-bodo",
-      "name": "신촌보도",
-      "description": "신촌보도",
-      "keywords": ["신촌보도", "신촌 보도", "sinchon bodo"]
     }
   ]
 }

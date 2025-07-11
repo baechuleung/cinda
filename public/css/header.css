@@ -185,6 +185,16 @@ nav a:hover {
     color: #FF5555;
 }
 
+/* 로그아웃 메뉴 스타일 */
+.logout-menu a {
+    color: #666;
+    font-weight: 500;
+}
+
+.logout-menu a:hover {
+    color: #333;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 768px) {
     .ad-banner-section {
@@ -292,5 +302,12 @@ nav a:hover {
     /* 광고관리 메뉴 모바일 스타일 */
     .advertise-menu {
         background-color: #fff5f5;
+    }
+    
+    /* 로그아웃 메뉴 모바일 스타일 */
+    .logout-menu {
+        background-color: #f5f5f5;
+        border-top: 2px solid #e0e0e0;
+        margin-top: 1rem;
     }
 }

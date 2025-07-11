@@ -8,6 +8,14 @@ let selectedStoreData = null;
 let businessTypes = [];
 let filteredBusinessTypes = [];
 
+// 이메일 도메인 목록
+const emailDomains = [
+    { value: 'naver.com', text: 'naver.com' },
+    { value: 'gmail.com', text: 'gmail.com' },
+    { value: 'daum.net', text: 'daum.net' },
+    { value: 'hanmail.net', text: 'hanmail.net' }
+];
+
 // 드롭다운 옵션 업데이트 함수들을 먼저 정의
 function updateDropdownOptions(stores) {
     const dropdownOptions = document.getElementById('dropdownOptions');
@@ -96,12 +104,21 @@ function closeBusinessDropdown() {
     dropdownMenu.style.display = 'none';
 }
 
+function closeEmailDropdown() {
+    const dropdownSelected = document.getElementById('emailDropdownSelected');
+    const dropdownMenu = document.getElementById('emailDropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
+}
+
 // 페이지 로드 시 가게 목록 가져오기
 document.addEventListener('DOMContentLoaded', async () => {
     await loadBusinessTypes();
     await loadStoreList();
     setupDropdown();
     setupBusinessTypeDropdown();
+    setupEmailDropdown();
 });
 
 // 업종 데이터 로드
@@ -248,6 +265,7 @@ function setupDropdown() {
         if (!e.target.closest('.custom-dropdown')) {
             closeDropdown();
             closeBusinessDropdown();
+            closeEmailDropdown();
         }
     });
 }
@@ -316,6 +334,114 @@ function setupBusinessTypeDropdown() {
     });
 }
 
+// 이메일 도메인 드롭다운 설정
+function setupEmailDropdown() {
+    const dropdownSelected = document.getElementById('emailDropdownSelected');
+    const dropdownMenu = document.getElementById('emailDropdownMenu');
+    const dropdownSearch = document.getElementById('emailDropdownSearch');
+    const selectedText = dropdownSelected.querySelector('.selected-text');
+    const directInput = document.getElementById('emailDomainDirect');
+    const emailDomainDropdown = document.querySelector('.email-domain-dropdown');
+    
+    // 드롭다운 토글
+    dropdownSelected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = dropdownMenu.style.display !== 'none';
+        
+        if (isOpen) {
+            closeEmailDropdown();
+        } else {
+            openEmailDropdown();
+        }
+    });
+    
+    // 검색 기능
+    dropdownSearch.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        updateEmailDropdownOptions(searchTerm);
+    });
+    
+    // 검색창 클릭 시 이벤트 전파 방지
+    dropdownSearch.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    
+    // 옵션 선택 이벤트 위임
+    document.getElementById('emailDropdownOptions').addEventListener('click', function(e) {
+        const option = e.target.closest('.dropdown-option');
+        if (option && !option.classList.contains('no-results')) {
+            const value = option.dataset.value;
+            const text = option.textContent;
+            
+            // 선택된 값 설정
+            selectedText.textContent = text;
+            
+            // 선택 상태 업데이트
+            document.querySelectorAll('#emailDropdownOptions .dropdown-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            
+            // 직접입력 처리
+            if (value === 'direct') {
+                emailDomainDropdown.style.display = 'none';
+                directInput.style.display = 'block';
+                directInput.focus();
+            } else {
+                emailDomainDropdown.style.display = 'flex';
+                directInput.style.display = 'none';
+                directInput.value = '';
+            }
+            
+            // 이메일 필드 업데이트
+            updateEmailField();
+            
+            // 드롭다운 닫기
+            closeEmailDropdown();
+        }
+    });
+}
+
+// 이메일 드롭다운 옵션 업데이트
+function updateEmailDropdownOptions(searchTerm = '') {
+    const dropdownOptions = document.getElementById('emailDropdownOptions');
+    dropdownOptions.innerHTML = '';
+    
+    // 기본 옵션
+    const defaultOption = document.createElement('div');
+    defaultOption.className = 'dropdown-option';
+    defaultOption.dataset.value = '';
+    defaultOption.textContent = '도메인 선택';
+    dropdownOptions.appendChild(defaultOption);
+    
+    // 검색어 필터링
+    const filteredDomains = searchTerm 
+        ? emailDomains.filter(domain => domain.text.toLowerCase().includes(searchTerm))
+        : emailDomains;
+    
+    if (filteredDomains.length === 0 && searchTerm) {
+        const noResultsOption = document.createElement('div');
+        noResultsOption.className = 'dropdown-option no-results';
+        noResultsOption.textContent = '검색 결과가 없습니다';
+        dropdownOptions.appendChild(noResultsOption);
+    } else {
+        filteredDomains.forEach(domain => {
+            const option = document.createElement('div');
+            option.className = 'dropdown-option';
+            option.dataset.value = domain.value;
+            option.textContent = domain.text;
+            dropdownOptions.appendChild(option);
+        });
+        
+        // 직접입력 옵션은 항상 표시
+        const directOption = document.createElement('div');
+        directOption.className = 'dropdown-option special';
+        directOption.dataset.value = 'direct';
+        directOption.textContent = '직접입력';
+        dropdownOptions.appendChild(directOption);
+    }
+}
+
 // 드롭다운 열기
 function openDropdown() {
     const dropdownSelected = document.getElementById('dropdownSelected');
@@ -350,6 +476,23 @@ function openBusinessDropdown() {
     // 전체 목록 표시
     filteredBusinessTypes = [...businessTypes];
     updateBusinessTypeOptions(filteredBusinessTypes);
+}
+
+// 이메일 드롭다운 열기
+function openEmailDropdown() {
+    const dropdownSelected = document.getElementById('emailDropdownSelected');
+    const dropdownMenu = document.getElementById('emailDropdownMenu');
+    const dropdownSearch = document.getElementById('emailDropdownSearch');
+    
+    dropdownSelected.classList.add('active');
+    dropdownMenu.style.display = 'block';
+    
+    // 검색창 초기화 및 포커스
+    dropdownSearch.value = '';
+    dropdownSearch.focus();
+    
+    // 전체 옵션 표시
+    updateEmailDropdownOptions();
 }
 
 // 가게 선택 처리
@@ -524,22 +667,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 // 이메일 필드 업데이트 함수 추가
 function updateEmailField() {
     const emailId = document.getElementById('emailId').value;
-    const select = document.getElementById('emailDomainSelect');
+    const selectedText = document.querySelector('#emailDropdownSelected .selected-text').textContent;
     const directInput = document.getElementById('emailDomainDirect');
     const emailField = document.getElementById('email');
     
-    if (select.value === 'direct') {
-        directInput.style.display = 'block';
-        select.style.display = 'none';
-        directInput.focus();
-        
-        if (emailId && directInput.value) {
-            emailField.value = emailId + '@' + directInput.value;
-        }
-    } else if (select.value) {
-        if (emailId) {
-            emailField.value = emailId + '@' + select.value;
-        }
+    if (selectedText === '직접입력' && directInput.value) {
+        emailField.value = emailId + '@' + directInput.value;
+    } else if (selectedText !== '도메인 선택' && selectedText !== '직접입력') {
+        emailField.value = emailId + '@' + selectedText;
     }
 }
 

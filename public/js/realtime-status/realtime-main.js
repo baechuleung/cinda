@@ -111,18 +111,21 @@ function displayStores(stores) {
                 </button>
             </div>
             <div class="card-stats">
-                <div class="stat">
-                    <div class="number">${store.availableRooms || 0}</div>
-                    <div class="label">맞출 방수</div>
-                </div>
-                <div class="stat">
-                    <div class="number">${store.availablePeople || 0}</div>
-                    <div class="label">맞출 인원</div>
-                </div>
-                <div class="stat">
-                    <div class="number">${store.waitingCustomers || 0}</div>
-                    <div class="label">대기 손님</div>
-                </div>
+                ${(store.availableRooms === 0 && store.availablePeople === 0 && store.waitingCustomers === 0) ? 
+                    '<div class="no-support-text">현황판을 지원하지 않는 지역/업체 입니다.</div>' :
+                    `<div class="stat">
+                        <div class="number">${store.availableRooms || 0}</div>
+                        <div class="label">맞출 방수</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">${store.availablePeople || 0}</div>
+                        <div class="label">맞출 인원</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">${store.waitingCustomers || 0}</div>
+                        <div class="label">대기 손님</div>
+                    </div>`
+                }
             </div>
             <div class="card-actions">
                 <button class="action-btn chat" data-store-id="${store.id}" data-chat-id="${store.chatRoomId}">채팅하기</button>
