@@ -131,6 +131,20 @@ async function loadStoreData() {
         document.getElementById('registeredAt').textContent = formatDate(data.registeredAt);
         document.getElementById('lastUpdate').textContent = formatDate(data.lastUpdate);
         
+        // 가게 코드 표시 (있을 경우)
+        if (data.storeCode) {
+            const storeCodeRow = document.createElement('div');
+            storeCodeRow.className = 'info-row';
+            storeCodeRow.innerHTML = `
+                <span class="info-label">가게 코드:</span>
+                <span class="info-value">${data.storeCode}</span>
+            `;
+            document.querySelector('.info-section').insertBefore(
+                storeCodeRow, 
+                document.querySelector('.info-section .info-row')
+            );
+        }
+        
     } catch (error) {
         console.error('가게 정보 로드 오류:', error);
         alert('가게 정보를 불러오는 중 오류가 발생했습니다.');

@@ -94,29 +94,65 @@
                     <input type="tel" id="phone" value="010-1234-5678" disabled>
                 </div>
 
-                <!-- 업종 -->
+                <!-- 가게 선택 -->
                 <div class="form-group">
-                    <label for="businessType">업종</label>
-                    <select id="businessType" class="full-dropdown">
-                        <option value="">업종을 선택해주세요.</option>
-                        <option value="public">퍼블릭</option>
-                        <option value="bar">바</option>
-                        <option value="leggings">레깅스룸</option>
-                        <option value="shirt">셔츠룸</option>
-                        <option value="1pro">일프로</option>
-                        <option value="jeom5">쩜오</option>
-                        <option value="club">클럽</option>
-                        <option value="tencafe">텐카페</option>
-                        <option value="tenpro">텐프로</option>
-                        <option value="hyperpublic">하이퍼블릭</option>
-                        <option value="hoba">호빠</option>
-                    </select>
+                    <label for="storeSelect">가게 선택 <span class="required">*</span></label>
+                    <div class="store-select-container">
+                        <div class="custom-select-wrapper">
+                            <input type="text" 
+                                   id="storeSearchInput" 
+                                   class="store-search-combo"
+                                   placeholder="가게명을 입력하거나 선택하세요"
+                                   autocomplete="off">
+                            <button type="button" class="dropdown-toggle" id="dropdownToggle">
+                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="store-dropdown" id="storeDropdown" style="display: none;">
+                            <div class="dropdown-item special-item" data-value="none">
+                                <div class="item-icon">➕</div>
+                                <div class="item-text">
+                                    <div class="item-title">직접 입력하기</div>
+                                    <div class="item-subtitle">등록된 가게가 없는 경우</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-search-info">
+                                <span id="searchResultCount">0</span>개의 가게
+                            </div>
+                            <div class="dropdown-list" id="storeList">
+                                <!-- 가게 목록이 여기에 동적으로 추가됨 -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="storeSelect" name="storeSelect" required>
+                    </div>
+                    <div class="helper-text">가게명을 검색하거나 목록에서 선택해주세요</div>
                 </div>
-
-                <!-- 가게명 -->
+                
+                <div class="form-group store-name-group" style="display: none;">
+                    <label for="storeName">가게명 <span class="required">*</span></label>
+                    <input type="text" id="storeName" placeholder="예: 달토 강남점">
+                    <div class="helper-text">정확한 가게명을 입력해주세요</div>
+                </div>
+                
                 <div class="form-group">
-                    <label for="storeName">가게명</label>
-                    <input type="text" id="storeName" placeholder="달토(강남점)">
+                    <label for="businessType">업종 <span class="required">*</span></label>
+                    <select id="businessType" required>
+                        <option value="">업종을 선택해주세요</option>
+                        <option value="퍼블릭">퍼블릭</option>
+                        <option value="바">바</option>
+                        <option value="레깅스룸">레깅스룸</option>
+                        <option value="셔츠룸">셔츠룸</option>
+                        <option value="일프로">일프로</option>
+                        <option value="쩜오">쩜오</option>
+                        <option value="클럽">클럽</option>
+                        <option value="텐카페">텐카페</option>
+                        <option value="텐프로">텐프로</option>
+                        <option value="하이퍼블릭">하이퍼블릭</option>
+                        <option value="호빠">호빠</option>
+                    </select>
                 </div>
 
                 <!-- 전체동의 -->
