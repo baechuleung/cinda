@@ -97,12 +97,26 @@
                 <!-- 가게 선택 -->
                 <div class="form-group">
                     <label for="storeSelect">가게 선택 <span class="required">*</span></label>
-                    <select id="storeSelect" class="store-dropdown-select" required>
-                        <option value="">가게를 선택하세요</option>
-                        <option value="none">해당 가게 없음</option>
-                        <!-- 가게 목록이 여기에 동적으로 추가됩니다 -->
-                    </select>
-                    <div class="helper-text">등록된 가게를 선택하거나 '해당 가게 없음'을 선택하세요</div>
+                    <div class="custom-dropdown">
+                        <div class="dropdown-selected" id="dropdownSelected">
+                            <span class="selected-text">가게를 선택하세요</span>
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu" style="display: none;">
+                            <div class="dropdown-search">
+                                <input type="text" id="dropdownSearch" class="dropdown-search-input" placeholder="가게명, 지역으로 검색">
+                            </div>
+                            <div class="dropdown-options" id="dropdownOptions">
+                                <div class="dropdown-option" data-value="">가게를 선택하세요</div>
+                                <div class="dropdown-option special" data-value="none">해당 가게 없음</div>
+                                <!-- 가게 목록이 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="storeSelect" name="storeSelect" required>
+                    <div class="helper-text">가게를 검색하거나 '해당 가게 없음'을 선택하세요</div>
                 </div>
                 
                 <div class="form-group store-name-group" style="display: none;">
@@ -113,20 +127,23 @@
                 
                 <div class="form-group">
                     <label for="businessType">업종 <span class="required">*</span></label>
-                    <select id="businessType" required>
-                        <option value="">업종을 선택해주세요</option>
-                        <option value="퍼블릭">퍼블릭</option>
-                        <option value="바">바</option>
-                        <option value="레깅스룸">레깅스룸</option>
-                        <option value="셔츠룸">셔츠룸</option>
-                        <option value="일프로">일프로</option>
-                        <option value="쩜오">쩜오</option>
-                        <option value="클럽">클럽</option>
-                        <option value="텐카페">텐카페</option>
-                        <option value="텐프로">텐프로</option>
-                        <option value="하이퍼블릭">하이퍼블릭</option>
-                        <option value="호빠">호빠</option>
-                    </select>
+                    <div class="custom-dropdown" id="businessTypeDropdown">
+                        <div class="dropdown-selected" id="businessDropdownSelected">
+                            <span class="selected-text">업종을 선택해주세요</span>
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="dropdown-menu" id="businessDropdownMenu" style="display: none;">
+                            <div class="dropdown-search">
+                                <input type="text" id="businessDropdownSearch" class="dropdown-search-input" placeholder="업종으로 검색">
+                            </div>
+                            <div class="dropdown-options" id="businessDropdownOptions">
+                                <!-- 업종 목록이 여기에 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="businessType" name="businessType" required>
                 </div>
 
                 <!-- 전체동의 -->

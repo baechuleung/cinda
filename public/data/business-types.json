@@ -1,0 +1,100 @@
+{
+  "businessTypes": [
+    {
+      "code": "public",
+      "name": "퍼블릭",
+      "description": "퍼블릭 룸",
+      "keywords": ["퍼블릭", "public", "퍼블릭룸"]
+    },
+    {
+      "code": "bar",
+      "name": "바",
+      "description": "바",
+      "keywords": ["바", "bar"]
+    },
+    {
+      "code": "leggings",
+      "name": "레깅스룸",
+      "description": "레깅스룸",
+      "keywords": ["레깅스", "레깅스룸", "leggings"]
+    },
+    {
+      "code": "shirt",
+      "name": "셔츠룸",
+      "description": "셔츠룸",
+      "keywords": ["셔츠", "셔츠룸", "shirt"]
+    },
+    {
+      "code": "onepro",
+      "name": "일프로",
+      "description": "일프로",
+      "keywords": ["일프로", "1프로", "onepro"]
+    },
+    {
+      "code": "jjumoh",
+      "name": "쩜오",
+      "description": "쩜오",
+      "keywords": ["쩜오", ".5", "점오"]
+    },
+    {
+      "code": "club",
+      "name": "클럽",
+      "description": "클럽",
+      "keywords": ["클럽", "club"]
+    },
+    {
+      "code": "tencafe",
+      "name": "텐카페",
+      "description": "텐카페",
+      "keywords": ["텐카페", "10카페", "tencafe"]
+    },
+    {
+      "code": "tenpro",
+      "name": "텐프로",
+      "description": "텐프로",
+      "keywords": ["텐프로", "10프로", "tenpro"]
+    },
+    {
+      "code": "hyperpublic",
+      "name": "하이퍼블릭",
+      "description": "하이퍼블릭",
+      "keywords": ["하이퍼블릭", "하이퍼", "hyperpublic"]
+    },
+    {
+      "code": "hobba",
+      "name": "호빠",
+      "description": "호빠",
+      "keywords": ["호빠", "호스트바", "hobba"]
+    },
+    {
+      "code": "hongdae-bodo",
+      "name": "홍대보도",
+      "description": "홍대보도",
+      "keywords": ["홍대보도", "홍대 보도", "hongdae bodo"]
+    },
+    {
+      "code": "garak-bodo",
+      "name": "가락보도",
+      "description": "가락보도",
+      "keywords": ["가락보도", "가락 보도", "garak bodo"]
+    },
+    {
+      "code": "suyu-bodo",
+      "name": "수유보도",
+      "description": "수유보도",
+      "keywords": ["수유보도", "수유 보도", "suyu bodo"]
+    },
+    {
+      "code": "sillim-bodo",
+      "name": "신림보도",
+      "description": "신림보도",
+      "keywords": ["신림보도", "신림 보도", "sillim bodo"]
+    },
+    {
+      "code": "sinchon-bodo",
+      "name": "신촌보도",
+      "description": "신촌보도",
+      "keywords": ["신촌보도", "신촌 보도", "sinchon bodo"]
+    }
+  ]
+}

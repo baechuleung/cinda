@@ -3,15 +3,128 @@ import { createUserWithEmailAndPassword, updateProfile } from 'https://www.gstat
 import { doc, setDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 let allStores = [];
+let filteredStores = [];
 let selectedStoreData = null;
+let businessTypes = [];
+let filteredBusinessTypes = [];
+
+// 드롭다운 옵션 업데이트 함수들을 먼저 정의
+function updateDropdownOptions(stores) {
+    const dropdownOptions = document.getElementById('dropdownOptions');
+    
+    // 기본 옵션 유지하고 나머지 제거
+    const defaultOptions = dropdownOptions.querySelectorAll('.dropdown-option:nth-child(1), .dropdown-option:nth-child(2)');
+    dropdownOptions.innerHTML = '';
+    defaultOptions.forEach(opt => dropdownOptions.appendChild(opt));
+    
+    if (stores.length === 0) {
+        const noResultsOption = document.createElement('div');
+        noResultsOption.className = 'dropdown-option no-results';
+        noResultsOption.textContent = '검색 결과가 없습니다';
+        dropdownOptions.appendChild(noResultsOption);
+    } else {
+        // 가게명으로 한글 정렬 (ㄱㄴㄷ 순서)
+        const sortedStores = [...stores].sort((a, b) => {
+            return a.storeName.localeCompare(b.storeName, 'ko-KR', { 
+                numeric: true,  // 숫자를 올바르게 정렬
+                sensitivity: 'base'  // 대소문자 구분 안함
+            });
+        });
+        
+        sortedStores.forEach(store => {
+            const option = document.createElement('div');
+            option.className = 'dropdown-option';
+            option.dataset.value = store.code;
+            option.dataset.businessType = store.businessType;
+            option.textContent = store.displayName;
+            dropdownOptions.appendChild(option);
+        });
+    }
+}
+
+function updateBusinessTypeOptions(types) {
+    const dropdownOptions = document.getElementById('businessDropdownOptions');
+    if (!dropdownOptions) return;
+    
+    dropdownOptions.innerHTML = '';
+    
+    // 기본 옵션 추가
+    const defaultOption = document.createElement('div');
+    defaultOption.className = 'dropdown-option';
+    defaultOption.dataset.value = '';
+    defaultOption.textContent = '업종을 선택해주세요';
+    dropdownOptions.appendChild(defaultOption);
+    
+    if (types.length === 0) {
+        const noResultsOption = document.createElement('div');
+        noResultsOption.className = 'dropdown-option no-results';
+        noResultsOption.textContent = '검색 결과가 없습니다';
+        dropdownOptions.appendChild(noResultsOption);
+    } else {
+        // 업종 이름으로 한글 정렬 (ㄱㄴㄷ 순서)
+        const sortedTypes = [...types].sort((a, b) => {
+            return a.name.localeCompare(b.name, 'ko-KR', { 
+                numeric: true,  // 숫자를 올바르게 정렬
+                sensitivity: 'base'  // 대소문자 구분 안함
+            });
+        });
+        
+        sortedTypes.forEach(type => {
+            const option = document.createElement('div');
+            option.className = 'dropdown-option';
+            option.dataset.value = type.name;  // 한글명을 값으로 사용
+            option.textContent = type.name;
+            dropdownOptions.appendChild(option);
+        });
+    }
+}
+
+// 드롭다운 닫기 함수들
+function closeDropdown() {
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
+}
+
+function closeBusinessDropdown() {
+    const dropdownSelected = document.getElementById('businessDropdownSelected');
+    const dropdownMenu = document.getElementById('businessDropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
+}
 
 // 페이지 로드 시 가게 목록 가져오기
 document.addEventListener('DOMContentLoaded', async () => {
+    await loadBusinessTypes();
     await loadStoreList();
-    
-    // 새로운 UI 이벤트 설정
-    setupStoreSelectUI();
+    setupDropdown();
+    setupBusinessTypeDropdown();
 });
+
+// 업종 데이터 로드
+async function loadBusinessTypes() {
+    try {
+        // 절대 경로 사용
+        const response = await fetch('/data/business-types.json');
+        const data = await response.json();
+        businessTypes = data.businessTypes;
+        filteredBusinessTypes = [...businessTypes];
+        
+        console.log('업종 목록 로드 완료:', businessTypes.length + '개');
+        
+        // 업종 드롭다운 옵션 업데이트
+        updateBusinessTypeOptions(businessTypes);
+    } catch (error) {
+        console.error('업종 데이터 로드 오류:', error);
+        // 오류 시 빈 배열로 설정
+        businessTypes = [];
+        filteredBusinessTypes = [];
+        updateBusinessTypeOptions(businessTypes);
+    }
+}
 
 // 가게 목록 로드
 async function loadStoreList() {
@@ -32,22 +145,26 @@ async function loadStoreList() {
             allStores = Object.entries(codes)
                 .filter(([code, storeData]) => storeData.isActive === true)
                 .map(([code, storeData]) => ({
-                    code: code, // 키가 코드 (예: "달리는 토끼_하이퍼블릭_서울_강남구_001")
+                    code: code,
                     ...storeData,
-                    displayName: `${storeData.storeName}_${storeData.region1}_${storeData.region2}`
+                    displayName: `${storeData.storeName} (${storeData.region1} ${storeData.region2} - ${storeData.businessType})`
                 }));
             
             console.log('필터링된 가게 목록:', allStores);
             
-            // 표시 이름으로 정렬
-            allStores.sort((a, b) => a.displayName.localeCompare(b.displayName));
+            // 한글 정렬 (ㄱㄴㄷ 순서)
+            allStores.sort((a, b) => {
+                return a.storeName.localeCompare(b.storeName, 'ko-KR', { 
+                    numeric: true,  // 숫자를 올바르게 정렬
+                    sensitivity: 'base'  // 대소문자 구분 안함
+                });
+            });
+            filteredStores = [...allStores];
             
             console.log('가게 목록 로드 완료:', allStores.length + '개');
             
-            // 초기 표시 - DOM이 준비된 후에만 실행
-            if (document.getElementById('storeList')) {
-                filterAndDisplayStores();
-            }
+            // 드롭다운 옵션 업데이트
+            updateDropdownOptions(allStores);
         } else {
             console.log('master 문서가 존재하지 않습니다.');
         }
@@ -57,20 +174,19 @@ async function loadStoreList() {
     }
 }
 
-// 새로운 UI 설정
-function setupStoreSelectUI() {
-    const searchInput = document.getElementById('storeSearchInput');
-    const dropdownToggle = document.getElementById('dropdownToggle');
-    const storeDropdown = document.getElementById('storeDropdown');
-    
-    if (!searchInput || !dropdownToggle || !storeDropdown) {
-        console.error('UI 요소를 찾을 수 없습니다.');
-        return;
-    }
+// 커스텀 드롭다운 설정
+function setupDropdown() {
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const dropdownSearch = document.getElementById('dropdownSearch');
+    const selectedText = document.querySelector('.selected-text');
+    const storeSelectInput = document.getElementById('storeSelect');
     
     // 드롭다운 토글
-    dropdownToggle.addEventListener('click', () => {
-        const isOpen = storeDropdown.style.display !== 'none';
+    dropdownSelected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = dropdownMenu.style.display !== 'none';
+        
         if (isOpen) {
             closeDropdown();
         } else {
@@ -78,123 +194,209 @@ function setupStoreSelectUI() {
         }
     });
     
-    // 검색 입력
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        filterAndDisplayStores(searchTerm);
-        if (storeDropdown.style.display === 'none') {
-            openDropdown();
+    // 검색 기능
+    dropdownSearch.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            filteredStores = [...allStores];
+        } else {
+            filteredStores = allStores.filter(store => 
+                store.displayName.toLowerCase().includes(searchTerm) ||
+                store.storeName.toLowerCase().includes(searchTerm) ||
+                store.region1.toLowerCase().includes(searchTerm) ||
+                store.region2.toLowerCase().includes(searchTerm) ||
+                store.businessType.toLowerCase().includes(searchTerm)
+            );
         }
+        
+        updateDropdownOptions(filteredStores);
     });
     
-    // 포커스 시 드롭다운 열기
-    searchInput.addEventListener('focus', () => {
-        openDropdown();
+    // 검색창 클릭 시 이벤트 전파 방지
+    dropdownSearch.addEventListener('click', function(e) {
+        e.stopPropagation();
     });
     
-    // 외부 클릭 시 닫기
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.store-select-container')) {
+    // 옵션 선택 이벤트 위임
+    document.getElementById('dropdownOptions').addEventListener('click', function(e) {
+        const option = e.target.closest('.dropdown-option');
+        if (option && !option.classList.contains('no-results')) {
+            const value = option.dataset.value;
+            const text = option.textContent;
+            
+            // 선택된 값 설정
+            selectedText.textContent = text;
+            storeSelectInput.value = value;
+            
+            // 선택 상태 업데이트
+            document.querySelectorAll('.dropdown-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            
+            // 가게 선택 처리
+            handleStoreSelection(value);
+            
+            // 드롭다운 닫기
             closeDropdown();
         }
     });
     
-    // 직접 입력 선택 이벤트
-    const specialItem = document.querySelector('.special-item');
-    if (specialItem) {
-        specialItem.addEventListener('click', () => {
-            window.selectStore('none');
-        });
-    }
-    
-    function openDropdown() {
-        storeDropdown.style.display = 'block';
-        dropdownToggle.classList.add('active');
-        filterAndDisplayStores(searchInput.value);
-    }
-    
-    function closeDropdown() {
-        storeDropdown.style.display = 'none';
-        dropdownToggle.classList.remove('active');
-    }
+    // 외부 클릭 시 드롭다운 닫기
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-dropdown')) {
+            closeDropdown();
+            closeBusinessDropdown();
+        }
+    });
 }
 
-// 가게 목록 표시 (새로운 UI)
-function filterAndDisplayStores(searchTerm = '') {
-    const storeList = document.getElementById('storeList');
-    const searchResultCount = document.getElementById('searchResultCount');
+// 업종 드롭다운 설정
+function setupBusinessTypeDropdown() {
+    const dropdownSelected = document.getElementById('businessDropdownSelected');
+    const dropdownMenu = document.getElementById('businessDropdownMenu');
+    const dropdownSearch = document.getElementById('businessDropdownSearch');
+    const selectedText = dropdownSelected.querySelector('.selected-text');
+    const businessTypeInput = document.getElementById('businessType');
     
-    if (!storeList || !searchResultCount) {
-        console.error('DOM 요소를 찾을 수 없습니다.');
-        return;
-    }
+    // 드롭다운 토글
+    dropdownSelected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = dropdownMenu.style.display !== 'none';
+        
+        if (isOpen) {
+            closeBusinessDropdown();
+        } else {
+            openBusinessDropdown();
+        }
+    });
     
-    let filteredStores = allStores;
+    // 검색 기능
+    dropdownSearch.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            filteredBusinessTypes = [...businessTypes];
+        } else {
+            filteredBusinessTypes = businessTypes.filter(type => 
+                type.name.toLowerCase().includes(searchTerm) ||
+                type.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        updateBusinessTypeOptions(filteredBusinessTypes);
+    });
     
-    if (searchTerm) {
-        filteredStores = allStores.filter(store => 
-            store.storeName.toLowerCase().includes(searchTerm) ||
-            store.region1.toLowerCase().includes(searchTerm) ||
-            store.region2.toLowerCase().includes(searchTerm) ||
-            store.businessType.toLowerCase().includes(searchTerm)
-        );
-    }
+    // 검색창 클릭 시 이벤트 전파 방지
+    dropdownSearch.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
     
-    searchResultCount.textContent = filteredStores.length;
-    
-    storeList.innerHTML = filteredStores.map(store => `
-        <div class="store-item" onclick="selectStore('${store.code}')">
-            <div class="store-name">${store.storeName}</div>
-            <div class="store-info">
-                <span class="store-badge">${store.businessType}</span>
-                <span>${store.region1} ${store.region2}</span>
-            </div>
-        </div>
-    `).join('');
-    
-    if (filteredStores.length === 0) {
-        storeList.innerHTML = `
-            <div class="dropdown-item" style="text-align: center; color: #999;">
-                검색 결과가 없습니다
-            </div>
-        `;
-    }
+    // 옵션 선택 이벤트 위임
+    document.getElementById('businessDropdownOptions').addEventListener('click', function(e) {
+        const option = e.target.closest('.dropdown-option');
+        if (option && !option.classList.contains('no-results')) {
+            const value = option.dataset.value;
+            const text = option.textContent;
+            
+            // 선택된 값 설정
+            selectedText.textContent = text;
+            businessTypeInput.value = value;
+            
+            // 선택 상태 업데이트
+            document.querySelectorAll('#businessDropdownOptions .dropdown-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+            
+            // 드롭다운 닫기
+            closeBusinessDropdown();
+        }
+    });
 }
 
-// 가게 선택 (전역 함수)
-window.selectStore = function(storeCode) {
-    const searchInput = document.getElementById('storeSearchInput');
-    const storeSelect = document.getElementById('storeSelect');
-    const businessTypeSelect = document.getElementById('businessType');
+// 드롭다운 열기
+function openDropdown() {
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const dropdownSearch = document.getElementById('dropdownSearch');
+    
+    dropdownSelected.classList.add('active');
+    dropdownMenu.style.display = 'block';
+    
+    // 검색창 초기화 및 포커스
+    dropdownSearch.value = '';
+    dropdownSearch.focus();
+    
+    // 전체 목록 표시
+    filteredStores = [...allStores];
+    updateDropdownOptions(filteredStores);
+}
+
+// 업종 드롭다운 열기
+function openBusinessDropdown() {
+    const dropdownSelected = document.getElementById('businessDropdownSelected');
+    const dropdownMenu = document.getElementById('businessDropdownMenu');
+    const dropdownSearch = document.getElementById('businessDropdownSearch');
+    
+    dropdownSelected.classList.add('active');
+    dropdownMenu.style.display = 'block';
+    
+    // 검색창 초기화 및 포커스
+    dropdownSearch.value = '';
+    dropdownSearch.focus();
+    
+    // 전체 목록 표시
+    filteredBusinessTypes = [...businessTypes];
+    updateBusinessTypeOptions(filteredBusinessTypes);
+}
+
+// 가게 선택 처리
+function handleStoreSelection(value) {
     const storeNameGroup = document.querySelector('.store-name-group');
     const storeNameInput = document.getElementById('storeName');
+    const businessTypeDropdown = document.getElementById('businessTypeDropdown');
+    const businessTypeInput = document.getElementById('businessType');
+    const businessSelectedText = document.querySelector('#businessDropdownSelected .selected-text');
     
-    if (storeCode === 'none') {
-        // 직접 입력 선택
-        searchInput.value = '직접 입력';
-        storeSelect.value = 'none';
+    if (value === 'none') {
+        // '해당 가게 없음' 선택 시
         storeNameGroup.style.display = 'block';
         storeNameInput.required = true;
-        businessTypeSelect.disabled = false;
-        businessTypeSelect.value = '';
+        businessTypeDropdown.style.pointerEvents = 'auto';
+        businessTypeDropdown.style.opacity = '1';
+        businessTypeInput.value = '';
+        businessSelectedText.textContent = '업종을 선택해주세요';
         selectedStoreData = null;
-    } else {
-        // 가게 선택
-        selectedStoreData = allStores.find(store => store.code === storeCode);
+    } else if (value) {
+        // 특정 가게 선택 시
+        storeNameGroup.style.display = 'none';
+        storeNameInput.required = false;
+        storeNameInput.value = '';
+        
+        // 선택된 가게 정보 찾기
+        selectedStoreData = allStores.find(store => store.code === value);
+        
         if (selectedStoreData) {
-            searchInput.value = `${selectedStoreData.storeName} (${selectedStoreData.region1} ${selectedStoreData.region2})`;
-            storeSelect.value = storeCode;
-            businessTypeSelect.value = selectedStoreData.businessType;
-            businessTypeSelect.disabled = true;
-            storeNameGroup.style.display = 'none';
-            storeNameInput.required = false;
+            // 업종 자동 설정 및 비활성화
+            businessTypeInput.value = selectedStoreData.businessType;
+            businessSelectedText.textContent = selectedStoreData.businessType;
+            businessTypeDropdown.style.pointerEvents = 'none';
+            businessTypeDropdown.style.opacity = '0.6';
+            console.log('선택된 가게:', selectedStoreData);
         }
+    } else {
+        // 선택 안함
+        storeNameGroup.style.display = 'none';
+        storeNameInput.required = false;
+        businessTypeDropdown.style.pointerEvents = 'auto';
+        businessTypeDropdown.style.opacity = '1';
+        businessTypeInput.value = '';
+        businessSelectedText.textContent = '업종을 선택해주세요';
+        selectedStoreData = null;
     }
-    
-    // 드롭다운 닫기
-    document.getElementById('storeDropdown').style.display = 'none';
-    document.getElementById('dropdownToggle').classList.remove('active');
-};
+}
 
 // 폼 제출 처리
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
