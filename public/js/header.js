@@ -213,6 +213,27 @@ function isProtectedPage() {
     return protectedPages.some(page => currentPath.includes(page));
 }
 
+// 현재 페이지에 따라 메뉴 활성화
+function setActiveMenu() {
+    const currentPath = window.location.pathname;
+    const menuLinks = document.querySelectorAll('nav a');
+    
+    menuLinks.forEach(link => {
+        // href 속성 가져오기
+        const href = link.getAttribute('href');
+        
+        // 현재 경로와 일치하는지 확인
+        if (href && currentPath.includes(href) && href !== '#' && href !== '/') {
+            link.classList.add('active');
+        } else if (href === '/' && (currentPath === '/' || currentPath === '/index.html')) {
+            // 홈페이지인 경우
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
+
 // 사용자 인증 상태 확인 및 메뉴 표시
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -236,8 +257,10 @@ onAuthStateChanged(auth, async (user) => {
         
         // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
         if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
-            alert('로그인이 필요한 서비스입니다.');
+            // 먼저 페이지 이동 후 알림 표시
             window.location.href = '/auth/login.html';
+            // 페이지 이동 후에는 아래 코드가 실행되지 않으므로 세션스토리지에 메시지 저장
+            sessionStorage.setItem('loginRequired', 'true');
         }
     }
 });
@@ -312,8 +335,8 @@ window.handleLogout = async function() {
     if (confirm('로그아웃 하시겠습니까?')) {
         try {
             await auth.signOut();
-            alert('로그아웃되었습니다.');
-            window.location.href = '/';
+            // 로그아웃 후 바로 로그인 페이지로 이동
+            window.location.href = '/auth/login.html';
         } catch (error) {
             console.error('로그아웃 오류:', error);
             alert('로그아웃 중 오류가 발생했습니다.');
@@ -388,8 +411,10 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initializeHamburgerMenu();
         initializeSlider();
+        setActiveMenu(); // 활성 메뉴 설정
     });
 } else {
     initializeHamburgerMenu();
     initializeSlider();
+    setActiveMenu(); // 활성 메뉴 설정
 }

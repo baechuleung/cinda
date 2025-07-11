@@ -649,7 +649,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         await setDoc(doc(db, 'business_users', user.uid), userData);
         
         console.log('기업회원 가입 성공 및 Firestore 저장 완료');
-        window.location.href = '../../dashboard.html';
+        window.location.href = '/realtime-status/realtime-status.html';
     } catch (error) {
         console.error('가입 오류:', error);
         if (error.code === 'auth/email-already-in-use') {

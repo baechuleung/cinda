@@ -1,79 +1,472 @@
-.register-container {
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 0;
+    border: none;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+}
+
+.modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+#termsFrame {
+    width: 100%;
+    height: 70vh;
+    border: none;
+    border-radius: 12px;
+}.checkbox-status {
+    color: #28a745;
+    font-size: 14px;
+    font-weight: 500;
+}.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 1rem;
+    background-color: #f8f9fa;
 }
 
 .register-form {
     background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
 }
 
 .register-form h2 {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     color: #333;
+    font-size: 24px;
+    font-weight: 600;
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.form-group input {
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.required {
+    color: #f66;
+}
+
+.optional {
+    color: #999;
+    font-size: 13px;
+}
+
+.form-group input,
+.form-group select {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
     transition: border-color 0.3s ease;
+    background-color: #fff;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: #007bff;
 }
 
-button {
+.form-group input:disabled {
+    background-color: #f8f9fa;
+    color: #999;
+}
+
+/* 커스텀 드롭다운 */
+.custom-dropdown {
+    position: relative;
     width: 100%;
+}
+
+.dropdown-selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.dropdown-selected:hover {
+    border-color: #007bff;
+}
+
+.dropdown-selected.active {
+    border-color: #007bff;
+    border-radius: 8px 8px 0 0;
+}
+
+.selected-text {
+    font-size: 14px;
+    color: #333;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-selected.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #007bff;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 350px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-search {
     padding: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+}
+
+.dropdown-search-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.dropdown-search-input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.dropdown-options {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.dropdown-option {
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.dropdown-option:hover {
+    background: #f8f9fa;
+}
+
+.dropdown-option.selected {
+    background: #e7f5ff;
+    color: #1971c2;
+}
+
+.dropdown-option.special {
+    border-top: 1px solid #e0e0e0;
+    background: #fffbf5;
+    color: #ff6b00;
+    font-weight: 500;
+}
+
+.dropdown-option.no-results {
+    color: #999;
+    font-style: italic;
+    cursor: default;
+}
+
+.dropdown-option.no-results:hover {
+    background: transparent;
+}
+
+/* 이메일 드롭다운 */
+.input-with-dropdown {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.input-with-dropdown input[type="text"]:first-child {
+    flex: 1.5;
+}
+
+.at-symbol {
+    color: #666;
+    font-weight: 500;
+    padding: 0 0.25rem;
+}
+
+.email-domain-dropdown {
+    flex: 1.5;
+    min-width: 160px; /* 최소 너비 고정 */
+}
+
+#emailDomainDirect {
+    flex: 1.5;
+    min-width: 160px; /* 최소 너비 고정 */
+}
+
+/* 비밀번호 표시 */
+.password-input {
+    position: relative;
+}
+
+.show-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.show-password:hover svg path,
+.show-password:hover svg circle,
+.show-password:hover svg line {
+    stroke: #666;
+}
+
+/* 도움말 텍스트 */
+.helper-text {
+    margin-top: 0.5rem;
+    font-size: 12px;
+    color: #999;
+}
+
+/* 라벨과 인증완료 표시 */
+.label-with-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.label-with-status label {
+    margin-bottom: 0;
+}
+
+/* 전체동의 섹션 */
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #FF6666;
+    position: relative;
+}
+
+.section-title label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* 체크박스 커스텀 스타일 */
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em white;
+    transform-origin: center;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked {
+    background-color: #FF6666;
+    border-color: #FF6666;
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+.terms-group {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+.term-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.term-item:last-child {
+    border-bottom: none;
+}
+
+.term-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.term-left label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.view-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #999;
+}
+
+/* 제출 버튼 */
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
-    margin-bottom: 1rem;
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.submit-btn:hover {
     background-color: #0056b3;
 }
 
-.auth-links {
+.error-message {
+    color: #f66;
+    margin-top: 1rem;
+    font-size: 14px;
     text-align: center;
-    font-size: 0.9rem;
 }
 
-.auth-links a {
-    color: #007bff;
-    text-decoration: none;
-    margin: 0 0.5rem;
-}
-
-.auth-links a:hover {
-    text-decoration: underline;
-}
-
-.auth-links span {
-    color: #ddd;
+/* 모바일에서 자동 확대 방지를 위해 최소 16px - 하지만 시각적으로 작게 보이도록 조정 */
+@media (max-width: 768px) {
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        /* 시각적으로 작게 보이도록 조정 */
+        transform: scale(0.875); /* 14px처럼 보이도록 */
+        transform-origin: left center;
+        width: 114.3%; /* scale 보정 */
+    }
+    
+    /* 드롭다운 텍스트는 14px */
+    .selected-text,
+    .dropdown-option {
+        font-size: 14px !important;
+    }
+    
+    /* 드롭다운 컨테이너 조정 */
+    .dropdown-selected {
+        padding: 0.75rem 0.875rem;
+    }
 }
 
 /* 반응형 디자인 */
@@ -83,66 +476,250 @@ button:hover {
     }
     
     .register-form {
-        padding: 1.5rem;
-        max-width: 350px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        max-width: 450px;
     }
     
     .register-form h2 {
-        font-size: 1.8rem;
+        font-size: 22px;
+    }
+    
+    .input-with-dropdown {
+        flex-wrap: wrap;
+    }
+    
+    .input-with-dropdown input[type="text"]:first-child {
+        flex: 1 1 60%;
+        min-width: 150px;
+    }
+    
+    .at-symbol {
+        flex: 0 0 auto;
+    }
+    
+    .email-domain-dropdown,
+    #emailDomainDirect {
+        flex: 1 1 35%;
+        min-width: 140px; /* 최소 너비 고정 */
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    #termsFrame {
+        height: 60vh;
     }
 }
 
 @media (max-width: 480px) {
     .register-container {
-        padding: 0.75rem;
+        padding: 0.5rem;
     }
     
     .register-form {
-        padding: 1.25rem;
+        padding: 1.5rem;
         max-width: 100%;
         margin: 0;
-        border-radius: 6px;
+        border-radius: 8px;
     }
     
     .register-form h2 {
-        font-size: 1.5rem;
-        margin-bottom: 1.25rem;
+        font-size: 20px;
+        margin-bottom: 1.5rem;
     }
     
     .form-group {
-        margin-bottom: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+        font-size: 13px;
     }
     
     .form-group input,
-    button {
+    .form-group select,
+    .submit-btn {
         padding: 0.875rem;
-        font-size: 15px;
-        border-radius: 6px;
+        font-size: 14px;
     }
     
-    .auth-links {
-        margin-top: 0.75rem;
-        font-size: 0.8rem;
+    /* 480px 이하에서도 자동 확대 방지 */
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        transform: scale(0.875);
+        transform-origin: left center;
+        width: 114.3%;
+    }
+    
+    .selected-text,
+    .dropdown-option {
+        font-size: 14px !important;
+    }
+    
+    /* 이메일 필드 모바일 최적화 */
+    .input-with-dropdown {
+        position: relative;
+        display: flex;
+        flex-wrap: nowrap; /* 한 줄로 유지 */
+        gap: 0.5rem;
+    }
+    
+    .input-with-dropdown input[type="text"]:first-child {
+        flex: 1;
+        min-width: 0; /* flex item이 줄어들 수 있도록 */
+    }
+    
+    .at-symbol {
+        flex: 0 0 auto;
+    }
+    
+    .email-domain-dropdown,
+    #emailDomainDirect {
+        flex: 0 0 140px; /* 고정 너비 */
+        width: 140px;
+    }
+    
+    /* 인증완료 텍스트 크기 조정 */
+    .checkbox-status {
+        font-size: 12px;
+    }
+    
+    /* 비밀번호 눈 아이콘 위치 조정 */
+    .show-password {
+        right: 0.75rem;
+    }
+    
+    /* 약관 섹션 */
+    .section-title {
+        font-size: 15px;
+        margin-top: 1.5rem;
+    }
+    
+    .terms-group {
+        padding: 0.75rem;
+    }
+    
+    .term-item {
+        padding: 0.5rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .term-left {
+        flex: 1;
+        margin-right: 0.5rem;
+    }
+    
+    .term-left label {
+        font-size: 13px;
+    }
+    
+    .view-btn {
+        padding: 0.2rem 0.5rem;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+    
+    /* 체크박스 크기 조정 */
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+    
+    input[type="checkbox"]::before {
+        width: 10px;
+        height: 10px;
+    }
+    
+    /* 모달 모바일 최적화 */
+    .modal-content {
+        margin: 20% auto;
+        width: 98%;
+        max-height: 90vh;
+    }
+    
+    .modal-close {
+        right: 10px;
+        top: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 24px;
+    }
+    
+    #termsFrame {
+        height: 75vh;
+    }
+    
+    .helper-text {
+        font-size: 11px;
+        line-height: 1.4;
     }
 }
 
 @media (max-width: 360px) {
     .register-container {
-        padding: 0.5rem;
+        padding: 0.375rem;
     }
     
     .register-form {
-        padding: 1rem;
+        padding: 1.25rem;
     }
     
     .register-form h2 {
-        font-size: 1.3rem;
+        font-size: 18px;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
     }
     
     .form-group input,
-    button {
+    .form-group select,
+    .submit-btn {
         padding: 0.75rem;
+        font-size: 13px;
+    }
+    
+    /* 360px 이하에서도 자동 확대 방지 */
+    .form-group input,
+    .form-group select,
+    .dropdown-search-input {
+        font-size: 16px !important;
+        transform: scale(0.8125);
+        transform-origin: left center;
+        width: 123%;
+    }
+    
+    .selected-text,
+    .dropdown-option {
+        font-size: 13px !important;
+    }
+    
+    .section-title {
         font-size: 14px;
+    }
+    
+    .term-left label {
+        font-size: 12px;
+    }
+    
+    .view-btn {
+        font-size: 10px;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    /* 초소형 화면에서 약관 항목 세로 정렬 */
+    .term-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .view-btn {
+        align-self: flex-end;
+        margin-top: -1.5rem;
     }
 }

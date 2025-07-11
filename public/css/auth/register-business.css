@@ -275,10 +275,12 @@ input:disabled {
 
 .email-domain-dropdown {
     flex: 1.5;
+    min-width: 160px; /* 최소 너비 고정 */
 }
 
 #emailDomainDirect {
     flex: 1.5;
+    min-width: 160px; /* 최소 너비 고정 */
 }
 
 /* 비밀번호 표시 */
@@ -518,7 +520,7 @@ input[type="checkbox"]:checked::before {
     .email-domain-dropdown,
     #emailDomainDirect {
         flex: 1 1 35%;
-        min-width: 120px;
+        min-width: 140px; /* 최소 너비 고정 */
     }
     
     .modal-content {
@@ -581,25 +583,24 @@ input[type="checkbox"]:checked::before {
     /* 이메일 필드 모바일 최적화 */
     .input-with-dropdown {
         position: relative;
+        display: flex;
+        flex-wrap: nowrap; /* 한 줄로 유지 */
+        gap: 0.5rem;
     }
     
     .input-with-dropdown input[type="text"]:first-child {
-        flex: 1 1 100%;
-        margin-bottom: 0.5rem;
+        flex: 1;
+        min-width: 0; /* flex item이 줄어들 수 있도록 */
     }
     
     .at-symbol {
-        position: absolute;
-        right: 15px;
-        top: 14px;
-        background: white;
-        padding: 0 5px;
+        flex: 0 0 auto;
     }
     
     .email-domain-dropdown,
     #emailDomainDirect {
-        flex: 1 1 100%;
-        margin-top: 0;
+        flex: 0 0 140px; /* 고정 너비 */
+        width: 140px;
     }
     
     /* 인증완료 텍스트 크기 조정 */

@@ -6,34 +6,39 @@
     <title>회원가입 선택</title>
     
     <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
-    <script type="module" src="../../js/seo-manager.js"></script>
+    <script type="module" src="/js/seo-manager.js"></script>
     
-    <link rel="stylesheet" href="../../css/common.css">
-    <link rel="stylesheet" href="../../css/auth/register.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth/register.css">
 </head>
 <body>
     <div class="register-selection-container">
         <div class="register-selection">
             <h2>회원가입을 선택해주세요</h2>
             <p class="subtitle">회원가입을 위해 회원가입 유형을 선택하세요.</p>
-            <p class="description">고객님께서는 목적을 달성하여 회원가입을 진행할 수 있게 도와드립니다.</p>
+            <p class="description">고객님께서는 해당하는 유형을 선택하여 회원가입을 진행해 주시기 바랍니다.</p>
             
             <div class="selection-options">
                 <div class="option-card individual">
-                    <div class="icon">👤</div>
-                    <h3>개인회원 가입</h3>
-                    <a href="register-individual.html" class="select-btn individual-btn">개인회원 가입</a>
+                    <div class="icon">
+                        <img src="/img/female_register.png" alt="개인회원 가입">
+                    </div>
+                    <a href="/auth/register-individual.html" class="select-btn individual-btn">개인회원 가입</a>
                 </div>
                 
+                <div class="divider-bar"></div>
+                
                 <div class="option-card business">
-                    <div class="icon">🏢</div>
-                    <h3>비즈니스회원 가입</h3>
-                    <a href="register-business.html" class="select-btn business-btn">비즈니스회원 가입</a>
+                    <div class="icon">
+                        <img src="/img/business_register.png" alt="비즈니스회원 가입">
+                    </div>
+                    <a href="/auth/register-business.html" class="select-btn business-btn">비즈니스회원 가입</a>
                 </div>
             </div>
             
             <div class="auth-links">
-                <a href="login.html">이미 계정이 있으신가요? 로그인</a>
+                <span class="gray-text">이미 계정이 있으신가요?</span>
+                <a href="/auth/login.html" class="login-link">로그인</a>
             </div>
         </div>
     </div>
