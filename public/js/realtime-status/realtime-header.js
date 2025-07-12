@@ -1,5 +1,5 @@
-// 지역 데이터 로드 함수
-async function loadRegionData() {
+// 지역 및 업종 데이터 로드 함수
+async function loadRegionAndBusinessData() {
     try {
         // region1 데이터 로드
         const region1Response = await fetch('/data/region1.json');
@@ -24,8 +24,26 @@ async function loadRegionData() {
             updateRegion2Options(this.selectedOptions[0]?.getAttribute('data-code'));
         });
         
+        // business-types 데이터 로드
+        const businessResponse = await fetch('/data/business-types.json');
+        const businessData = await businessResponse.json();
+        
+        const businessSelect = document.getElementById('businessTypeSearch');
+        if (businessSelect) {
+            // 기존 옵션 제거 (첫 번째 '업종 선택' 옵션 제외)
+            while (businessSelect.options.length > 1) {
+                businessSelect.remove(1);
+            }
+            
+            // business-types.json에서 가져온 데이터로 옵션 추가
+            businessData.businessTypes.forEach(type => {
+                const option = new Option(type.name, type.name);
+                businessSelect.add(option);
+            });
+        }
+        
     } catch (error) {
-        console.error('지역 데이터 로드 오류:', error);
+        console.error('데이터 로드 오류:', error);
     }
 }
 
@@ -77,7 +95,7 @@ window.searchByLocation = function() {
 
 // DOM 로드 후 초기화
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadRegionData);
+    document.addEventListener('DOMContentLoaded', loadRegionAndBusinessData);
 } else {
-    loadRegionData();
+    loadRegionAndBusinessData();
 }
