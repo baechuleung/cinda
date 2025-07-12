@@ -22,6 +22,95 @@
     color: #666;
 }
 
+/* 베스트 글 섹션 */
+.best-posts-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.best-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #FF6666;
+    display: inline-block;
+}
+
+.best-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.best-post-card {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.best-post-card:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.best-rank {
+    width: 30px;
+    height: 30px;
+    background: #FF6666;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.best-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.best-post-title {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.best-post-title:hover {
+    color: #FF6666;
+}
+
+.best-post-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #666;
+}
+
+.best-author::after {
+    content: '|';
+    margin-left: 10px;
+    color: #ddd;
+}
+
 /* 필터 섹션 */
 .filter-section {
     display: flex;
@@ -87,7 +176,7 @@
 /* 게시판 테이블 */
 .board-list {
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     margin-bottom: 2rem;
@@ -100,7 +189,7 @@
 
 .board-table th {
     background: #f8f9fa;
-    padding: 1rem;
+    padding: 15px;
     text-align: center;
     font-size: 14px;
     font-weight: 600;
@@ -109,7 +198,7 @@
 }
 
 .board-table td {
-    padding: 1rem;
+    padding: 15px;
     text-align: center;
     border-bottom: 1px solid #f0f0f0;
     font-size: 14px;
@@ -211,6 +300,14 @@
         font-size: 24px;
     }
     
+    .best-posts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .best-post-card {
+        padding: 12px;
+    }
+    
     .filter-section {
         flex-direction: column;
         gap: 1rem;
@@ -231,7 +328,7 @@
     
     .board-table th,
     .board-table td {
-        padding: 0.75rem 0.5rem;
+        padding: 10px 5px;
         font-size: 13px;
     }
 }

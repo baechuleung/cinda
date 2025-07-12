@@ -47,60 +47,74 @@ function handleImageSelect(e) {
     // 최대 5개까지만 선택 가능
     if (selectedImages.length + files.length > 5) {
         alert('이미지는 최대 5개까지 첨부할 수 있습니다.');
+        e.target.value = '';
         return;
     }
     
-    // 파일 크기 체크
-    const validFiles = files.filter(file => {
-        if (file.size > 5 * 1024 * 1024) {
-            alert(`${file.name}은 5MB를 초과합니다.`);
-            return false;
-        }
-        return true;
-    });
+    // 파일 크기 체크 (각 파일 10MB 제한)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const oversizedFiles = files.filter(file => file.size > maxSize);
     
-    selectedImages = [...selectedImages, ...validFiles];
-    displayImagePreview();
+    if (oversizedFiles.length > 0) {
+        alert('10MB를 초과하는 파일이 있습니다.');
+        e.target.value = '';
+        return;
+    }
+    
+    // 이미지 파일만 허용
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length !== files.length) {
+        alert('이미지 파일만 업로드할 수 있습니다.');
+        e.target.value = '';
+        return;
+    }
+    
+    selectedImages = [...selectedImages, ...imageFiles];
+    displaySelectedImages();
 }
 
-// 이미지 미리보기 표시
-function displayImagePreview() {
+// 선택한 이미지 표시
+function displaySelectedImages() {
     const preview = document.getElementById('imagePreview');
-    preview.innerHTML = '';
     
-    selectedImages.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const previewItem = document.createElement('div');
-            previewItem.className = 'preview-item';
-            previewItem.innerHTML = `
-                <img src="${e.target.result}" alt="미리보기">
-                <button type="button" class="preview-remove" onclick="removeImage(${index})">×</button>
-            `;
-            preview.appendChild(previewItem);
-        };
-        reader.readAsDataURL(file);
-    });
+    if (selectedImages.length === 0) {
+        preview.innerHTML = '';
+        return;
+    }
+    
+    preview.innerHTML = `
+        <div class="image-preview-container">
+            ${selectedImages.map((image, index) => `
+                <div class="image-preview-item">
+                    <img src="${URL.createObjectURL(image)}" alt="미리보기">
+                    <button type="button" class="remove-image-btn" onclick="removeImage(${index})">×</button>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 // 이미지 제거
 window.removeImage = function(index) {
     selectedImages.splice(index, 1);
-    displayImagePreview();
+    displaySelectedImages();
     
     // 파일 입력 초기화
-    document.getElementById('images').value = '';
+    if (selectedImages.length === 0) {
+        document.getElementById('images').value = '';
+    }
 };
 
-// 폼 제출 처리
-document.getElementById('writeForm').addEventListener('submit', async (e) => {
+// 게시글 작성 폼 제출
+document.getElementById('postForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
     
     if (!title || !content) {
-        alert('제목과 내용을 입력해주세요.');
+        alert('제목과 내용을 모두 입력해주세요.');
         return;
     }
     
@@ -147,7 +161,7 @@ document.getElementById('writeForm').addEventListener('submit', async (e) => {
             authorId: currentUser.uid,
             authorName: authorName,
             images: imageUrls,
-            views: 0,
+            views: 0,  // 조회수 초기값 추가
             commentCount: 0,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
@@ -167,5 +181,12 @@ document.getElementById('writeForm').addEventListener('submit', async (e) => {
         const submitBtn = e.target.querySelector('.submit-btn');
         submitBtn.disabled = false;
         submitBtn.textContent = '등록';
+    }
+});
+
+// 취소 버튼
+document.querySelector('.cancel-btn').addEventListener('click', () => {
+    if (confirm('작성을 취소하시겠습니까?')) {
+        window.location.href = 'list.html';
     }
 });

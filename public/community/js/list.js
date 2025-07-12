@@ -7,6 +7,7 @@ let currentPage = 1;
 let lastDoc = null;
 let totalPosts = 0;
 let allPosts = [];
+let bestPosts = []; // 베스트 글 저장
 
 // 인증 상태 확인
 onAuthStateChanged(auth, async (user) => {
@@ -52,92 +53,123 @@ onAuthStateChanged(auth, async (user) => {
         }
     }
     
-    // 게시글 목록 로드 (로그인한 모든 사용자가 볼 수 있음)
+    // 베스트 글 로드
+    await loadBestPosts();
+    
+    // 게시글 목록 로드
     loadPosts();
 });
 
+// 베스트 글 로드
+async function loadBestPosts() {
+    try {
+        const q = query(
+            collection(db, 'community_posts'),
+            orderBy('views', 'desc'),
+            limit(5)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        bestPosts = [];
+        
+        querySnapshot.forEach((doc) => {
+            bestPosts.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        displayBestPosts();
+    } catch (error) {
+        console.error('베스트 글 로드 오류:', error);
+    }
+}
+
+// 베스트 글 표시
+function displayBestPosts() {
+    const bestSection = document.getElementById('bestPostsSection');
+    if (!bestSection) {
+        // 베스트 글 섹션 생성
+        const boardList = document.querySelector('.board-list');
+        const bestHTML = `
+            <div class="best-posts-section" id="bestPostsSection">
+                <h3 class="best-title">베스트 글</h3>
+                <div class="best-posts-grid" id="bestPostsGrid">
+                    <!-- 베스트 글이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        `;
+        boardList.insertAdjacentHTML('beforebegin', bestHTML);
+    }
+    
+    const bestGrid = document.getElementById('bestPostsGrid');
+    bestGrid.innerHTML = bestPosts.map((post, index) => `
+        <div class="best-post-card">
+            <div class="best-rank">${index + 1}</div>
+            <div class="best-content">
+                <a href="view.html?id=${post.id}" class="best-post-title">
+                    ${escapeHtml(post.title)}
+                </a>
+                <div class="best-post-info">
+                    <span class="best-author">${escapeHtml(post.authorName)}</span>
+                    <span class="best-views">조회 ${post.views || 0}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
 // 게시글 목록 로드
-async function loadPosts(searchType = '', searchKeyword = '') {
+async function loadPosts() {
     try {
         let q;
         
-        if (searchKeyword) {
-            // 검색 기능은 클라이언트 사이드에서 처리
-            q = query(
-                collection(db, 'community_posts'),
-                orderBy('createdAt', 'desc')
-            );
-        } else {
-            // 일반 목록 조회
+        if (currentPage === 1 || !lastDoc) {
+            // 첫 페이지
             q = query(
                 collection(db, 'community_posts'),
                 orderBy('createdAt', 'desc'),
                 limit(POSTS_PER_PAGE)
             );
-            
-            if (lastDoc && currentPage > 1) {
-                q = query(
-                    collection(db, 'community_posts'),
-                    orderBy('createdAt', 'desc'),
-                    startAfter(lastDoc),
-                    limit(POSTS_PER_PAGE)
-                );
-            }
+        } else {
+            // 다음 페이지
+            q = query(
+                collection(db, 'community_posts'),
+                orderBy('createdAt', 'desc'),
+                startAfter(lastDoc),
+                limit(POSTS_PER_PAGE)
+            );
         }
         
         const querySnapshot = await getDocs(q);
         
-        if (searchKeyword) {
-            // 검색 결과 필터링
-            allPosts = [];
-            querySnapshot.forEach((doc) => {
-                const post = { id: doc.id, ...doc.data() };
-                
-                let matches = false;
-                switch(searchType) {
-                    case 'title':
-                        matches = post.title.toLowerCase().includes(searchKeyword.toLowerCase());
-                        break;
-                    case 'content':
-                        matches = post.content.toLowerCase().includes(searchKeyword.toLowerCase());
-                        break;
-                    case 'author':
-                        matches = post.authorName.toLowerCase().includes(searchKeyword.toLowerCase());
-                        break;
-                    default: // 'all'
-                        matches = post.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                                 post.content.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-                                 post.authorName.toLowerCase().includes(searchKeyword.toLowerCase());
-                }
-                
-                if (matches) {
-                    allPosts.push(post);
-                }
+        if (querySnapshot.empty && currentPage > 1) {
+            currentPage--;
+            return;
+        }
+        
+        const posts = [];
+        querySnapshot.forEach((doc) => {
+            posts.push({
+                id: doc.id,
+                ...doc.data()
             });
-            
-            // 검색 결과 표시
-            displayPosts(allPosts.slice(0, POSTS_PER_PAGE));
-            displayPagination(Math.ceil(allPosts.length / POSTS_PER_PAGE));
-        } else {
-            // 일반 목록 표시
-            const posts = [];
-            querySnapshot.forEach((doc) => {
-                posts.push({ id: doc.id, ...doc.data() });
-            });
-            
-            if (querySnapshot.docs.length > 0) {
-                lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-            }
-            
-            displayPosts(posts);
-            
-            // 전체 게시글 수 계산 (첫 페이지일 때만)
-            if (currentPage === 1) {
-                const countQuery = query(collection(db, 'community_posts'));
-                const countSnapshot = await getDocs(countQuery);
-                totalPosts = countSnapshot.size;
-                displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
-            }
+        });
+        
+        allPosts = posts;
+        
+        if (posts.length > 0) {
+            lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+        }
+        
+        displayPosts(posts);
+        
+        // 전체 게시글 수 계산 (첫 페이지일 때만)
+        if (currentPage === 1) {
+            const countQuery = query(collection(db, 'community_posts'));
+            const countSnapshot = await getDocs(countQuery);
+            totalPosts = countSnapshot.size;
+            displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
         }
         
     } catch (error) {
@@ -229,13 +261,18 @@ function formatDate(timestamp) {
     const now = new Date();
     const diff = now - date;
     
-    // 오늘 작성된 글이면 시간만 표시
-    if (diff < 24 * 60 * 60 * 1000 && date.getDate() === now.getDate()) {
-        return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    // 24시간 이내면 시간으로 표시
+    if (diff < 24 * 60 * 60 * 1000) {
+        const hours = Math.floor(diff / (60 * 60 * 1000));
+        const minutes = Math.floor(diff / (60 * 1000));
+        
+        if (hours > 0) return `${hours}시간 전`;
+        if (minutes > 0) return `${minutes}분 전`;
+        return '방금 전';
     }
     
-    // 그 외에는 날짜 표시
-    return date.toLocaleDateString('ko-KR').replace(/\. /g, '.').replace(/\.$/, '');
+    // 그 외에는 날짜로 표시
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 // HTML 이스케이프
@@ -251,26 +288,70 @@ function escapeHtml(text) {
 }
 
 // 검색 기능
-document.getElementById('searchBtn').addEventListener('click', performSearch);
+document.getElementById('searchBtn').addEventListener('click', searchPosts);
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        performSearch();
+        searchPosts();
     }
 });
 
-function performSearch() {
+async function searchPosts() {
     const searchType = document.getElementById('searchType').value;
     const searchKeyword = document.getElementById('searchInput').value.trim();
     
     if (!searchKeyword) {
-        // 검색어가 없으면 전체 목록 표시
         currentPage = 1;
         lastDoc = null;
         loadPosts();
         return;
     }
     
-    currentPage = 1;
-    lastDoc = null;
-    loadPosts(searchType, searchKeyword);
+    try {
+        let q;
+        
+        if (searchType === 'title') {
+            // 제목 검색 (Firestore는 부분 검색이 제한적이므로 전체 데이터를 가져와서 필터링)
+            q = query(
+                collection(db, 'community_posts'),
+                orderBy('createdAt', 'desc')
+            );
+        } else if (searchType === 'author') {
+            // 작성자 검색
+            q = query(
+                collection(db, 'community_posts'),
+                where('authorName', '==', searchKeyword),
+                orderBy('createdAt', 'desc')
+            );
+        } else {
+            // 제목+내용 검색 (전체 데이터를 가져와서 필터링)
+            q = query(
+                collection(db, 'community_posts'),
+                orderBy('createdAt', 'desc')
+            );
+        }
+        
+        const querySnapshot = await getDocs(q);
+        
+        let searchResults = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            if (searchType === 'title' && data.title.includes(searchKeyword)) {
+                searchResults.push({ id: doc.id, ...data });
+            } else if (searchType === 'author') {
+                searchResults.push({ id: doc.id, ...data });
+            } else if (searchType === 'titleContent' && 
+                      (data.title.includes(searchKeyword) || data.content.includes(searchKeyword))) {
+                searchResults.push({ id: doc.id, ...data });
+            }
+        });
+        
+        totalPosts = searchResults.length;
+        displayPosts(searchResults.slice(0, POSTS_PER_PAGE));
+        displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
+        
+    } catch (error) {
+        console.error('검색 오류:', error);
+        alert('검색 중 오류가 발생했습니다.');
+    }
 }
