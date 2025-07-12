@@ -1,0 +1,264 @@
+/* 커뮤니티 컨테이너 */
+.community-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* 커뮤니티 헤더 */
+.community-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.community-header h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1;
+    max-width: 500px;
+}
+
+.search-select {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.search-btn {
+    padding: 0.75rem 1.5rem;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #555;
+}
+
+.write-btn {
+    padding: 0.75rem 1.5rem;
+    background: #FF6666;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.write-btn:hover {
+    background: #FF5555;
+}
+
+/* 게시판 테이블 */
+.board-list {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-table th {
+    background: #f8f9fa;
+    padding: 1rem;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.board-table td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.board-table tr:hover {
+    background: #f8f9fa;
+}
+
+/* 컬럼 너비 */
+.col-no {
+    width: 80px;
+}
+
+.col-title {
+    text-align: left !important;
+}
+
+.col-author {
+    width: 120px;
+}
+
+.col-date {
+    width: 120px;
+}
+
+.col-views {
+    width: 80px;
+}
+
+/* 제목 링크 */
+.post-title {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    transition: color 0.3s ease;
+}
+
+.post-title:hover {
+    color: #FF6666;
+}
+
+/* 댓글 수 */
+.comment-count {
+    color: #FF6666;
+    font-size: 12px;
+    margin-left: 0.5rem;
+}
+
+/* 데이터 없음 메시지 */
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+    font-size: 16px;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    background: white;
+    color: #666;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background: #f5f5f5;
+}
+
+.page-btn.active {
+    background: #FF6666;
+    color: white;
+    border-color: #FF6666;
+}
+
+.page-btn.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .community-container {
+        padding: 1rem;
+    }
+    
+    .community-header h1 {
+        font-size: 24px;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-box {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .board-list {
+        overflow-x: auto;
+    }
+    
+    .board-table {
+        min-width: 600px;
+    }
+    
+    .board-table th,
+    .board-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .community-header {
+        margin-bottom: 2rem;
+    }
+    
+    .search-box {
+        flex-wrap: wrap;
+    }
+    
+    .search-select {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: calc(70% - 0.25rem);
+    }
+    
+    .search-btn {
+        width: calc(30% - 0.25rem);
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .write-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

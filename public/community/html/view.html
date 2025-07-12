@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 - 신다 수다방</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="../css/view.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="community-container">
+        <!-- 게시글 내용 -->
+        <div class="post-container">
+            <div class="post-header">
+                <h1 id="postTitle">게시글 제목</h1>
+                <div class="post-info">
+                    <span class="author" id="postAuthor">작성자</span>
+                    <span class="date" id="postDate">2025-01-01</span>
+                    <span class="views" id="postViews">조회 0</span>
+                </div>
+            </div>
+            
+            <div class="post-content" id="postContent">
+                <!-- 게시글 내용이 표시됩니다 -->
+            </div>
+            
+            <div class="post-images" id="postImages">
+                <!-- 첨부 이미지가 표시됩니다 -->
+            </div>
+            
+            <div class="post-actions">
+                <button class="list-btn" onclick="location.href='list.html'">목록</button>
+                <div class="right-actions">
+                    <button class="edit-btn" id="editBtn" style="display: none;">수정</button>
+                    <button class="delete-btn" id="deleteBtn" style="display: none;">삭제</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 댓글 영역 -->
+        <div class="comment-container">
+            <h3>댓글 <span id="commentCount">0</span></h3>
+            
+            <div class="comment-write">
+                <textarea id="commentInput" placeholder="댓글을 입력하세요" rows="3"></textarea>
+                <button id="commentSubmit" class="comment-submit-btn">댓글 등록</button>
+            </div>
+            
+            <div class="comment-list" id="commentList">
+                <!-- 댓글이 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="../js/view.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드
+        loadHeader('header-container');
+    </script>
+</body>
+</html>
