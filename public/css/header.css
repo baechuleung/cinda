@@ -173,22 +173,22 @@ nav a.active {
 
 /* 관리자 메뉴 특별 스타일 */
 .admin-menu a {
-    color: #5368ff;
-    font-weight: 600;
+    color: #666;
+    font-weight: 500;
 }
 
 .admin-menu a:hover {
-    color: #4053e0;
+    color: #FF6666;
 }
 
 /* 광고관리 메뉴 특별 스타일 */
 .advertise-menu a {
-    color: #FF6666;
-    font-weight: 600;
+    color: #666;
+    font-weight: 500;
 }
 
 .advertise-menu a:hover {
-    color: #FF5555;
+    color: #FF6666;
 }
 
 /* 로그아웃 메뉴 스타일 */
@@ -307,12 +307,12 @@ nav a.active {
     
     /* 관리자 메뉴 모바일 스타일 */
     .admin-menu {
-        background-color: #f8f9fa;
+        background-color: transparent;
     }
     
     /* 광고관리 메뉴 모바일 스타일 */
     .advertise-menu {
-        background-color: #fff5f5;
+        background-color: transparent;
     }
     
     /* 로그아웃 메뉴 모바일 스타일 */
