@@ -224,7 +224,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             displayName: nickname
         });
         
-        // Firestore의 individual_users 컬렉션에 사용자 정보 저장
+// Firestore의 individual_users 컬렉션에 사용자 정보 저장
         await setDoc(doc(db, 'individual_users', user.uid), {
             uid: user.uid,
             email: email,
@@ -232,6 +232,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             name: name,
             birthdate: birthdate,
             phone: phone,
+            gender: 'female', // 개인회원 가입 페이지이므로 female로 설정
             userType: 'individual',
             marketingAgreed: document.getElementById('terms3').checked,
             createdAt: serverTimestamp(),

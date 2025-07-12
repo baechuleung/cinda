@@ -20,27 +20,47 @@ if (!postId) {
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     
+    if (!user) {
+        alert('로그인이 필요한 서비스입니다.');
+        window.location.href = '/auth/login.html';
+        return;
+    }
+    
+    // 상세보기 권한 확인
+    let hasViewPermission = false;
+    
+    // admin_users 확인
+    const adminDoc = await getDoc(doc(db, 'admin_users', user.uid));
+    if (adminDoc.exists()) {
+        hasViewPermission = true;
+    } else {
+        // individual_users의 gender 확인
+        const individualDoc = await getDoc(doc(db, 'individual_users', user.uid));
+        if (individualDoc.exists() && individualDoc.data().gender === 'female') {
+            hasViewPermission = true;
+        }
+    }
+    
+    if (!hasViewPermission) {
+        alert('게시글을 볼 수 있는 권한이 없습니다.');
+        window.location.href = 'list.html';
+        return;
+    }
+    
     // 게시글 로드
     await loadPost();
     
     // 댓글 로드 및 실시간 리스닝
     loadComments();
     
-    // 댓글 작성 버튼 이벤트
-    if (user) {
-        document.getElementById('commentSubmit').addEventListener('click', submitComment);
-        document.getElementById('commentInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                submitComment();
-            }
-        });
-    } else {
-        // 로그인하지 않은 경우 댓글 작성 비활성화
-        document.getElementById('commentInput').disabled = true;
-        document.getElementById('commentInput').placeholder = '로그인 후 댓글을 작성할 수 있습니다.';
-        document.getElementById('commentSubmit').disabled = true;
-    }
+    // 댓글 작성 버튼 이벤트 (권한이 있는 사용자만)
+    document.getElementById('commentSubmit').addEventListener('click', submitComment);
+    document.getElementById('commentInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitComment();
+        }
+    });
 });
 
 // 게시글 로드

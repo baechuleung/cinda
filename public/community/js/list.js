@@ -1,5 +1,5 @@
 import { auth, db } from '/js/firebase-config.js';
-import { collection, query, orderBy, limit, startAfter, getDocs, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, query, orderBy, limit, startAfter, getDocs, where, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 const POSTS_PER_PAGE = 15;
@@ -9,16 +9,50 @@ let totalPosts = 0;
 let allPosts = [];
 
 // 인증 상태 확인
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
+    const writeBtn = document.querySelector('.write-btn');
+    
     if (!user) {
-        // 로그인하지 않은 경우 글쓰기 버튼 숨기기
-        const writeBtn = document.querySelector('.write-btn');
+        // 로그인하지 않은 경우
+        alert('로그인이 필요한 서비스입니다.');
+        window.location.href = '/auth/login.html';
+        return;
+    } else {
+        // 글쓰기 권한 확인
+        let hasWritePermission = false;
+        
+        // admin_users 확인
+        try {
+            const adminDoc = await getDoc(doc(db, 'admin_users', user.uid));
+            if (adminDoc.exists()) {
+                hasWritePermission = true;
+            }
+        } catch (error) {
+            // 오류 무시
+        }
+        
+        // admin이 아닌 경우 individual_users 확인
+        if (!hasWritePermission) {
+            try {
+                const individualDoc = await getDoc(doc(db, 'individual_users', user.uid));
+                if (individualDoc.exists()) {
+                    const userData = individualDoc.data();
+                    if (userData.gender === 'female') {
+                        hasWritePermission = true;
+                    }
+                }
+            } catch (error) {
+                // 오류 무시
+            }
+        }
+        
+        // 권한에 따라 글쓰기 버튼 표시/숨김
         if (writeBtn) {
-            writeBtn.style.display = 'none';
+            writeBtn.style.display = hasWritePermission ? 'inline-block' : 'none';
         }
     }
     
-    // 게시글 목록 로드
+    // 게시글 목록 로드 (로그인한 모든 사용자가 볼 수 있음)
     loadPosts();
 });
 

@@ -15,6 +15,27 @@ onAuthStateChanged(auth, async (user) => {
     }
     
     currentUser = user;
+    
+    // 글쓰기 권한 확인
+    let hasWritePermission = false;
+    
+    // admin_users 확인
+    const adminDoc = await getDoc(doc(db, 'admin_users', user.uid));
+    if (adminDoc.exists()) {
+        hasWritePermission = true;
+    } else {
+        // individual_users의 gender 확인
+        const individualDoc = await getDoc(doc(db, 'individual_users', user.uid));
+        if (individualDoc.exists() && individualDoc.data().gender === 'female') {
+            hasWritePermission = true;
+        }
+    }
+    
+    if (!hasWritePermission) {
+        alert('글쓰기 권한이 없습니다.');
+        window.location.href = 'list.html';
+        return;
+    }
 });
 
 // 이미지 선택 처리
