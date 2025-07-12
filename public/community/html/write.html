@@ -28,6 +28,14 @@
         </div>
         
         <form id="writeForm" class="write-form">
+            <!-- 공지사항 체크박스 (관리자만 표시) -->
+            <div class="form-group notice-group" id="noticeGroup" style="display: none;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="isNotice">
+                    <span>공지사항으로 등록</span>
+                </label>
+            </div>
+            
             <div class="form-group">
                 <label for="title">제목 <span class="required">*</span></label>
                 <input type="text" id="title" placeholder="제목을 입력하세요" required>
@@ -41,7 +49,7 @@
             <div class="form-group">
                 <label for="images">이미지 첨부</label>
                 <input type="file" id="images" accept="image/*" multiple>
-                <div class="helper-text">최대 5개까지 첨부 가능 (각 5MB 이하)</div>
+                <div class="helper-text">최대 5개까지 첨부 가능 (각 10MB 이하)</div>
                 <div id="imagePreview" class="image-preview"></div>
             </div>
             

@@ -1,6 +1,6 @@
 /* 커뮤니티 컨테이너 */
 .community-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 2rem;
 }
@@ -8,15 +8,15 @@
 /* 게시글 컨테이너 */
 .post-container {
     background: white;
-    padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
     margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* 게시글 헤더 */
 .post-header {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
 }
@@ -30,20 +30,31 @@
 
 .post-info {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     font-size: 14px;
     color: #666;
 }
 
 .post-info span {
-    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.post-info span:not(:last-child)::after {
+.author {
+    font-weight: 500;
+    color: #333;
+}
+
+.date::before {
     content: '|';
-    position: absolute;
-    right: -0.5rem;
-    color: #e0e0e0;
+    margin-right: 1.5rem;
+    color: #ddd;
+}
+
+.views::before {
+    content: '|';
+    margin-right: 1.5rem;
+    color: #ddd;
 }
 
 /* 게시글 내용 */
@@ -65,54 +76,104 @@
 .post-images img {
     max-width: 100%;
     height: auto;
-    border-radius: 6px;
+    border-radius: 4px;
     margin-bottom: 1rem;
     display: block;
 }
 
-/* 게시글 액션 */
+/* 좋아요 반응 섹션 */
+.post-reactions {
+    display: flex;
+    gap: 12px;
+    margin: 24px 0;
+    padding: 20px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.reaction-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    color: #666;
+}
+
+.reaction-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reaction-icon {
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s ease;
+}
+
+.reaction-text {
+    font-weight: 500;
+}
+
+.reaction-count {
+    font-weight: 600;
+    padding: 2px 8px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
+/* 좋아요 버튼 */
+.like-btn:hover {
+    border-color: #FF6666;
+    color: #FF6666;
+}
+
+.like-btn:hover .reaction-icon {
+    fill: rgba(255, 102, 102, 0.2);
+}
+
+.like-btn.active {
+    background: #FF6666;
+    border-color: #FF6666;
+    color: white;
+}
+
+.like-btn.active .reaction-icon {
+    fill: white;
+}
+
+.like-btn.active .reaction-count {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 게시글 액션 버튼 */
 .post-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 1rem;
+    padding-top: 2rem;
     border-top: 1px solid #e0e0e0;
 }
 
-.list-btn,
-.edit-btn,
-.delete-btn {
-    padding: 0.5rem 1.5rem;
-    border: 1px solid #e0e0e0;
-    background: white;
+.list-btn {
+    padding: 0.75rem 1.5rem;
+    background: #666;
+    color: white;
+    border: none;
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 .list-btn:hover {
-    background: #f5f5f5;
-}
-
-.edit-btn {
-    background: #666;
-    color: white;
-    border-color: #666;
-}
-
-.edit-btn:hover {
     background: #555;
-}
-
-.delete-btn {
-    background: #FF6666;
-    color: white;
-    border-color: #FF6666;
-}
-
-.delete-btn:hover {
-    background: #FF5555;
 }
 
 .right-actions {
@@ -120,11 +181,37 @@
     gap: 0.5rem;
 }
 
-/* 댓글 컨테이너 */
+.edit-btn,
+.delete-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #e0e0e0;
+    background: white;
+    color: #666;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+    background: #f5f5f5;
+}
+
+.delete-btn {
+    color: #ff4444;
+    border-color: #ff4444;
+}
+
+.delete-btn:hover {
+    background: #ff4444;
+    color: white;
+}
+
+/* 댓글 영역 */
 .comment-container {
     background: white;
-    padding: 2rem;
     border-radius: 8px;
+    padding: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -136,7 +223,7 @@
 
 #commentCount {
     color: #FF6666;
-    font-size: 16px;
+    font-weight: normal;
 }
 
 /* 댓글 작성 */
@@ -148,13 +235,13 @@
 
 #commentInput {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
     resize: vertical;
-    min-height: 80px;
     margin-bottom: 1rem;
+    font-family: inherit;
 }
 
 #commentInput:focus {
@@ -163,8 +250,7 @@
 }
 
 .comment-submit-btn {
-    float: right;
-    padding: 0.5rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     background: #FF6666;
     color: white;
     border: none;
@@ -180,7 +266,8 @@
 
 /* 댓글 리스트 */
 .comment-list {
-    clear: both;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .comment-item {
@@ -210,23 +297,11 @@
     color: #999;
 }
 
-.comment-content {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #666;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.comment-actions {
-    margin-top: 0.5rem;
-}
-
 .comment-delete-btn {
     padding: 0.25rem 0.75rem;
     background: none;
-    color: #999;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #ff4444;
+    color: #ff4444;
     border-radius: 4px;
     font-size: 12px;
     cursor: pointer;
@@ -234,8 +309,23 @@
 }
 
 .comment-delete-btn:hover {
-    color: #FF6666;
-    border-color: #FF6666;
+    background: #ff4444;
+    color: white;
+}
+
+.comment-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.no-comments {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 14px;
 }
 
 /* 반응형 */
@@ -255,37 +345,52 @@
     
     .post-info {
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 1rem;
     }
     
-    .post-info span::after {
+    .date::before,
+    .views::before {
         display: none;
     }
     
     .post-content {
         font-size: 15px;
     }
-}
-
-@media (max-width: 480px) {
-    .post-container,
-    .comment-container {
-        padding: 1rem;
-    }
     
     .post-actions {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
     }
     
-    .list-btn,
     .right-actions {
         width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .post-reactions {
+        flex-direction: column;
+        gap: 8px;
     }
     
-    .right-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+    .reaction-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .post-header h1 {
+        font-size: 18px;
+    }
+    
+    .post-info {
+        font-size: 13px;
+    }
+    
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
     
     .comment-submit-btn {

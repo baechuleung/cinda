@@ -14,10 +14,10 @@ onAuthStateChanged(auth, async (user) => {
     const writeBtn = document.querySelector('.write-btn');
     
     if (!user) {
-        // 로그인하지 않은 경우
-        alert('로그인이 필요한 서비스입니다.');
-        window.location.href = '/auth/login.html';
-        return;
+        // 로그인하지 않은 경우에도 리스트는 볼 수 있음
+        if (writeBtn) {
+            writeBtn.style.display = 'none';
+        }
     } else {
         // 글쓰기 권한 확인
         let hasWritePermission = false;
@@ -53,6 +53,9 @@ onAuthStateChanged(auth, async (user) => {
         }
     }
     
+    // 공지사항 로드
+    await loadNoticePosts();
+    
     // 베스트 글 로드
     await loadBestPosts();
     
@@ -63,25 +66,32 @@ onAuthStateChanged(auth, async (user) => {
 // 베스트 글 로드
 async function loadBestPosts() {
     try {
+        // 모든 게시글을 가져와서 코드에서 필터링
         const q = query(
-            collection(db, 'community_posts'),
-            orderBy('views', 'desc'),
-            limit(5)
+            collection(db, 'community_posts')
         );
         
         const querySnapshot = await getDocs(q);
-        bestPosts = [];
+        const allPostsForBest = [];
         
         querySnapshot.forEach((doc) => {
-            bestPosts.push({
+            allPostsForBest.push({
                 id: doc.id,
                 ...doc.data()
             });
         });
         
+        // 공지사항 제외하고 조회수 순으로 정렬
+        bestPosts = allPostsForBest
+            .filter(post => !post.isNotice)
+            .sort((a, b) => (b.views || 0) - (a.views || 0))
+            .slice(0, 5);
+        
         displayBestPosts();
     } catch (error) {
         console.error('베스트 글 로드 오류:', error);
+        bestPosts = [];
+        displayBestPosts();
     }
 }
 
@@ -104,12 +114,12 @@ function displayBestPosts() {
     
     const bestGrid = document.getElementById('bestPostsGrid');
     bestGrid.innerHTML = bestPosts.map((post, index) => `
-        <div class="best-post-card">
+        <div class="best-post-card" onclick="location.href='view.html?id=${post.id}'">
             <div class="best-rank">${index + 1}</div>
             <div class="best-content">
-                <a href="view.html?id=${post.id}" class="best-post-title">
+                <span class="best-post-title">
                     ${escapeHtml(post.title)}
-                </a>
+                </span>
                 <div class="best-post-info">
                     <span class="best-author">${escapeHtml(post.authorName)}</span>
                     <span class="best-views">조회 ${post.views || 0}</span>
@@ -122,62 +132,64 @@ function displayBestPosts() {
 // 게시글 목록 로드
 async function loadPosts() {
     try {
-        let q;
-        
-        if (currentPage === 1 || !lastDoc) {
-            // 첫 페이지
-            q = query(
-                collection(db, 'community_posts'),
-                orderBy('createdAt', 'desc'),
-                limit(POSTS_PER_PAGE)
-            );
-        } else {
-            // 다음 페이지
-            q = query(
-                collection(db, 'community_posts'),
-                orderBy('createdAt', 'desc'),
-                startAfter(lastDoc),
-                limit(POSTS_PER_PAGE)
-            );
-        }
+        // 전체 게시글을 가져와서 코드에서 정렬
+        const q = query(
+            collection(db, 'community_posts')
+        );
         
         const querySnapshot = await getDocs(q);
         
-        if (querySnapshot.empty && currentPage > 1) {
-            currentPage--;
-            return;
-        }
-        
-        const posts = [];
+        const allPostsData = [];
         querySnapshot.forEach((doc) => {
-            posts.push({
+            allPostsData.push({
                 id: doc.id,
                 ...doc.data()
             });
         });
         
-        allPosts = posts;
+        // 공지사항과 일반 게시글 분리
+        const noticePosts = allPostsData.filter(post => post.isNotice);
+        const normalPosts = allPostsData.filter(post => !post.isNotice);
         
-        if (posts.length > 0) {
-            lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-        }
+        // 각각 날짜순 정렬
+        noticePosts.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+            const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+            return bTime - aTime;
+        });
+        
+        normalPosts.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+            const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+            return bTime - aTime;
+        });
+        
+        // 페이지네이션은 일반 게시글에만 적용
+        totalPosts = normalPosts.length;
+        const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+        const endIndex = startIndex + POSTS_PER_PAGE;
+        const paginatedNormalPosts = normalPosts.slice(startIndex, endIndex);
+        
+        // 공지사항은 항상 상단에 표시, 일반 게시글은 페이지네이션 적용
+        const posts = [...noticePosts, ...paginatedNormalPosts];
+        
+        allPosts = posts;
         
         displayPosts(posts);
         
         // 전체 게시글 수 계산 (첫 페이지일 때만)
         if (currentPage === 1) {
-            const countQuery = query(collection(db, 'community_posts'));
-            const countSnapshot = await getDocs(countQuery);
-            totalPosts = countSnapshot.size;
             displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
         }
         
     } catch (error) {
         console.error('게시글 로드 오류:', error);
+        allPosts = [];
+        displayPosts([]);
     }
 }
 
-// 게시글 목록 표시
+// 게시글 목록 표시 (카드 형태로 변경)
 function displayPosts(posts) {
     const postList = document.getElementById('postList');
     const noDataMessage = document.getElementById('noDataMessage');
@@ -190,23 +202,69 @@ function displayPosts(posts) {
     
     noDataMessage.style.display = 'none';
     
-    postList.innerHTML = posts.map((post, index) => {
-        const postNumber = totalPosts - ((currentPage - 1) * POSTS_PER_PAGE) - index;
+    // 공지사항 분리
+    const noticePosts = posts.filter(post => post.isNotice);
+    const normalPosts = posts.filter(post => !post.isNotice);
+    
+    // 공지사항 먼저, 그 다음 일반 게시글
+    const sortedPosts = [...noticePosts, ...normalPosts];
+    
+    // 번호 계산을 위한 인덱스
+    let normalPostIndex = 0;
+    
+    postList.innerHTML = sortedPosts.map((post) => {
+        let postNumber;
+        if (post.isNotice) {
+            postNumber = '<span style="background:#FF6666;color:white;padding:2px 8px;border-radius:12px;font-size:12px;">공지</span>';
+        } else {
+            postNumber = `No.${totalPosts - ((currentPage - 1) * POSTS_PER_PAGE) - normalPostIndex}`;
+            normalPostIndex++;
+        }
+        
         const commentCount = post.commentCount || 0;
+        const likeCount = post.likeCount || 0;
+        const postDate = formatDate(post.createdAt);
         
         return `
-            <tr>
-                <td>${postNumber}</td>
-                <td>
-                    <a href="view.html?id=${post.id}" class="post-title">
+            <div class="post-card ${post.isNotice ? 'notice-card' : ''}" onclick="location.href='view.html?id=${post.id}'">
+                <div class="post-card-header">
+                    <span class="post-number">${postNumber}</span>
+                    <span class="post-meta">
+                        <span class="post-author">${escapeHtml(post.authorName)}</span>
+                        <span class="post-date">${postDate}</span>
+                    </span>
+                </div>
+                <div class="post-card-body">
+                    <h4 class="post-card-title">
                         ${escapeHtml(post.title)}
                         ${commentCount > 0 ? `<span class="comment-count">[${commentCount}]</span>` : ''}
-                    </a>
-                </td>
-                <td>${escapeHtml(post.authorName)}</td>
-                <td>${formatDate(post.createdAt)}</td>
-                <td>${post.views || 0}</td>
-            </tr>
+                    </h4>
+                    <p class="post-preview">${escapeHtml(post.content).substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                </div>
+                <div class="post-card-footer">
+                    <span class="post-stats">
+                        <span class="stat-item">
+                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            ${post.views || 0}
+                        </span>
+                        <span class="stat-item">
+                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            ${commentCount}
+                        </span>
+                        <span class="stat-item">
+                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            ${likeCount}
+                        </span>
+                    </span>
+                </div>
+            </div>
         `;
     }).join('');
 }
@@ -246,9 +304,6 @@ function displayPagination(totalPages) {
 // 페이지 이동
 window.goToPage = function(page) {
     currentPage = page;
-    if (page === 1) {
-        lastDoc = null;
-    }
     loadPosts();
     window.scrollTo(0, 0);
 };

@@ -1,5 +1,5 @@
 import { auth, db } from '/js/firebase-config.js';
-import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, setDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc, updateDoc, deleteDoc, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, setDoc, increment, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 let currentUser = null;
@@ -154,6 +154,9 @@ function displayPost() {
             `<img src="${url}" alt="첨부 이미지">`
         ).join('');
     }
+    
+    // 좋아요/싫어요 표시
+    displayReactions();
 }
 
 // 게시글 삭제
@@ -346,3 +349,62 @@ window.addEventListener('beforeunload', () => {
         commentsUnsubscribe();
     }
 });
+
+// 좋아요 표시
+async function displayReactions() {
+    const likeCount = postData.likeCount || 0;
+    
+    document.getElementById('likeCount').textContent = likeCount;
+    
+    // 현재 사용자의 반응 확인
+    if (currentUser) {
+        const reactionDoc = await getDoc(doc(db, 'post_reactions', `${postId}_${currentUser.uid}`));
+        if (reactionDoc.exists()) {
+            const reaction = reactionDoc.data();
+            if (reaction.type === 'like') {
+                document.getElementById('likeBtn').classList.add('active');
+            }
+        } else {
+            document.getElementById('likeBtn').classList.remove('active');
+        }
+    }
+}
+
+// 좋아요 처리
+window.handleLike = async function() {
+    if (!currentUser) {
+        alert('로그인이 필요합니다.');
+        return;
+    }
+    
+    try {
+        const reactionId = `${postId}_${currentUser.uid}`;
+        const reactionDoc = await getDoc(doc(db, 'post_reactions', reactionId));
+        
+        if (reactionDoc.exists()) {
+            // 이미 좋아요한 경우 - 취소
+            await deleteDoc(doc(db, 'post_reactions', reactionId));
+            await updateDoc(doc(db, 'community_posts', postId), {
+                likeCount: increment(-1)
+            });
+            postData.likeCount = (postData.likeCount || 1) - 1;
+        } else {
+            // 새로운 좋아요
+            await setDoc(doc(db, 'post_reactions', reactionId), {
+                postId: postId,
+                userId: currentUser.uid,
+                type: 'like',
+                createdAt: serverTimestamp()
+            });
+            await updateDoc(doc(db, 'community_posts', postId), {
+                likeCount: increment(1)
+            });
+            postData.likeCount = (postData.likeCount || 0) + 1;
+        }
+        
+        displayReactions();
+    } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+        alert('처리 중 오류가 발생했습니다.');
+    }
+};

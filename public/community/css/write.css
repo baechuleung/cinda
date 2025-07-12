@@ -69,6 +69,33 @@
     line-height: 1.6;
 }
 
+/* 공지사항 체크박스 그룹 */
+.notice-group {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-weight: 500;
+}
+
 /* 파일 업로드 */
 .form-group input[type="file"] {
     display: block;
@@ -88,13 +115,16 @@
 
 /* 이미지 미리보기 */
 .image-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
     margin-top: 1rem;
 }
 
-.preview-item {
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.image-preview-item {
     position: relative;
     width: 150px;
     height: 150px;
@@ -103,13 +133,13 @@
     overflow: hidden;
 }
 
-.preview-item img {
+.image-preview-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.preview-remove {
+.remove-image-btn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -127,32 +157,34 @@
     line-height: 1;
 }
 
-.preview-remove:hover {
+.remove-image-btn:hover {
     background: rgba(0, 0, 0, 0.9);
 }
 
 /* 폼 액션 */
 .form-actions {
     display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
 }
 
 .cancel-btn,
 .submit-btn {
     padding: 0.75rem 2rem;
-    border: none;
     border-radius: 6px;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .cancel-btn {
     background: white;
-    color: #666;
     border: 1px solid #e0e0e0;
+    color: #666;
 }
 
 .cancel-btn:hover {
@@ -161,6 +193,7 @@
 
 .submit-btn {
     background: #FF6666;
+    border: none;
     color: white;
 }
 
@@ -168,14 +201,15 @@
     background: #FF5555;
 }
 
+.submit-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .community-container {
         padding: 1rem;
-    }
-    
-    .write-header h1 {
-        font-size: 24px;
     }
     
     .write-form {
@@ -186,23 +220,24 @@
         min-height: 200px;
     }
     
-    .image-preview {
+    .image-preview-container {
         gap: 0.5rem;
     }
     
-    .preview-item {
+    .image-preview-item {
         width: 100px;
         height: 100px;
     }
 }
 
 @media (max-width: 480px) {
-    .write-form {
-        padding: 1rem;
+    .write-header h1 {
+        font-size: 24px;
     }
     
     .form-actions {
-        flex-direction: column;
+        flex-direction: column-reverse;
+        gap: 1rem;
     }
     
     .cancel-btn,

@@ -5,6 +5,7 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/fi
 
 let currentUser = null;
 let selectedImages = [];
+let isAdmin = false;
 
 // 인증 상태 확인
 onAuthStateChanged(auth, async (user) => {
@@ -23,6 +24,9 @@ onAuthStateChanged(auth, async (user) => {
     const adminDoc = await getDoc(doc(db, 'admin_users', user.uid));
     if (adminDoc.exists()) {
         hasWritePermission = true;
+        isAdmin = true;
+        // 관리자인 경우 공지사항 체크박스 표시
+        document.getElementById('noticeGroup').style.display = 'block';
     } else {
         // individual_users의 gender 확인
         const individualDoc = await getDoc(doc(db, 'individual_users', user.uid));
@@ -107,11 +111,12 @@ window.removeImage = function(index) {
 };
 
 // 게시글 작성 폼 제출
-document.getElementById('postForm').addEventListener('submit', async (e) => {
+document.getElementById('writeForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
+    const isNotice = isAdmin && document.getElementById('isNotice').checked;
     
     if (!title || !content) {
         alert('제목과 내용을 모두 입력해주세요.');
@@ -162,7 +167,9 @@ document.getElementById('postForm').addEventListener('submit', async (e) => {
             authorName: authorName,
             images: imageUrls,
             views: 0,  // 조회수 초기값 추가
+            likeCount: 0,  // 좋아요 초기값 추가
             commentCount: 0,
+            isNotice: isNotice,  // 공지사항 여부 추가
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         };
