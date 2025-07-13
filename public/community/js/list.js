@@ -1,3 +1,6 @@
+// 파일 경로: /community/list.js
+// 파일 이름: list.js
+
 import { auth, db } from '/js/firebase-config.js';
 import { collection, query, orderBy, limit, startAfter, getDocs, where, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -62,6 +65,41 @@ onAuthStateChanged(auth, async (user) => {
     // 게시글 목록 로드
     loadPosts();
 });
+
+// 공지사항 로드 함수 추가
+async function loadNoticePosts() {
+    try {
+        // 복합 인덱스를 피하기 위해 모든 게시글을 가져온 후 필터링
+        const q = query(
+            collection(db, 'community_posts')
+        );
+        
+        const querySnapshot = await getDocs(q);
+        const notices = [];
+        
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.isNotice === true) {
+                notices.push({
+                    id: doc.id,
+                    ...data
+                });
+            }
+        });
+        
+        // 날짜순 정렬
+        notices.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+            const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+            return bTime - aTime;
+        });
+        
+        // 공지사항은 loadPosts에서 처리하므로 여기서는 별도 처리 없음
+        console.log(`공지사항 ${notices.length}개 로드됨`);
+    } catch (error) {
+        console.error('공지사항 로드 오류:', error);
+    }
+}
 
 // 베스트 글 로드
 async function loadBestPosts() {
@@ -177,10 +215,8 @@ async function loadPosts() {
         
         displayPosts(posts);
         
-        // 전체 게시글 수 계산 (첫 페이지일 때만)
-        if (currentPage === 1) {
-            displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
-        }
+        // 전체 페이지 수 계산하여 페이지네이션 표시
+        displayPagination(Math.ceil(totalPosts / POSTS_PER_PAGE));
         
     } catch (error) {
         console.error('게시글 로드 오류:', error);
@@ -189,7 +225,7 @@ async function loadPosts() {
     }
 }
 
-// 게시글 목록 표시 (카드 형태로 변경)
+// 게시글 목록 표시 (테이블 형태)
 function displayPosts(posts) {
     const postList = document.getElementById('postList');
     const noDataMessage = document.getElementById('noDataMessage');
@@ -215,9 +251,9 @@ function displayPosts(posts) {
     postList.innerHTML = sortedPosts.map((post) => {
         let postNumber;
         if (post.isNotice) {
-            postNumber = '<span style="background:#FF6666;color:white;padding:2px 8px;border-radius:12px;font-size:12px;">공지</span>';
+            postNumber = '<span class="notice-badge">공지</span>';
         } else {
-            postNumber = `No.${totalPosts - ((currentPage - 1) * POSTS_PER_PAGE) - normalPostIndex}`;
+            postNumber = totalPosts - ((currentPage - 1) * POSTS_PER_PAGE) - normalPostIndex;
             normalPostIndex++;
         }
         
@@ -226,45 +262,51 @@ function displayPosts(posts) {
         const postDate = formatDate(post.createdAt);
         
         return `
-            <div class="post-card ${post.isNotice ? 'notice-card' : ''}" onclick="location.href='view.html?id=${post.id}'">
-                <div class="post-card-header">
-                    <span class="post-number">${postNumber}</span>
-                    <span class="post-meta">
-                        <span class="post-author">${escapeHtml(post.authorName)}</span>
-                        <span class="post-date">${postDate}</span>
-                    </span>
-                </div>
-                <div class="post-card-body">
-                    <h4 class="post-card-title">
+            <tr class="${post.isNotice ? 'notice-row' : ''}" onclick="location.href='view.html?id=${post.id}'" style="cursor: pointer;">
+                <td class="col-no">${postNumber}</td>
+                <td class="col-title">
+                    <span class="post-title">
                         ${escapeHtml(post.title)}
                         ${commentCount > 0 ? `<span class="comment-count">[${commentCount}]</span>` : ''}
-                    </h4>
-                    <p class="post-preview">${escapeHtml(post.content).substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
-                </div>
-                <div class="post-card-footer">
-                    <span class="post-stats">
-                        <span class="stat-item">
-                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    </span>
+                    <!-- 모바일용 정보 -->
+                    <div class="mobile-info">
+                        <span class="mobile-author">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            ${escapeHtml(post.authorName)}
+                        </span>
+                        <span class="mobile-date">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ${postDate}
+                        </span>
+                        <span class="mobile-views">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                             ${post.views || 0}
                         </span>
-                        <span class="stat-item">
-                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            ${commentCount}
-                        </span>
-                        <span class="stat-item">
-                            <svg class="stat-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <span class="mobile-likes">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                             </svg>
                             ${likeCount}
                         </span>
-                    </span>
-                </div>
-            </div>
+                    </div>
+                </td>
+                <td class="col-author desktop-only">${escapeHtml(post.authorName)}</td>
+                <td class="col-date desktop-only">${postDate}</td>
+                <td class="col-views desktop-only">${post.views || 0}</td>
+                <td class="col-likes desktop-only">${likeCount}</td>
+            </tr>
         `;
     }).join('');
 }
@@ -273,7 +315,8 @@ function displayPosts(posts) {
 function displayPagination(totalPages) {
     const pagination = document.getElementById('pagination');
     
-    if (totalPages <= 1) {
+    // 페이지가 1개여도 페이지네이션 표시
+    if (totalPages === 0) {
         pagination.innerHTML = '';
         return;
     }
