@@ -26,14 +26,14 @@
         <div class="advertise-header">
             <div>
                 <h1>광고신청</h1>
-                <p class="subtitle">CINDA 광고 배너를 통해 더 많은 고객에게 다가가세요</p>
+                <p class="subtitle">CINDA 광고 배너를 통해 더 많은 고객에게 다아가세요</p>
             </div>
         </div>
         
         <div class="advertise-content">
-            <!-- 광고 옵션 섹션 -->
+            <!-- 광고 섹션 -->
             <div class="ad-options-section">
-                <h2>광고 옵션</h2>
+                <h2 style="color: #353535; font-size: 20px; font-weight: 700;">신다 일반 광고 및 제휴서비스 입점</h2>
                 <div class="ad-options-grid">
                     <div class="ad-option-card" data-type="top">
                         <div class="option-header">
@@ -45,6 +45,19 @@
                         <button class="detail-btn" onclick="showDetail('top')">설명보기</button>
                     </div>
                     
+                    <div class="ad-option-card" data-type="inquiry">
+                        <div class="option-header">
+                            <h3>실시간현황판</h3>
+                            <span class="price">월 300,000원</span>
+                        </div>
+                        <div class="limit-badge">제한 없음</div>
+                        <button class="select-btn" onclick="selectOption('inquiry')">선택하기</button>
+                        <button class="detail-btn" onclick="showDetail('inquiry')">설명보기</button>
+                    </div>
+                </div>
+                
+                <h2 style="color: #353535; font-size: 20px; font-weight: 700; margin-top: 3rem;">신다 채용관 광고</h2>
+                <div class="ad-options-grid">
                     <div class="ad-option-card" data-type="vip">
                         <div class="option-header">
                             <h3>VIP 채용관</h3>
@@ -74,16 +87,6 @@
                         <button class="select-btn" onclick="selectOption('basic')">선택하기</button>
                         <button class="detail-btn" onclick="showDetail('basic')">설명보기</button>
                     </div>
-                    
-                    <div class="ad-option-card" data-type="inquiry">
-                        <div class="option-header">
-                            <h3>실시간현황판</h3>
-                            <span class="price">월 300,000원</span>
-                        </div>
-                        <div class="limit-badge">제한 없음</div>
-                        <button class="select-btn" onclick="selectOption('inquiry')">선택하기</button>
-                        <button class="detail-btn" onclick="showDetail('inquiry')">설명보기</button>
-                    </div>
                 </div>
                 
                 <!-- 추가 비용 안내 -->
@@ -105,43 +108,10 @@
             <!-- 광고신청 폼 -->
             <div class="ad-form-section">
                 <h2>광고신청서</h2>
-                <form id="advertiseForm" class="advertise-form">
+                <form id="advertiseForm">
                     <div class="form-group">
-                        <label for="adType">선택한 광고 유형</label>
-                        <input type="text" id="adType" readonly placeholder="광고 유형을 선택해주세요">
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="businessName">업체명 <span class="required">*</span></label>
-                            <input type="text" id="businessName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contactName">담당자명 <span class="required">*</span></label>
-                            <input type="text" id="contactName" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="contactPhone">연락처 <span class="required">*</span></label>
-                            <input type="tel" id="contactPhone" placeholder="010-0000-0000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contactEmail">이메일 <span class="required">*</span></label>
-                            <input type="email" id="contactEmail" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="adContent">광고 내용 <span class="required">*</span></label>
-                        <textarea id="adContent" rows="4" placeholder="광고하실 내용을 간단히 작성해주세요" required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="adImage">광고 이미지 업로드</label>
-                        <input type="file" id="adImage" accept="image/*">
-                        <div class="helper-text">권장 사이즈: 1200x300px, 최대 5MB</div>
+                        <label for="selectedAdType">선택한 광고 유형</label>
+                        <input type="text" id="selectedAdType" readonly placeholder="위에서 광고를 선택해주세요">
                     </div>
                     
                     <div class="form-row">
@@ -251,82 +221,154 @@
         const adDetails = {
             top: {
                 title: 'Top 광고',
-                features: [
-                    '메인 페이지 최상단 노출',
-                    '640px x 160px 배너',
-                    '최고 시인성 보장',
-                    '클릭 통계 제공'
-                ]
+                content: `
+                    <div class="detail-content">
+                        <h3>Top 광고 특징</h3>
+                        <ul>
+                            <li>메인 페이지 최상단 프리미엄 위치 노출</li>
+                            <li>모든 방문자에게 즉시 노출</li>
+                            <li>최대 클릭률 보장</li>
+                            <li>선착순 10개 업체만 가능</li>
+                        </ul>
+                        <h3>추천 대상</h3>
+                        <ul>
+                            <li>브랜드 인지도를 높이고 싶은 업체</li>
+                            <li>신규 서비스 런칭</li>
+                            <li>대규모 이벤트 홍보</li>
+                        </ul>
+                    </div>
+                `
             },
             vip: {
                 title: 'VIP 채용관',
-                features: [
-                    '채용 페이지 VIP 영역',
-                    '우선 노출 순서',
-                    '특별 VIP 배지',
-                    '강조된 디자인'
-                ]
+                content: `
+                    <div class="detail-content">
+                        <h3>VIP 채용관 특징</h3>
+                        <ul>
+                            <li>채용 페이지 최상단 VIP 영역 노출</li>
+                            <li>강조 디자인으로 시선 집중</li>
+                            <li>구직자 관심도 극대화</li>
+                            <li>선착순 40개 업체 한정</li>
+                        </ul>
+                        <h3>추천 대상</h3>
+                        <ul>
+                            <li>우수 인재 채용이 시급한 기업</li>
+                            <li>대규모 채용을 진행하는 업체</li>
+                            <li>브랜드 이미지가 중요한 기업</li>
+                        </ul>
+                    </div>
+                `
             },
             premium: {
                 title: 'Premium 채용관',
-                features: [
-                    '채용 페이지 Premium 영역',
-                    '일반보다 상위 노출',
-                    'Premium 배지',
-                    '향상된 가독성'
-                ]
+                content: `
+                    <div class="detail-content">
+                        <h3>Premium 채용관 특징</h3>
+                        <ul>
+                            <li>채용 페이지 Premium 영역 노출</li>
+                            <li>안정적인 노출 위치</li>
+                            <li>합리적인 가격대</li>
+                            <li>선착순 120개 업체</li>
+                        </ul>
+                        <h3>추천 대상</h3>
+                        <ul>
+                            <li>지속적인 채용을 진행하는 업체</li>
+                            <li>특정 직무 채용에 집중하는 기업</li>
+                            <li>비용 대비 효과를 중시하는 업체</li>
+                        </ul>
+                    </div>
+                `
             },
             basic: {
                 title: 'Basic 채용관',
-                features: [
-                    '채용 페이지 Basic 영역',
-                    '기본 노출 순서',
-                    '표준 디자인',
-                    '합리적인 가격'
-                ]
+                content: `
+                    <div class="detail-content">
+                        <h3>Basic 채용관 특징</h3>
+                        <ul>
+                            <li>채용 페이지 Basic 영역 노출</li>
+                            <li>부담없는 가격으로 시작</li>
+                            <li>기본적인 채용 홍보 효과</li>
+                            <li>수량 제한 없음</li>
+                        </ul>
+                        <h3>추천 대상</h3>
+                        <ul>
+                            <li>소규모 채용을 진행하는 업체</li>
+                            <li>처음 온라인 채용을 시도하는 기업</li>
+                            <li>예산이 제한적인 스타트업</li>
+                        </ul>
+                    </div>
+                `
             },
             inquiry: {
                 title: '실시간현황판',
-                features: [
-                    '실시간 현황판 출근하기 버튼',
-                    '1구좌당 월 30만원',
-                    '직접적인 고객 유입',
-                    '실시간 문의 연결'
-                ]
+                content: `
+                    <div class="detail-content">
+                        <h3>실시간현황판 특징</h3>
+                        <ul>
+                            <li>실시간 현황판 출근하기 버튼 영역</li>
+                            <li>즉각적인 액션 유도</li>
+                            <li>실시간 반응 확인 가능</li>
+                            <li>수량 제한 없음</li>
+                        </ul>
+                        <h3>추천 대상</h3>
+                        <ul>
+                            <li>즉시 출근 가능한 인력이 필요한 업체</li>
+                            <li>일용직/단기 알바 모집</li>
+                            <li>긴급 인력 충원이 필요한 기업</li>
+                        </ul>
+                    </div>
+                `
             }
         };
         
-        // 설명 보기 함수
-        function showDetail(type) {
-            const modal = document.getElementById('detailModal');
+        // 광고 옵션 선택
+        window.selectOption = (type) => {
+            // 기존 선택 제거
+            document.querySelectorAll('.ad-option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 새로운 선택 추가
+            document.querySelector(`[data-type="${type}"]`).classList.add('selected');
+            
+            // 선택된 광고 유형 표시
+            const adNames = {
+                top: 'Top 광고',
+                vip: 'VIP 채용관',
+                premium: 'Premium 채용관',
+                basic: 'Basic 채용관',
+                inquiry: '실시간현황판'
+            };
+            
+            document.getElementById('selectedAdType').value = adNames[type];
+            
+            // 전역 변수에 저장
+            window.selectedAdType = type;
+            
+            // 금액 업데이트
+            updateTotalAmount();
+        };
+        
+        // 상세 설명 보기
+        window.showDetail = (type) => {
             const detail = adDetails[type];
-            
             document.getElementById('modalTitle').textContent = detail.title;
-            document.getElementById('modalContent').innerHTML = `
-                <ul class="modal-features">
-                    ${detail.features.map(feature => `<li>${feature}</li>`).join('')}
-                </ul>
-            `;
-            
-            modal.style.display = 'block';
-        }
+            document.getElementById('modalContent').innerHTML = detail.content;
+            document.getElementById('detailModal').style.display = 'block';
+        };
         
         // 모달 닫기
-        function closeDetailModal() {
+        window.closeDetailModal = () => {
             document.getElementById('detailModal').style.display = 'none';
-        }
+        };
         
         // 모달 외부 클릭 시 닫기
-        window.onclick = function(event) {
+        window.onclick = (event) => {
             const modal = document.getElementById('detailModal');
-            if (event.target == modal) {
-                closeDetailModal();
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
-        }
+        };
     </script>
-    <!-- Footer 포함 -->
-    <div id="footer-container"></div>
-    <!-- Footer JS 로드 -->
-    <script src="/js/footer.js"></script>
 </body>
 </html>
