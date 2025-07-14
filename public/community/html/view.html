@@ -1,3 +1,4 @@
+<!-- 파일 경로: public/community/html/view.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -110,7 +111,70 @@
             </div>
             
             <div class="comment-list" id="commentList">
-                <!-- 댓글이 동적으로 추가됩니다 -->
+                <!-- 댓글 템플릿 (숨김 처리) -->
+                <template id="commentTemplate">
+                    <div class="comment-wrapper">
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div class="comment-info">
+                                    <span class="comment-author"></span>
+                                    <span class="comment-date"></span>
+                                </div>
+                                <div class="comment-actions">
+                                    <button class="reply-btn" onclick="showReplyForm(this.dataset.commentId)" style="display: none;">답글</button>
+                                    <button class="report-comment-btn" onclick="reportComment(this.dataset.commentId)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536 6.66667C6.66536 6.3 6.79592 5.98611 7.05703 5.725C7.31814 5.46389 7.63203 5.33333 7.9987 5.33333C8.18759 5.33333 8.34592 5.26944 8.4737 5.14167C8.60148 5.01389 8.66536 4.85556 8.66536 4.66667C8.66536 4.47778 8.60148 4.31944 8.4737 4.19167C8.34592 4.06389 8.18759 4 7.9987 4C7.26536 4 6.63759 4.26111 6.11536 4.78333C5.59314 5.30556 5.33203 5.93333 5.33203 6.66667V8C5.33203 8.18889 5.39592 8.34722 5.5237 8.475C5.65148 8.60278 5.80981 8.66667 5.9987 8.66667C6.18759 8.66667 6.34592 8.60278 6.4737 8.475C6.60148 8.34722 6.66536 8.18889 6.66536 8V6.66667ZM4.66536 10H11.332V6.66667C11.332 5.74444 11.007 4.95833 10.357 4.30833C9.70703 3.65833 8.92092 3.33333 7.9987 3.33333C7.07648 3.33333 6.29036 3.65833 5.64036 4.30833C4.99036 4.95833 4.66536 5.74444 4.66536 6.66667V10ZM2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V11.3333C1.33203 10.9667 1.46259 10.6528 1.7237 10.3917C1.98481 10.1306 2.2987 10 2.66536 10H3.33203V6.66667C3.33203 5.36667 3.78481 4.26389 4.69036 3.35833C5.59592 2.45278 6.6987 2 7.9987 2C9.2987 2 10.4015 2.45278 11.307 3.35833C12.2126 4.26389 12.6654 5.36667 12.6654 6.66667V10H13.332C13.6987 10 14.0126 10.1306 14.2737 10.3917C14.5348 10.6528 14.6654 10.9667 14.6654 11.3333V12.6667C14.6654 13.0333 14.5348 13.3472 14.2737 13.6083C14.0126 13.8694 13.6987 14 13.332 14H2.66536Z" fill="#999999"/>
+                                        </svg>
+                                        신고
+                                    </button>
+                                    <button class="comment-delete-btn" onclick="deleteComment(this.dataset.commentId)" style="display: none;">삭제</button>
+                                </div>
+                            </div>
+                            <div class="comment-content"></div>
+                        </div>
+                        
+                        <!-- 답글 폼 -->
+                        <div class="reply-form" style="display: none;">
+                            <textarea class="reply-input" placeholder="답글을 입력하세요"></textarea>
+                            <div class="reply-actions">
+                                <button class="reply-cancel-btn" onclick="hideReplyForm(this.dataset.commentId)">취소</button>
+                                <button class="reply-submit-btn" onclick="submitReply(this.dataset.commentId)">등록</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 답글 목록 -->
+                        <div class="replies"></div>
+                    </div>
+                </template>
+                
+                <!-- 답글 템플릿 -->
+                <template id="replyTemplate">
+                    <div class="comment-item reply-comment">
+                        <div class="comment-header">
+                            <div class="comment-info">
+                                <svg class="reply-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6 8L10 12L14 8" stroke="#999999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" transform="rotate(90 10 10)"/>
+                                </svg>
+                                <span class="comment-author"></span>
+                                <span class="comment-date"></span>
+                            </div>
+                            <div class="comment-actions">
+                                <button class="report-comment-btn" onclick="reportComment(this.dataset.commentId)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536 6.66667C6.66536 6.3 6.79592 5.98611 7.05703 5.725C7.31814 5.46389 7.63203 5.33333 7.9987 5.33333C8.18759 5.33333 8.34592 5.26944 8.4737 5.14167C8.60148 5.01389 8.66536 4.85556 8.66536 4.66667C8.66536 4.47778 8.60148 4.31944 8.4737 4.19167C8.34592 4.06389 8.18759 4 7.9987 4C7.26536 4 6.63759 4.26111 6.11536 4.78333C5.59314 5.30556 5.33203 5.93333 5.33203 6.66667V8C5.33203 8.18889 5.39592 8.34722 5.5237 8.475C5.65148 8.60278 5.80981 8.66667 5.9987 8.66667C6.18759 8.66667 6.34592 8.60278 6.4737 8.475C6.60148 8.34722 6.66536 8.18889 6.66536 8V6.66667ZM4.66536 10H11.332V6.66667C11.332 5.74444 11.007 4.95833 10.357 4.30833C9.70703 3.65833 8.92092 3.33333 7.9987 3.33333C7.07648 3.33333 6.29036 3.65833 5.64036 4.30833C4.99036 4.95833 4.66536 5.74444 4.66536 6.66667V10ZM2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V11.3333C1.33203 10.9667 1.46259 10.6528 1.7237 10.3917C1.98481 10.1306 2.2987 10 2.66536 10H3.33203V6.66667C3.33203 5.36667 3.78481 4.26389 4.69036 3.35833C5.59592 2.45278 6.6987 2 7.9987 2C9.2987 2 10.4015 2.45278 11.307 3.35833C12.2126 4.26389 12.6654 5.36667 12.6654 6.66667V10H13.332C13.6987 10 14.0126 10.1306 14.2737 10.3917C14.5348 10.6528 14.6654 10.9667 14.6654 11.3333V12.6667C14.6654 13.0333 14.5348 13.3472 14.2737 13.6083C14.0126 13.8694 13.6987 14 13.332 14H2.66536Z" fill="#999999"/>
+                                    </svg>
+                                    신고
+                                </button>
+                                <button class="comment-delete-btn" onclick="deleteComment(this.dataset.commentId)" style="display: none;">삭제</button>
+                            </div>
+                        </div>
+                        <div class="comment-content"></div>
+                    </div>
+                </template>
+                
+                <!-- 댓글이 없을 때 표시되는 메시지 -->
+                <div class="no-comments" style="display: none;">첫 번째 댓글을 작성해보세요!</div>
             </div>
         </div>
     </div>

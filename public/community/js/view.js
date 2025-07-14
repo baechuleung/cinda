@@ -1,4 +1,4 @@
-// 파일 경로: /public/community/js/view.js
+// 파일 경로: public/community/js/view.js
 
 import { auth, db } from '/js/firebase-config.js';
 import { doc, getDoc, deleteDoc, updateDoc, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp, increment, setDoc, getDocs, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -146,58 +146,59 @@ async function loadPost() {
             
             // 게시글 번호 표시
             if (postData.isNotice) {
-                document.getElementById('postNumber').innerHTML = '<span class="notice-badge">공지</span>';
+                document.getElementById('postNumber').textContent = '공지';
+                document.getElementById('postNumber').classList.add('notice');
             } else {
                 document.getElementById('postNumber').textContent = `NO.${postNumber}`;
             }
         } catch (error) {
             console.error('게시글 번호 계산 오류:', error);
-            document.getElementById('postNumber').textContent = `NO.1`;
+            document.getElementById('postNumber').textContent = 'NO.1';
         }
         
-        // 나머지 게시글 정보 표시
+        // 제목
         document.getElementById('postTitle').textContent = postData.title;
-        document.getElementById('postAuthor').textContent = postData.authorName;
+        
+        // 작성자 정보
+        const authorName = postData.authorName || '알 수 없음';
+        document.getElementById('postAuthor').textContent = authorName;
+        
+        // 작성일
         document.getElementById('postDate').textContent = formatDate(postData.createdAt);
+        
+        // 조회수
         document.getElementById('postViews').textContent = postData.views || 0;
-        document.getElementById('postLikes').textContent = postData.likeCount || 0;
+        
+        // 댓글 수
         document.getElementById('postComments').textContent = postData.commentCount || 0;
         
-        // HTML 내용 표시 (Quill 에디터로 작성된 경우)
-        if (postData.content.includes('<')) {
-            // HTML 내용인 경우
-            document.getElementById('postContent').innerHTML = postData.content;
-        } else {
-            // 일반 텍스트인 경우 (이전 버전 호환)
-            document.getElementById('postContent').textContent = postData.content;
-        }
+        // 내용
+        document.getElementById('postContent').innerHTML = postData.content.replace(/\n/g, '<br>');
         
-        // 이미지 표시 제거 (Quill 에디터에 이미 포함됨)
-        // 별도의 이미지 컨테이너는 비워둠
-        const imagesContainer = document.getElementById('postImages');
-        if (imagesContainer) {
-            imagesContainer.innerHTML = '';
-        }
-        
-        // 수정/삭제 버튼 표시 여부
-        if (currentUser && currentUser.uid === postData.authorId) {
-            document.getElementById('editBtn').style.display = 'inline-block';
-            document.getElementById('deleteBtn').style.display = 'inline-block';
-            
-            // 버튼 이벤트 연결
-            document.getElementById('editBtn').addEventListener('click', () => {
-                window.location.href = `edit.html?id=${postId}`;
-            });
-            
-            document.getElementById('deleteBtn').addEventListener('click', deletePost);
-        }
-        
-        // 좋아요 표시
+        // 좋아요 수
         displayReactions();
+        
+        // 수정/삭제 버튼 표시
+        if (currentUser && currentUser.uid === postData.authorId) {
+            const editBtn = document.getElementById('editBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            
+            if (editBtn) editBtn.style.display = 'inline-flex';
+            if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        }
         
     } catch (error) {
         console.error('게시글 로드 오류:', error);
         alert('게시글을 불러오는 중 오류가 발생했습니다.');
+        window.location.href = 'list.html';
+    }
+}
+
+// 좋아요 표시
+function displayReactions() {
+    const likeCount = document.getElementById('likeCount');
+    if (likeCount) {
+        likeCount.textContent = postData.likeCount || 0;
     }
 }
 
@@ -251,62 +252,30 @@ function formatDate(timestamp) {
     const now = new Date();
     const diff = now - date;
     
-    // 1시간 이내
-    if (diff < 60 * 60 * 1000) {
-        const minutes = Math.floor(diff / (60 * 1000));
-        return `${minutes}분 전`;
+    // 오늘이면 시간만 표시
+    if (diff < 24 * 60 * 60 * 1000 && date.getDate() === now.getDate()) {
+        return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
     }
     
-    // 24시간 이내
-    if (diff < 24 * 60 * 60 * 1000) {
-        const hours = Math.floor(diff / (60 * 60 * 1000));
-        return `${hours}시간 전`;
+    // 어제면 "어제" 표시
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (date.getDate() === yesterday.getDate() && date.getMonth() === yesterday.getMonth()) {
+        return '어제';
     }
     
-    // 날짜 표시
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    
-    return `${year}.${month}.${day}`;
-}
-
-// 좋아요 표시
-async function displayReactions() {
-    if (!currentUser) return;
-    
-    try {
-        // 하위 컬렉션에서 현재 사용자의 좋아요 확인
-        const likesRef = collection(db, 'community_posts', postId, 'likes');
-        const userLikeQuery = query(likesRef, where('userId', '==', currentUser.uid));
-        const userLikeSnapshot = await getDocs(userLikeQuery);
-        
-        const likeBtn = document.getElementById('likeBtn');
-        if (!userLikeSnapshot.empty) {
-            likeBtn.classList.add('active');
-        } else {
-            likeBtn.classList.remove('active');
-        }
-        
-        // 좋아요 수 업데이트
-        document.getElementById('likeCount').textContent = postData.likeCount || 0;
-    } catch (error) {
-        console.error('좋아요 표시 오류:', error);
-    }
+    // 그 외는 날짜 표시
+    return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' });
 }
 
 // 댓글 로드 및 실시간 리스닝
 function loadComments() {
     // 하위 컬렉션에서 댓글 가져오기
-    const commentsRef = collection(db, 'community_posts', postId, 'comments');
-    const commentsQuery = query(commentsRef, orderBy('createdAt', 'desc'));
+    const commentsQuery = query(
+        collection(db, 'community_posts', postId, 'comments'),
+        orderBy('createdAt', 'asc')
+    );
     
-    // 기존 리스너 정리
-    if (commentsUnsubscribe) {
-        commentsUnsubscribe();
-    }
-    
-    // 실시간 리스너 설정
     commentsUnsubscribe = onSnapshot(commentsQuery, (snapshot) => {
         const comments = [];
         snapshot.forEach((doc) => {
@@ -321,11 +290,18 @@ function loadComments() {
 // 댓글 표시
 function displayComments(comments) {
     const commentList = document.getElementById('commentList');
+    const noCommentsDiv = commentList.querySelector('.no-comments');
     
-    if (comments.length === 0) {
-        commentList.innerHTML = '<div class="no-comments">아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</div>';
+    // 기존 댓글 제거 (템플릿과 no-comments 제외)
+    const existingComments = commentList.querySelectorAll('.comment-wrapper');
+    existingComments.forEach(comment => comment.remove());
+    
+    if (!comments || comments.length === 0) {
+        noCommentsDiv.style.display = 'block';
         return;
     }
+    
+    noCommentsDiv.style.display = 'none';
     
     // 댓글과 답글 구조화
     const topLevelComments = comments.filter(comment => !comment.parentId);
@@ -340,72 +316,87 @@ function displayComments(comments) {
         };
     });
     
-    // HTML 생성
-    commentList.innerHTML = Object.values(commentMap).map(comment => {
-        return `
-            <div class="comment-wrapper">
-                <div class="comment-item">
-                    <div class="comment-header">
-                        <div class="comment-info">
-                            <span class="comment-author">${escapeHtml(comment.authorName)}</span>
-                            <span class="comment-date">${formatDate(comment.createdAt)}</span>
-                        </div>
-                        <div class="comment-actions">
-                            ${currentUser ? `<button class="reply-btn" onclick="showReplyForm('${comment.id}')">답글</button>` : ''}
-                            <button class="report-comment-btn" onclick="reportComment('${comment.id}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                    <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536" fill="#666"/>
-                                </svg>
-                                신고
-                            </button>
-                            ${currentUser && currentUser.uid === comment.authorId ? 
-                                `<button class="comment-delete-btn" onclick="deleteComment('${comment.id}')">삭제</button>` : ''}
-                        </div>
-                    </div>
-                    <div class="comment-content">${escapeHtml(comment.content)}</div>
-                </div>
+    // 템플릿 가져오기
+    const commentTemplate = document.getElementById('commentTemplate');
+    const replyTemplate = document.getElementById('replyTemplate');
+    
+    // 각 댓글 렌더링
+    Object.values(commentMap).forEach(comment => {
+        // 댓글 템플릿 복제
+        const commentElement = commentTemplate.content.cloneNode(true);
+        
+        // 댓글 데이터 설정
+        commentElement.querySelector('.comment-author').textContent = comment.authorName;
+        commentElement.querySelector('.comment-date').textContent = formatDate(comment.createdAt);
+        commentElement.querySelector('.comment-content').textContent = comment.content;
+        
+        // 버튼 data-comment-id 설정
+        const buttons = commentElement.querySelectorAll('button[onclick*="Comment"]');
+        buttons.forEach(btn => {
+            if (btn.onclick) {
+                btn.dataset.commentId = comment.id;
+            }
+        });
+        
+        // 답글 버튼 표시/숨김
+        const replyBtn = commentElement.querySelector('.reply-btn');
+        if (currentUser) {
+            replyBtn.style.display = 'inline-flex';
+            replyBtn.dataset.commentId = comment.id;
+        }
+        
+        // 삭제 버튼 표시/숨김
+        const deleteBtn = commentElement.querySelector('.comment-delete-btn');
+        if (currentUser && currentUser.uid === comment.authorId) {
+            deleteBtn.style.display = 'inline-flex';
+            deleteBtn.dataset.commentId = comment.id;
+        }
+        
+        // 신고 버튼 data-comment-id 설정
+        const reportBtn = commentElement.querySelector('.report-comment-btn');
+        reportBtn.dataset.commentId = comment.id;
+        
+        // 답글 폼 ID 설정
+        const replyForm = commentElement.querySelector('.reply-form');
+        replyForm.id = `reply-form-${comment.id}`;
+        
+        // 답글 폼 버튼들 data-comment-id 설정
+        const replyFormBtns = replyForm.querySelectorAll('button');
+        replyFormBtns.forEach(btn => {
+            btn.dataset.commentId = comment.id;
+        });
+        
+        // 답글 추가
+        if (comment.replies.length > 0) {
+            const repliesContainer = commentElement.querySelector('.replies');
+            
+            comment.replies.forEach(reply => {
+                // 답글 템플릿 복제
+                const replyElement = replyTemplate.content.cloneNode(true);
                 
-                <!-- 답글 폼 -->
-                <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
-                    <textarea class="reply-input" placeholder="답글을 입력하세요"></textarea>
-                    <div class="reply-actions">
-                        <button class="reply-cancel-btn" onclick="hideReplyForm('${comment.id}')">취소</button>
-                        <button class="reply-submit-btn" onclick="submitReply('${comment.id}')">등록</button>
-                    </div>
-                </div>
+                // 답글 데이터 설정
+                replyElement.querySelector('.comment-author').textContent = reply.authorName;
+                replyElement.querySelector('.comment-date').textContent = formatDate(reply.createdAt);
+                replyElement.querySelector('.comment-content').textContent = reply.content;
                 
-                <!-- 답글 목록 -->
-                ${comment.replies.length > 0 ? `
-                    <div class="replies">
-                        ${comment.replies.map(reply => `
-                            <div class="comment-item reply-comment">
-                                <div class="comment-header">
-                                    <div class="comment-info">
-                                        <svg class="reply-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                            <path d="M13.3 20.275C13.1 20.075 13 19.8417 13 19.575C13 19.3083 13.1 19.075 13.3 18.875L16.175 16H7C6.45 16 5.97917 15.8042 5.5875 15.4125C5.19583 15.0208 5 14.55 5 14V5C5 4.71667 5.09583 4.47917 5.2875 4.2875C5.47917 4.09583 5.71667 4 6 4C6.28333 4 6.52083 4.09583 6.7125 4.2875C6.90417 4.47917 7 4.71667 7 5V14H16.175L13.275 11.1C13.075 10.9 12.9792 10.6667 12.9875 10.4C12.9958 10.1333 13.0917 9.9 13.275 9.7C13.475 9.5 13.7083 9.39583 13.975 9.3875C14.2417 9.37917 14.475 9.475 14.675 9.675L19.3 14.3C19.4 14.4 19.4708 14.5083 19.5125 14.625C19.5542 14.7417 19.575 14.8667 19.575 15C19.575 15.1333 19.5542 15.2583 19.5125 15.375C19.4708 15.4917 19.4 15.6 19.3 15.7L14.725 20.275C14.525 20.475 14.2875 20.575 14.0125 20.575C13.7375 20.575 13.5 20.475 13.3 20.275Z" fill="#FF6666"/>
-                                        </svg>
-                                        <span class="comment-author">${escapeHtml(reply.authorName)}</span>
-                                        <span class="comment-date">${formatDate(reply.createdAt)}</span>
-                                    </div>
-                                    <div class="comment-actions">
-                                        <button class="report-comment-btn" onclick="reportComment('${reply.id}')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
-                                                <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536" fill="#666"/>
-                                            </svg>
-                                            신고
-                                        </button>
-                                        ${currentUser && currentUser.uid === reply.authorId ? 
-                                            `<button class="comment-delete-btn" onclick="deleteComment('${reply.id}')">삭제</button>` : ''}
-                                    </div>
-                                </div>
-                                <div class="comment-content">${escapeHtml(reply.content)}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }).join('');
+                // 답글 버튼 data-comment-id 설정
+                const replyReportBtn = replyElement.querySelector('.report-comment-btn');
+                replyReportBtn.dataset.commentId = reply.id;
+                
+                // 답글 삭제 버튼
+                const replyDeleteBtn = replyElement.querySelector('.comment-delete-btn');
+                if (currentUser && currentUser.uid === reply.authorId) {
+                    replyDeleteBtn.style.display = 'inline-flex';
+                    replyDeleteBtn.dataset.commentId = reply.id;
+                }
+                
+                repliesContainer.appendChild(replyElement);
+            });
+        }
+        
+        // 댓글 목록에 추가
+        commentList.appendChild(commentElement);
+    });
 }
 
 // 댓글 수 업데이트
