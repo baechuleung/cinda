@@ -1,20 +1,80 @@
 /* 커뮤니티 컨테이너 */
 .community-container {
-    max-width: 800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
 }
 
+/* 커뮤니티 헤더 추가 */
+.community-header {
+    text-align: left;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #CECECE;
+}
+
+.community-header h1 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.community-header .subtitle {
+    font-size: 16px;
+    color: #666;
+}
+
+/* 안내사항 박스 추가 */
+.notice-box {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notice-title {
+    color: #4E5968;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.notice-title .highlight {
+    color: #F66;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.notice-content {
+    color: #4E5968;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.8;
+    padding: 0 20px;
+}
+
+.notice-content p {
+    margin-bottom: 8px;
+}
+
+.notice-content p:last-child {
+    margin-bottom: 0;
+}
+
 /* 작성 헤더 */
 .write-header {
-    text-align: center;
+    text-align: left;
     margin-bottom: 2rem;
 }
 
 .write-header h1 {
-    font-size: 28px;
-    color: #333;
-    margin-bottom: 0.5rem;
+    color: #170F49;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 0;
 }
 
 .subtitle {
@@ -27,7 +87,8 @@
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .form-group {
@@ -113,6 +174,53 @@
     color: #999;
 }
 
+/* Quill 에디터 스타일 */
+#editor-container {
+    background: white;
+    border-radius: 6px;
+}
+
+#editor {
+    min-height: 300px;
+    font-size: 14px;
+}
+
+/* Quill 에디터 테두리 커스터마이징 */
+.ql-toolbar.ql-snow {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px 6px 0 0;
+}
+
+.ql-container.ql-snow {
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+}
+
+/* 포커스 시 테두리 색상 */
+#editor-container:focus-within .ql-toolbar.ql-snow,
+#editor-container:focus-within .ql-container.ql-snow {
+    border-color: #FF6666;
+}
+
+/* Quill 에디터 내부 스타일 */
+.ql-editor {
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+.ql-editor.ql-blank::before {
+    font-style: normal;
+    color: #999;
+}
+
+/* Quill 에디터 이미지 스타일 */
+.ql-editor img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+}
+
 /* 이미지 미리보기 */
 .image-preview {
     margin-top: 1rem;
@@ -161,21 +269,19 @@
     background: rgba(0, 0, 0, 0.9);
 }
 
-/* 폼 액션 */
+/* 버튼 액션 */
 .form-actions {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
     margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e0e0e0;
 }
 
 .cancel-btn,
 .submit-btn {
-    padding: 0.75rem 2rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -183,8 +289,8 @@
 
 .cancel-btn {
     background: white;
-    border: 1px solid #e0e0e0;
     color: #666;
+    border: 1px solid #e0e0e0;
 }
 
 .cancel-btn:hover {
@@ -193,8 +299,8 @@
 
 .submit-btn {
     background: #FF6666;
-    border: none;
     color: white;
+    border: none;
 }
 
 .submit-btn:hover {
@@ -204,6 +310,21 @@
 .submit-btn:disabled {
     background: #ccc;
     cursor: not-allowed;
+}
+
+/* 로딩 상태 */
+.loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* 반응형 */
@@ -216,28 +337,8 @@
         padding: 1.5rem;
     }
     
-    .form-group textarea {
-        min-height: 200px;
-    }
-    
-    .image-preview-container {
-        gap: 0.5rem;
-    }
-    
-    .image-preview-item {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-@media (max-width: 480px) {
-    .write-header h1 {
-        font-size: 24px;
-    }
-    
     .form-actions {
-        flex-direction: column-reverse;
-        gap: 1rem;
+        flex-direction: column;
     }
     
     .cancel-btn,

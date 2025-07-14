@@ -1,7 +1,7 @@
 // 파일 경로: /public/community/js/view.js
 
 import { auth, db } from '/js/firebase-config.js';
-import { doc, getDoc, deleteDoc, updateDoc, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp, increment, setDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc, deleteDoc, updateDoc, addDoc, collection, query, orderBy, onSnapshot, serverTimestamp, increment, setDoc, getDocs, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 let currentUser = null;
@@ -162,14 +162,21 @@ async function loadPost() {
         document.getElementById('postViews').textContent = postData.views || 0;
         document.getElementById('postLikes').textContent = postData.likeCount || 0;
         document.getElementById('postComments').textContent = postData.commentCount || 0;
-        document.getElementById('postContent').textContent = postData.content;
         
-        // 이미지 표시
-        if (postData.images && postData.images.length > 0) {
-            const imagesContainer = document.getElementById('postImages');
-            imagesContainer.innerHTML = postData.images.map(url => 
-                `<img src="${url}" alt="첨부 이미지">`
-            ).join('');
+        // HTML 내용 표시 (Quill 에디터로 작성된 경우)
+        if (postData.content.includes('<')) {
+            // HTML 내용인 경우
+            document.getElementById('postContent').innerHTML = postData.content;
+        } else {
+            // 일반 텍스트인 경우 (이전 버전 호환)
+            document.getElementById('postContent').textContent = postData.content;
+        }
+        
+        // 이미지 표시 제거 (Quill 에디터에 이미 포함됨)
+        // 별도의 이미지 컨테이너는 비워둠
+        const imagesContainer = document.getElementById('postImages');
+        if (imagesContainer) {
+            imagesContainer.innerHTML = '';
         }
         
         // 수정/삭제 버튼 표시 여부
@@ -236,21 +243,74 @@ async function deletePost() {
     }
 }
 
+// 날짜 포맷팅
+function formatDate(timestamp) {
+    if (!timestamp) return '';
+    
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    
+    // 1시간 이내
+    if (diff < 60 * 60 * 1000) {
+        const minutes = Math.floor(diff / (60 * 1000));
+        return `${minutes}분 전`;
+    }
+    
+    // 24시간 이내
+    if (diff < 24 * 60 * 60 * 1000) {
+        const hours = Math.floor(diff / (60 * 60 * 1000));
+        return `${hours}시간 전`;
+    }
+    
+    // 날짜 표시
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    return `${year}.${month}.${day}`;
+}
+
+// 좋아요 표시
+async function displayReactions() {
+    if (!currentUser) return;
+    
+    try {
+        // 하위 컬렉션에서 현재 사용자의 좋아요 확인
+        const likesRef = collection(db, 'community_posts', postId, 'likes');
+        const userLikeQuery = query(likesRef, where('userId', '==', currentUser.uid));
+        const userLikeSnapshot = await getDocs(userLikeQuery);
+        
+        const likeBtn = document.getElementById('likeBtn');
+        if (!userLikeSnapshot.empty) {
+            likeBtn.classList.add('active');
+        } else {
+            likeBtn.classList.remove('active');
+        }
+        
+        // 좋아요 수 업데이트
+        document.getElementById('likeCount').textContent = postData.likeCount || 0;
+    } catch (error) {
+        console.error('좋아요 표시 오류:', error);
+    }
+}
+
 // 댓글 로드 및 실시간 리스닝
 function loadComments() {
-    // 하위 컬렉션에서 댓글 로드
-    const commentsQuery = query(
-        collection(db, 'community_posts', postId, 'comments'),
-        orderBy('createdAt', 'asc')
-    );
+    // 하위 컬렉션에서 댓글 가져오기
+    const commentsRef = collection(db, 'community_posts', postId, 'comments');
+    const commentsQuery = query(commentsRef, orderBy('createdAt', 'desc'));
     
+    // 기존 리스너 정리
+    if (commentsUnsubscribe) {
+        commentsUnsubscribe();
+    }
+    
+    // 실시간 리스너 설정
     commentsUnsubscribe = onSnapshot(commentsQuery, (snapshot) => {
         const comments = [];
         snapshot.forEach((doc) => {
-            comments.push({
-                id: doc.id,
-                ...doc.data()
-            });
+            comments.push({ id: doc.id, ...doc.data() });
         });
         
         displayComments(comments);
@@ -263,30 +323,38 @@ function displayComments(comments) {
     const commentList = document.getElementById('commentList');
     
     if (comments.length === 0) {
-        commentList.innerHTML = '<p class="no-comments">등록된 댓글이 없습니다.</p>';
+        commentList.innerHTML = '<div class="no-comments">아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</div>';
         return;
     }
     
-    // 대댓글 구조로 정리 (parentId가 없는 것이 부모 댓글)
-    const parentComments = comments.filter(comment => !comment.parentId);
-    const childComments = comments.filter(comment => comment.parentId);
+    // 댓글과 답글 구조화
+    const topLevelComments = comments.filter(comment => !comment.parentId);
+    const replies = comments.filter(comment => comment.parentId);
     
-    commentList.innerHTML = parentComments.map(comment => {
-        const replies = childComments.filter(child => child.parentId === comment.id);
-        
+    // 답글을 부모 댓글에 매핑
+    const commentMap = {};
+    topLevelComments.forEach(comment => {
+        commentMap[comment.id] = {
+            ...comment,
+            replies: replies.filter(reply => reply.parentId === comment.id)
+        };
+    });
+    
+    // HTML 생성
+    commentList.innerHTML = Object.values(commentMap).map(comment => {
         return `
             <div class="comment-wrapper">
-                <div class="comment-item ${comment.parentId ? 'reply-comment' : ''}">
+                <div class="comment-item">
                     <div class="comment-header">
                         <div class="comment-info">
                             <span class="comment-author">${escapeHtml(comment.authorName)}</span>
                             <span class="comment-date">${formatDate(comment.createdAt)}</span>
                         </div>
                         <div class="comment-actions">
-                            <button class="reply-btn" onclick="showReplyForm('${comment.id}')">답글</button>
+                            ${currentUser ? `<button class="reply-btn" onclick="showReplyForm('${comment.id}')">답글</button>` : ''}
                             <button class="report-comment-btn" onclick="reportComment('${comment.id}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                    <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536 6.66667C6.66536 6.3 6.79592 5.98611 7.05703 5.725C7.31814 5.46389 7.63203 5.33333 7.9987 5.33333C8.18759 5.33333 8.34592 5.26944 8.4737 5.14167C8.60148 5.01389 8.66536 4.85556 8.66536 4.66667C8.66536 4.47778 8.60148 4.31944 8.4737 4.19167C8.34592 4.06389 8.18759 4 7.9987 4C7.26536 4 6.63759 4.26111 6.11536 4.78333C5.59314 5.30556 5.33203 5.93333 5.33203 6.66667V8C5.33203 8.18889 5.39592 8.34722 5.5237 8.475C5.65148 8.60278 5.80981 8.66667 5.9987 8.66667C6.18759 8.66667 6.34592 8.60278 6.4737 8.475C6.60148 8.34722 6.66536 8.18889 6.66536 8V6.66667ZM4.66536 10H11.332V6.66667C11.332 5.74444 11.007 4.95833 10.357 4.30833C9.70703 3.65833 8.92092 3.33333 7.9987 3.33333C7.07648 3.33333 6.29036 3.65833 5.64036 4.30833C4.99036 4.95833 4.66536 5.74444 4.66536 6.66667V10ZM2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V11.3333C1.33203 10.9667 1.46259 10.6528 1.7237 10.3917C1.98481 10.1306 2.2987 10 2.66536 10H3.33203V6.66667C3.33203 5.36667 3.78481 4.26389 4.69036 3.35833C5.59592 2.45278 6.6987 2 7.9987 2C9.2987 2 10.4015 2.45278 11.307 3.35833C12.2126 4.26389 12.6654 5.36667 12.6654 6.66667V10H13.332C13.6987 10 14.0126 10.1306 14.2737 10.3917C14.5348 10.6528 14.6654 10.9667 14.6654 11.3333V12.6667C14.6654 13.0333 14.5348 13.3472 14.2737 13.6083C14.0126 13.8694 13.6987 14 13.332 14H2.66536Z" fill="#999999"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                    <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536" fill="#666"/>
                                 </svg>
                                 신고
                             </button>
@@ -296,30 +364,33 @@ function displayComments(comments) {
                     </div>
                     <div class="comment-content">${escapeHtml(comment.content)}</div>
                 </div>
-                <div id="reply-form-${comment.id}" class="reply-form" style="display: none;">
-                    <textarea class="reply-input" placeholder="답글을 입력하세요" rows="2"></textarea>
+                
+                <!-- 답글 폼 -->
+                <div class="reply-form" id="reply-form-${comment.id}" style="display: none;">
+                    <textarea class="reply-input" placeholder="답글을 입력하세요"></textarea>
                     <div class="reply-actions">
-                        <button class="reply-submit-btn" onclick="submitReply('${comment.id}')">등록</button>
                         <button class="reply-cancel-btn" onclick="hideReplyForm('${comment.id}')">취소</button>
+                        <button class="reply-submit-btn" onclick="submitReply('${comment.id}')">등록</button>
                     </div>
                 </div>
-                ${replies.length > 0 ? `
+                
+                <!-- 답글 목록 -->
+                ${comment.replies.length > 0 ? `
                     <div class="replies">
-                        ${replies.map(reply => `
+                        ${comment.replies.map(reply => `
                             <div class="comment-item reply-comment">
                                 <div class="comment-header">
                                     <div class="comment-info">
-                                        <svg class="reply-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M15 10L20 15L15 20"></path>
-                                            <path d="M4 4v7a4 4 0 0 0 4 4h12"></path>
+                                        <svg class="reply-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M13.3 20.275C13.1 20.075 13 19.8417 13 19.575C13 19.3083 13.1 19.075 13.3 18.875L16.175 16H7C6.45 16 5.97917 15.8042 5.5875 15.4125C5.19583 15.0208 5 14.55 5 14V5C5 4.71667 5.09583 4.47917 5.2875 4.2875C5.47917 4.09583 5.71667 4 6 4C6.28333 4 6.52083 4.09583 6.7125 4.2875C6.90417 4.47917 7 4.71667 7 5V14H16.175L13.275 11.1C13.075 10.9 12.9792 10.6667 12.9875 10.4C12.9958 10.1333 13.0917 9.9 13.275 9.7C13.475 9.5 13.7083 9.39583 13.975 9.3875C14.2417 9.37917 14.475 9.475 14.675 9.675L19.3 14.3C19.4 14.4 19.4708 14.5083 19.5125 14.625C19.5542 14.7417 19.575 14.8667 19.575 15C19.575 15.1333 19.5542 15.2583 19.5125 15.375C19.4708 15.4917 19.4 15.6 19.3 15.7L14.725 20.275C14.525 20.475 14.2875 20.575 14.0125 20.575C13.7375 20.575 13.5 20.475 13.3 20.275Z" fill="#FF6666"/>
                                         </svg>
                                         <span class="comment-author">${escapeHtml(reply.authorName)}</span>
                                         <span class="comment-date">${formatDate(reply.createdAt)}</span>
                                     </div>
                                     <div class="comment-actions">
                                         <button class="report-comment-btn" onclick="reportComment('${reply.id}')">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                                <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536 6.66667C6.66536 6.3 6.79592 5.98611 7.05703 5.725C7.31814 5.46389 7.63203 5.33333 7.9987 5.33333C8.18759 5.33333 8.34592 5.26944 8.4737 5.14167C8.60148 5.01389 8.66536 4.85556 8.66536 4.66667C8.66536 4.47778 8.60148 4.31944 8.4737 4.19167C8.34592 4.06389 8.18759 4 7.9987 4C7.26536 4 6.63759 4.26111 6.11536 4.78333C5.59314 5.30556 5.33203 5.93333 5.33203 6.66667V8C5.33203 8.18889 5.39592 8.34722 5.5237 8.475C5.65148 8.60278 5.80981 8.66667 5.9987 8.66667C6.18759 8.66667 6.34592 8.60278 6.4737 8.475C6.60148 8.34722 6.66536 8.18889 6.66536 8V6.66667ZM4.66536 10H11.332V6.66667C11.332 5.74444 11.007 4.95833 10.357 4.30833C9.70703 3.65833 8.92092 3.33333 7.9987 3.33333C7.07648 3.33333 6.29036 3.65833 5.64036 4.30833C4.99036 4.95833 4.66536 5.74444 4.66536 6.66667V10ZM2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V11.3333C1.33203 10.9667 1.46259 10.6528 1.7237 10.3917C1.98481 10.1306 2.2987 10 2.66536 10H3.33203V6.66667C3.33203 5.36667 3.78481 4.26389 4.69036 3.35833C5.59592 2.45278 6.6987 2 7.9987 2C9.2987 2 10.4015 2.45278 11.307 3.35833C12.2126 4.26389 12.6654 5.36667 12.6654 6.66667V10H13.332C13.6987 10 14.0126 10.1306 14.2737 10.3917C14.5348 10.6528 14.6654 10.9667 14.6654 11.3333V12.6667C14.6654 13.0333 14.5348 13.3472 14.2737 13.6083C14.0126 13.8694 13.6987 14 13.332 14H2.66536Z" fill="#999999"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                                                <path d="M2.66536 12.6667H13.332V11.3333H2.66536V12.6667ZM6.66536" fill="#666"/>
                                             </svg>
                                             신고
                                         </button>
@@ -421,78 +492,14 @@ window.deleteComment = async function(commentId) {
     }
 };
 
-// 날짜 포맷
-function formatDate(timestamp) {
-    if (!timestamp) return '-';
-    
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    // 24시간 이내면 시간으로 표시
-    if (diff < 24 * 60 * 60 * 1000) {
-        const hours = Math.floor(diff / (60 * 60 * 1000));
-        const minutes = Math.floor(diff / (60 * 1000));
-        
-        if (hours > 0) return `${hours}시간 전`;
-        if (minutes > 0) return `${minutes}분 전`;
-        return '방금 전';
-    }
-    
-    // 그 외에는 날짜로 표시
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-}
-
-// HTML 이스케이프
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-// 페이지 언로드 시 리스너 정리
-window.addEventListener('beforeunload', () => {
-    if (commentsUnsubscribe) {
-        commentsUnsubscribe();
-    }
-});
-
-// 좋아요 표시
-async function displayReactions() {
-    const likeCount = postData.likeCount || 0;
-    
-    // 좋아요 버튼의 카운트
-    const likeCountElement = document.getElementById('likeCount');
-    if (likeCountElement) {
-        likeCountElement.textContent = likeCount;
-    }
-    
-    // 헤더의 좋아요 수도 업데이트 (요소가 있을 경우에만)
-    const postLikesElement = document.getElementById('postLikes');
-    if (postLikesElement) {
-        postLikesElement.textContent = likeCount;
-    }
-    
-    // 현재 사용자의 반응 확인
-    if (currentUser) {
-        const reactionDoc = await getDoc(doc(db, 'post_reactions', `${postId}_${currentUser.uid}`));
-        const likeBtn = document.getElementById('likeBtn');
-        if (likeBtn) {
-            if (reactionDoc.exists()) {
-                const reaction = reactionDoc.data();
-                if (reaction.type === 'like') {
-                    likeBtn.classList.add('active');
-                }
-            } else {
-                likeBtn.classList.remove('active');
-            }
-        }
-    }
+// HTML 이스케이프 함수
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // 좋아요 처리
@@ -503,22 +510,23 @@ window.handleLike = async function() {
     }
     
     try {
-        const reactionId = `${postId}_${currentUser.uid}`;
-        const reactionDoc = await getDoc(doc(db, 'post_reactions', reactionId));
+        // 하위 컬렉션에서 현재 사용자의 좋아요 확인
+        const likesRef = collection(db, 'community_posts', postId, 'likes');
+        const userLikeQuery = query(likesRef, where('userId', '==', currentUser.uid));
+        const userLikeSnapshot = await getDocs(userLikeQuery);
         
-        if (reactionDoc.exists()) {
+        if (!userLikeSnapshot.empty) {
             // 이미 좋아요한 경우 - 취소
-            await deleteDoc(doc(db, 'post_reactions', reactionId));
+            const likeDocId = userLikeSnapshot.docs[0].id;
+            await deleteDoc(doc(db, 'community_posts', postId, 'likes', likeDocId));
             await updateDoc(doc(db, 'community_posts', postId), {
                 likeCount: increment(-1)
             });
             postData.likeCount = (postData.likeCount || 1) - 1;
         } else {
             // 새로운 좋아요
-            await setDoc(doc(db, 'post_reactions', reactionId), {
-                postId: postId,
+            await addDoc(collection(db, 'community_posts', postId, 'likes'), {
                 userId: currentUser.uid,
-                type: 'like',
                 createdAt: serverTimestamp()
             });
             await updateDoc(doc(db, 'community_posts', postId), {
@@ -615,7 +623,7 @@ window.submitReply = async function(parentId) {
             content: content,
             authorId: currentUser.uid,
             authorName: authorName,
-            parentId: parentId,  // 부모 댓글 ID
+            parentId: parentId,
             createdAt: serverTimestamp()
         };
         
@@ -630,3 +638,10 @@ window.submitReply = async function(parentId) {
         alert('답글 작성 중 오류가 발생했습니다.');
     }
 };
+
+// 페이지 언로드 시 리스너 정리
+window.addEventListener('beforeunload', () => {
+    if (commentsUnsubscribe) {
+        commentsUnsubscribe();
+    }
+});

@@ -153,20 +153,190 @@
     font-size: 14px;
 }
 
-/* 게시글 내용 */
+/* 게시글 내용 - Quill 에디터 콘텐츠 스타일 추가 */
 .post-content {
     font-size: 16px;
     line-height: 1.8;
     color: #333;
     margin-bottom: 2rem;
     min-height: 200px;
-    white-space: pre-wrap;
     word-break: break-word;
+}
+
+/* Quill 에디터로 작성된 콘텐츠 스타일 */
+.post-content h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+    font-weight: 700;
+}
+
+.post-content h2 {
+    font-size: 1.5em;
+    margin: 0.75em 0;
+    font-weight: 700;
+}
+
+.post-content h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+    font-weight: 700;
+}
+
+.post-content p {
+    margin: 1em 0;
+}
+
+.post-content strong {
+    font-weight: 700;
+}
+
+.post-content em {
+    font-style: italic;
+}
+
+.post-content u {
+    text-decoration: underline;
+}
+
+.post-content strike {
+    text-decoration: line-through;
+}
+
+.post-content blockquote {
+    border-left: 4px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    background: #f9f9f9;
+}
+
+.post-content pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1em;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.post-content code {
+    background: #f4f4f4;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.post-content ol {
+    list-style: decimal;
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.post-content ul {
+    list-style: disc;
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.post-content li {
+    margin: 0.5em 0;
+}
+
+.post-content a {
+    color: #FF6666;
+    text-decoration: underline;
+}
+
+.post-content a:hover {
+    color: #ff4444;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 8px;
+    display: block;
+}
+
+.post-content video {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 8px;
+}
+
+/* 텍스트 정렬 */
+.post-content .ql-align-center {
+    text-align: center;
+}
+
+.post-content .ql-align-right {
+    text-align: right;
+}
+
+.post-content .ql-align-justify {
+    text-align: justify;
+}
+
+/* 들여쓰기 */
+.post-content .ql-indent-1 {
+    padding-left: 3em;
+}
+
+.post-content .ql-indent-2 {
+    padding-left: 6em;
+}
+
+.post-content .ql-indent-3 {
+    padding-left: 9em;
+}
+
+.post-content .ql-indent-4 {
+    padding-left: 12em;
+}
+
+.post-content .ql-indent-5 {
+    padding-left: 15em;
+}
+
+.post-content .ql-indent-6 {
+    padding-left: 18em;
+}
+
+.post-content .ql-indent-7 {
+    padding-left: 21em;
+}
+
+.post-content .ql-indent-8 {
+    padding-left: 24em;
+}
+
+/* 크기 */
+.post-content .ql-size-small {
+    font-size: 0.75em;
+}
+
+.post-content .ql-size-large {
+    font-size: 1.5em;
+}
+
+.post-content .ql-size-huge {
+    font-size: 2.5em;
+}
+
+/* 폰트 */
+.post-content .ql-font-serif {
+    font-family: Georgia, Times New Roman, serif;
+}
+
+.post-content .ql-font-monospace {
+    font-family: Monaco, Courier New, monospace;
 }
 
 /* 게시글 이미지 */
 .post-images {
     margin-bottom: 2rem;
+    display: none; /* Quill 에디터 사용 시 별도 이미지 컨테이너 숨김 */
 }
 
 .post-images img {
@@ -443,8 +613,9 @@
 
 .reply-icon {
     flex-shrink: 0;
-    stroke: #999;
     margin-right: 8px;
+    width: 20px;
+    height: 20px;
 }
 
 /* 답글 폼 */

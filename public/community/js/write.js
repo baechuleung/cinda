@@ -4,8 +4,100 @@ import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/fireba
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 let currentUser = null;
-let selectedImages = [];
 let isAdmin = false;
+let quill = null;
+
+// Quill 에디터 초기화
+function initializeQuill() {
+    const toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // 텍스트 스타일
+        ['blockquote', 'code-block'],                      // 블록
+        [{ 'header': 1 }, { 'header': 2 }],               // 헤더
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],     // 리스트
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // 위첨자/아래첨자
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // 들여쓰기
+        [{ 'direction': 'rtl' }],                          // 텍스트 방향
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // 크기
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],       // 헤더 레벨
+        [{ 'color': [] }, { 'background': [] }],          // 색상
+        [{ 'font': [] }],                                  // 폰트
+        [{ 'align': [] }],                                 // 정렬
+        ['clean'],                                         // 포맷 제거
+        ['link', 'image', 'video']                        // 링크, 이미지, 비디오
+    ];
+
+    quill = new Quill('#editor', {
+        modules: {
+            toolbar: toolbarOptions
+        },
+        theme: 'snow',
+        placeholder: '내용을 입력하세요...'
+    });
+
+    // 이미지 핸들러 커스터마이징
+    quill.getModule('toolbar').addHandler('image', imageHandler);
+}
+
+// 이미지 업로드 핸들러
+function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    
+    input.addEventListener('change', async () => {
+        const file = input.files[0];
+        
+        if (file) {
+            // 파일 크기 체크 (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('이미지 크기는 10MB 이하여야 합니다.');
+                return;
+            }
+            
+            try {
+                // 로딩 표시
+                const range = quill.getSelection(true);
+                quill.insertText(range.index, '이미지 업로드 중...');
+                
+                // Firebase Storage에 업로드
+                const timestamp = Date.now();
+                const fileName = `community/${currentUser.uid}/${timestamp}_${file.name}`;
+                const storageRef = ref(storage, fileName);
+                
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                
+                // 로딩 텍스트 제거
+                quill.deleteText(range.index, '이미지 업로드 중...'.length);
+                
+                // 이미지 삽입
+                quill.insertEmbed(range.index, 'image', downloadURL);
+                
+            } catch (error) {
+                console.error('이미지 업로드 오류:', error);
+                
+                // 오류 메시지 개선
+                if (error.code === 'storage/unauthorized') {
+                    alert('이미지 업로드 권한이 없습니다. 로그인 상태를 확인해주세요.');
+                } else if (error.code === 'storage/canceled') {
+                    alert('이미지 업로드가 취소되었습니다.');
+                } else if (error.code === 'storage/unknown') {
+                    alert('알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                } else {
+                    alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
+                }
+                
+                // 로딩 텍스트 제거
+                const range = quill.getSelection(true);
+                if (range) {
+                    quill.deleteText(range.index, '이미지 업로드 중...'.length);
+                }
+            }
+        }
+    });
+    
+    input.click();
+}
 
 // 인증 상태 확인
 onAuthStateChanged(auth, async (user) => {
@@ -40,85 +132,21 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = 'list.html';
         return;
     }
+    
+    // Quill 에디터 초기화
+    initializeQuill();
 });
-
-// 이미지 선택 처리
-document.getElementById('images').addEventListener('change', handleImageSelect);
-
-function handleImageSelect(e) {
-    const files = Array.from(e.target.files);
-    
-    // 최대 5개까지만 선택 가능
-    if (selectedImages.length + files.length > 5) {
-        alert('이미지는 최대 5개까지 첨부할 수 있습니다.');
-        e.target.value = '';
-        return;
-    }
-    
-    // 파일 크기 체크 (각 파일 10MB 제한)
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const oversizedFiles = files.filter(file => file.size > maxSize);
-    
-    if (oversizedFiles.length > 0) {
-        alert('10MB를 초과하는 파일이 있습니다.');
-        e.target.value = '';
-        return;
-    }
-    
-    // 이미지 파일만 허용
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
-    if (imageFiles.length !== files.length) {
-        alert('이미지 파일만 업로드할 수 있습니다.');
-        e.target.value = '';
-        return;
-    }
-    
-    selectedImages = [...selectedImages, ...imageFiles];
-    displaySelectedImages();
-}
-
-// 선택한 이미지 표시
-function displaySelectedImages() {
-    const preview = document.getElementById('imagePreview');
-    
-    if (selectedImages.length === 0) {
-        preview.innerHTML = '';
-        return;
-    }
-    
-    preview.innerHTML = `
-        <div class="image-preview-container">
-            ${selectedImages.map((image, index) => `
-                <div class="image-preview-item">
-                    <img src="${URL.createObjectURL(image)}" alt="미리보기">
-                    <button type="button" class="remove-image-btn" onclick="removeImage(${index})">×</button>
-                </div>
-            `).join('')}
-        </div>
-    `;
-}
-
-// 이미지 제거
-window.removeImage = function(index) {
-    selectedImages.splice(index, 1);
-    displaySelectedImages();
-    
-    // 파일 입력 초기화
-    if (selectedImages.length === 0) {
-        document.getElementById('images').value = '';
-    }
-};
 
 // 게시글 작성 폼 제출
 document.getElementById('writeForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const title = document.getElementById('title').value.trim();
-    const content = document.getElementById('content').value.trim();
+    const content = quill.root.innerHTML.trim();
+    const contentText = quill.getText().trim();
     const isNotice = isAdmin && document.getElementById('isNotice').checked;
     
-    if (!title || !content) {
+    if (!title || !contentText) {
         alert('제목과 내용을 모두 입력해주세요.');
         return;
     }
@@ -147,29 +175,27 @@ document.getElementById('writeForm').addEventListener('submit', async (e) => {
             }
         }
         
-        // 이미지 업로드
-        const imageUrls = [];
-        for (const image of selectedImages) {
-            const timestamp = Date.now();
-            const fileName = `community/${currentUser.uid}/${timestamp}_${image.name}`;
-            const storageRef = ref(storage, fileName);
-            
-            const snapshot = await uploadBytes(storageRef, image);
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            imageUrls.push(downloadURL);
-        }
+        // Quill 에디터에서 이미지 URL 추출
+        const images = [];
+        const imgElements = quill.root.querySelectorAll('img');
+        imgElements.forEach(img => {
+            if (img.src) {
+                images.push(img.src);
+            }
+        });
         
         // 게시글 데이터
         const postData = {
             title: title,
-            content: content,
+            content: content,           // HTML 내용
+            contentText: contentText,   // 일반 텍스트 (검색용)
             authorId: currentUser.uid,
             authorName: authorName,
-            images: imageUrls,
-            views: 0,  // 조회수 초기값 추가
-            likeCount: 0,  // 좋아요 초기값 추가
+            images: images,             // 이미지 URL 배열
+            views: 0,
+            likeCount: 0,
             commentCount: 0,
-            isNotice: isNotice,  // 공지사항 여부 추가
+            isNotice: isNotice,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         };
