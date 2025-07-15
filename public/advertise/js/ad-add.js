@@ -1,3 +1,5 @@
+// 파일 경로: /public/advertise/js/ad-add.js
+
 import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -8,6 +10,7 @@ let currentUser = null;
 let selectedAdType = null;
 let selectedAdCategory = null; // 'general' or 'job'
 let businessData = null;
+let userType = null; // 'partner' or 'business'
 
 // 광고 유형별 가격 정보
 const adPrices = {
@@ -52,16 +55,45 @@ onAuthStateChanged(auth, async (user) => {
     
     currentUser = user;
     
-    // 기업회원인지 확인
-    const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
-    if (!businessDoc.exists()) {
-        alert('기업회원만 이용할 수 있습니다.');
-        window.location.href = '/index.html';
-        return;
+    // 파트너회원인지 확인
+    const partnerDoc = await getDoc(doc(db, 'partner_users', user.uid));
+    if (partnerDoc.exists()) {
+        businessData = partnerDoc.data();
+        userType = 'partner';
+    } else {
+        // 업소회원인지 확인
+        const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
+        if (businessDoc.exists()) {
+            businessData = businessDoc.data();
+            userType = 'business';
+        } else {
+            alert('기업회원만 이용할 수 있습니다.');
+            window.location.href = '/index.html';
+            return;
+        }
     }
     
-    // 기업회원 정보 저장
-    businessData = businessDoc.data();
+    // 회원 유형에 따라 광고 섹션 표시/숨김
+    const generalAdSection = document.querySelector('.ad-options-section:first-child');
+    const jobAdSection = document.querySelector('.ad-options-section:last-child');
+    
+    if (userType === 'partner') {
+        // 파트너회원: 신다 일반 광고 및 제휴서비스 입점만 표시
+        if (generalAdSection) {
+            generalAdSection.style.display = 'block';
+        }
+        if (jobAdSection) {
+            jobAdSection.style.display = 'none';
+        }
+    } else if (userType === 'business') {
+        // 업소회원: 신다 채용관 광고만 표시
+        if (generalAdSection) {
+            generalAdSection.style.display = 'none';
+        }
+        if (jobAdSection) {
+            jobAdSection.style.display = 'block';
+        }
+    }
 });
 
 // 광고 옵션 선택
