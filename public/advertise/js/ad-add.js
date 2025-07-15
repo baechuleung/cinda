@@ -45,56 +45,67 @@ const adCategories = {
     basic: 'job'
 };
 
-// 인증 상태 확인
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        alert('로그인이 필요합니다.');
-        window.location.href = '/auth/login.html';
-        return;
-    }
-    
-    currentUser = user;
-    
-    // 파트너회원인지 확인
-    const partnerDoc = await getDoc(doc(db, 'partner_users', user.uid));
-    if (partnerDoc.exists()) {
-        businessData = partnerDoc.data();
-        userType = 'partner';
-    } else {
-        // 업소회원인지 확인
-        const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
-        if (businessDoc.exists()) {
-            businessData = businessDoc.data();
-            userType = 'business';
-        } else {
+// DOM이 로드될 때까지 대기
+document.addEventListener('DOMContentLoaded', function() {
+    // 인증 상태 확인
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '/auth/login.html';
+            return;
+        }
+        
+        currentUser = user;
+        
+        // 파트너회원인지 확인
+        try {
+            const partnerDoc = await getDoc(doc(db, 'partner_users', user.uid));
+            if (partnerDoc.exists()) {
+                businessData = partnerDoc.data();
+                userType = 'partner';
+                console.log('파트너회원 확인됨');
+            }
+        } catch (error) {
+            console.log('파트너회원 확인 중 오류:', error);
+        }
+        
+        // 파트너회원이 아니면 업소회원인지 확인
+        if (!userType) {
+            try {
+                const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
+                if (businessDoc.exists()) {
+                    businessData = businessDoc.data();
+                    userType = 'business';
+                    console.log('업소회원 확인됨');
+                }
+            } catch (error) {
+                console.log('업소회원 확인 중 오류:', error);
+            }
+        }
+        
+        // 어느 회원도 아닌 경우
+        if (!userType) {
             alert('기업회원만 이용할 수 있습니다.');
             window.location.href = '/index.html';
             return;
         }
-    }
-    
-    // 회원 유형에 따라 광고 섹션 표시/숨김
-    const generalAdSection = document.querySelector('.ad-options-section:first-child');
-    const jobAdSection = document.querySelector('.ad-options-section:last-child');
-    
-    if (userType === 'partner') {
-        // 파트너회원: 신다 일반 광고 및 제휴서비스 입점만 표시
-        if (generalAdSection) {
-            generalAdSection.style.display = 'block';
-        }
-        if (jobAdSection) {
-            jobAdSection.style.display = 'none';
-        }
-    } else if (userType === 'business') {
-        // 업소회원: 신다 채용관 광고만 표시
-        if (generalAdSection) {
-            generalAdSection.style.display = 'none';
-        }
-        if (jobAdSection) {
-            jobAdSection.style.display = 'block';
-        }
-    }
+        
+        // 회원 유형에 따라 광고 섹션 표시/숨김
+        updateAdvertiseSections();
+    });
 });
+
+// 광고 섹션 업데이트 함수
+function updateAdvertiseSections() {
+    // body에 회원 유형 클래스 추가
+    if (userType === 'partner') {
+        document.body.classList.add('partner-user');
+        console.log('파트너회원 UI 설정 완료');
+    } else if (userType === 'business') {
+        document.body.classList.add('business-user');
+        console.log('업소회원 UI 설정 완료');
+    }
+}
 
 // 광고 옵션 선택
 window.selectOption = async function(type) {

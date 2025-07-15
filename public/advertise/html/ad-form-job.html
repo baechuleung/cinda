@@ -1,158 +1,317 @@
+<!-- 파일 경로: /public/advertise/html/ad-form-job.html -->
+
 <!-- 광고신청 폼 - 채용관 광고용 -->
-<div id="jobAdForm">
-    <h2>광고신청서 - 채용관 광고</h2>
-    <form id="jobAdvertiseForm">
-        <div class="form-group">
-            <label for="selectedAdType2">선택한 광고 유형</label>
-            <input type="text" id="selectedAdType2" readonly placeholder="위에서 광고를 선택해주세요">
+<div class="job-ad-form-wrapper">
+    <h2 id="selectedAdTitle" class="selected-ad-title"></h2>
+    
+    <!-- STEP 01 - 광고업체 기본정보 입력 -->
+    <div class="form-box">
+        <div class="form-box-header">
+            <span class="step-number">STEP.01</span>
+            <span class="step-title">광고업체 기본정보 입력</span>
         </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="businessName2">업체명 <span class="required">*</span></label>
-                <input type="text" id="businessName2" required>
-            </div>
-            <div class="form-group">
-                <label for="businessType">업종 <span class="required">*</span></label>
-                <select id="businessType" required>
-                    <option value="">선택하세요</option>
-                    <option value="restaurant">음식점</option>
-                    <option value="cafe">카페</option>
-                    <option value="retail">소매업</option>
-                    <option value="service">서비스업</option>
-                    <option value="manufacturing">제조업</option>
-                    <option value="delivery">배달업</option>
-                    <option value="construction">건설업</option>
-                    <option value="cleaning">청소/미화</option>
-                    <option value="logistics">물류/유통</option>
-                    <option value="etc">기타</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="contactName2">담당자명 <span class="required">*</span></label>
-                <input type="text" id="contactName2" required>
-            </div>
-            <div class="form-group">
-                <label for="contactPhone2">연락처 <span class="required">*</span></label>
-                <input type="tel" id="contactPhone2" required>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="contactEmail2">이메일 <span class="required">*</span></label>
-            <input type="email" id="contactEmail2" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="jobTitle">채용 직종 <span class="required">*</span></label>
-            <input type="text" id="jobTitle" placeholder="예: 홀서빙, 주방보조, 배달직원" required>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="workLocation">근무지역 <span class="required">*</span></label>
-                <input type="text" id="workLocation" placeholder="예: 서울시 강남구" required>
-            </div>
-            <div class="form-group">
-                <label for="workAddress">상세주소</label>
-                <input type="text" id="workAddress" placeholder="예: 역삼동 123-45">
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="salary">급여 <span class="required">*</span></label>
-                <input type="text" id="salary" placeholder="예: 시급 10,000원" required>
-            </div>
-            <div class="form-group">
-                <label for="workTime">근무시간 <span class="required">*</span></label>
-                <input type="text" id="workTime" placeholder="예: 09:00 ~ 18:00" required>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="jobDescription">채용 내용 <span class="required">*</span></label>
-            <textarea id="jobDescription" rows="4" placeholder="근무조건, 우대사항, 복리후생 등을 상세히 입력해주세요" required></textarea>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="recruitCount">모집인원</label>
-                <input type="text" id="recruitCount" placeholder="예: 2명">
-            </div>
-            <div class="form-group">
-                <label for="experience">경력사항</label>
-                <select id="experience">
-                    <option value="">선택하세요</option>
-                    <option value="none">경력무관</option>
-                    <option value="newcomer">신입</option>
-                    <option value="experienced">경력자</option>
-                    <option value="1year">1년 이상</option>
-                    <option value="3years">3년 이상</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="startDate2">광고 시작일 <span class="required">*</span></label>
-                <input type="date" id="startDate2" required>
-            </div>
-            <div class="form-group">
-                <label for="duration2">광고 기간 <span class="required">*</span></label>
-                <select id="duration2" required onchange="updateTotalAmount()">
-                    <option value="">선택하세요</option>
-                    <option value="1">1개월</option>
-                    <option value="3">3개월</option>
-                    <option value="6">6개월</option>
-                    <option value="12">12개월</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="kakaoLink2">카카오톡 채팅방 링크</label>
-            <input type="url" id="kakaoLink2" placeholder="https://open.kakao.com/o/...">
-            <div class="helper-text">카카오톡 오픈채팅방 또는 채널 링크 (선택사항)</div>
-        </div>
-        
-        <!-- 파일 업로드 -->
-        <div class="form-group">
-            <label for="jobImage">회사 로고 또는 이미지</label>
-            <div class="file-input-wrapper">
-                <input type="file" id="jobImage" accept="image/*" style="display: none;">
-                <label for="jobImage" class="file-input-label">
-                    이미지 선택
-                </label>
-            </div>
-            <div class="helper-text">권장 크기: 500 x 500px (JPG, PNG)</div>
-        </div>
-        
-        <!-- 총 금액 표시 -->
-        <div class="total-amount">
-            <h3>총 광고비용</h3>
-            <div class="amount-breakdown">
-                <div class="amount-row">
-                    <span>월 광고비:</span>
-                    <span id="monthlyAmount2">0원</span>
+        <div class="form-box-content">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="businessName2">업체명</label>
+                    <input type="text" id="businessName2" readonly>
                 </div>
-                <div class="amount-row">
-                    <span>광고 기간:</span>
-                    <span id="adDuration2">0개월</span>
+                <div class="form-group">
+                    <label for="businessType">업종</label>
+                    <input type="text" id="businessType" readonly>
                 </div>
-                <div class="amount-row total">
-                    <span>총 결제금액:</span>
-                    <span id="totalAmount2">0원</span>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contactName2">담당자명</label>
+                    <input type="text" id="contactName2" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="contactPhone2">연락처</label>
+                    <input type="tel" id="contactPhone2" readonly>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="contactEmail2">이메일</label>
+                <input type="email" id="contactEmail2" readonly>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="region1">근무 지역(시/도)</label>
+                    <select id="region1" disabled>
+                        <option value="">시/도를 선택하세요</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="region2">근무 지역(시/군/구)</label>
+                    <select id="region2" disabled>
+                        <option value="">시/도를 먼저 선택하세요</option>
+                    </select>
                 </div>
             </div>
         </div>
-        
-        <div class="form-actions">
-            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
-            <button type="submit" class="submit-btn">광고 신청하기</button>
+    </div>
+    
+    <!-- STEP 02 - 채용 정보 입력 -->
+    <div class="form-box">
+        <div class="form-box-header">
+            <span class="step-number">STEP.02</span>
+            <span class="step-title">채용 정보 입력</span>
         </div>
-    </form>
+        <div class="form-box-content">
+            <form id="jobAdvertiseForm">
+                <div class="form-group">
+                    <label>급여 형태 <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="salaryType" value="hourly" required onchange="updateSalaryLabel()">
+                            <span class="radio-text">시급</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="salaryType" value="weekly" required onchange="updateSalaryLabel()">
+                            <span class="radio-text">주급</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="salaryType" value="daily" required onchange="updateSalaryLabel()">
+                            <span class="radio-text">일급</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="salaryType" value="monthly" required onchange="updateSalaryLabel()">
+                            <span class="radio-text">월급</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="salary"><span id="salaryLabel">급여</span> <span class="required">*</span></label>
+                    <div class="salary-input-wrapper">
+                        <input type="text" id="salary" placeholder="예: 50,000" required>
+                        <span class="salary-suffix">원</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>근무 시간 <span class="required">*</span></label>
+                    <div id="workTimeContainer">
+                        <!-- 근무 시간이 동적으로 추가됩니다 -->
+                    </div>
+                    <button type="button" class="add-time-btn" onclick="addWorkTime()">+ 근무 시간 추가</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="welfare">복지 내용</label>
+                    <textarea id="welfare" rows="3" placeholder="제공되는 복지 및 혜택을 입력해주세요 (예: 식사 제공, 기숙사, 인센티브 등)"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- STEP 03 - 광고기간 설정 및 추가 요청사항 -->
+    <div class="form-box">
+        <div class="form-box-header">
+            <span class="step-number">STEP.03</span>
+            <span class="step-title">광고기간 설정 및 추가 요청사항</span>
+        </div>
+        <div class="form-box-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate2">광고 시작일 <span class="required">*</span></label>
+                        <input type="date" id="startDate2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration2">광고 기간 <span class="required">*</span></label>
+                        <select id="duration2" required onchange="updateTotalAmount()">
+                            <option value="">선택하세요</option>
+                            <option value="1">1개월</option>
+                            <option value="3">3개월</option>
+                            <option value="6">6개월</option>
+                            <option value="12">12개월</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="additionalRequest">추가 요청사항</label>
+                    <textarea id="additionalRequest" rows="4" placeholder="광고 진행 시 추가로 요청하실 사항이 있으시면 자유롭게 작성해주세요"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="kakaoLink2">카카오톡 문의 링크</label>
+                    <input type="url" id="kakaoLink2" placeholder="https://open.kakao.com/...">
+                    <div class="helper-text">지원자가 직접 문의할 수 있는 카카오톡 오픈채팅 링크</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobImage">회사 이미지</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="jobImage" accept="image/*">
+                        <label for="jobImage" class="file-input-label">이미지 선택</label>
+                    </div>
+                    <div class="helper-text">최대 5MB, JPG/PNG/GIF 형식</div>
+                </div>
+                
+                <div class="total-amount">
+                    <h3>결제 금액</h3>
+                    <div class="amount-breakdown">
+                        <div class="amount-row">
+                            <span>월 광고비</span>
+                            <span id="monthlyAmount2">0원</span>
+                        </div>
+                        <div class="amount-row">
+                            <span>광고 기간</span>
+                            <span id="adDuration2">0개월</span>
+                        </div>
+                        <div class="amount-row total">
+                            <span>총 결제 금액</span>
+                            <span id="totalAmount2">0원</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="window.history.back()">취소</button>
+                    <button type="submit" class="submit-btn">광고 신청</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+// 근무 시간 인덱스
+let workTimeIndex = 0;
+
+// 페이지 로드 시 첫 번째 근무 시간 추가
+document.addEventListener('DOMContentLoaded', function() {
+    addWorkTime();
+});
+
+// 근무 시간 추가
+function addWorkTime() {
+    const container = document.getElementById('workTimeContainer');
+    const timeItem = document.createElement('div');
+    timeItem.className = 'work-time-item';
+    timeItem.dataset.index = workTimeIndex;
+    
+    timeItem.innerHTML = `
+        <div class="time-item-header">
+            <input type="text" class="time-title" placeholder="예: 주간조, 1부" required>
+            <button type="button" class="remove-time-btn" onclick="removeWorkTime(${workTimeIndex})">삭제</button>
+        </div>
+        <div class="time-selector-wrapper">
+            <div class="time-selector">
+                <label>시작 시간</label>
+                <div class="time-inputs">
+                    <select class="hour-select start-hour" required>
+                        <option value="">시</option>
+                        ${generateHourOptions()}
+                    </select>
+                    <span class="time-separator">:</span>
+                    <select class="minute-select start-minute" required>
+                        <option value="">분</option>
+                        ${generateMinuteOptions()}
+                    </select>
+                </div>
+            </div>
+            <span class="time-range-separator">~</span>
+            <div class="time-selector">
+                <label>종료 시간</label>
+                <div class="time-inputs">
+                    <select class="hour-select end-hour" required>
+                        <option value="">시</option>
+                        ${generateHourOptions()}
+                    </select>
+                    <span class="time-separator">:</span>
+                    <select class="minute-select end-minute" required>
+                        <option value="">분</option>
+                        ${generateMinuteOptions()}
+                    </select>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(timeItem);
+    workTimeIndex++;
+    
+    // 첫 번째 항목의 삭제 버튼 숨기기/표시
+    updateDeleteButtons();
+}
+
+// 근무 시간 제거
+function removeWorkTime(index) {
+    const item = document.querySelector(`.work-time-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        updateDeleteButtons();
+    }
+}
+
+// 삭제 버튼 업데이트
+function updateDeleteButtons() {
+    const items = document.querySelectorAll('.work-time-item');
+    items.forEach((item, index) => {
+        const deleteBtn = item.querySelector('.remove-time-btn');
+        if (items.length === 1) {
+            deleteBtn.style.display = 'none';
+        } else {
+            deleteBtn.style.display = 'block';
+        }
+    });
+}
+
+// 시간 옵션 생성
+function generateHourOptions() {
+    let options = '';
+    for (let i = 0; i < 24; i++) {
+        const hour = i.toString().padStart(2, '0');
+        options += `<option value="${hour}">${hour}</option>`;
+    }
+    return options;
+}
+
+// 분 옵션 생성
+function generateMinuteOptions() {
+    let options = '';
+    for (let i = 0; i < 60; i += 10) {
+        const minute = i.toString().padStart(2, '0');
+        options += `<option value="${minute}">${minute}</option>`;
+    }
+    return options;
+}
+
+// 급여 형태에 따른 라벨 변경
+function updateSalaryLabel() {
+    const salaryTypeRadios = document.getElementsByName('salaryType');
+    let selectedType = '';
+    
+    for (const radio of salaryTypeRadios) {
+        if (radio.checked) {
+            selectedType = radio.value;
+            break;
+        }
+    }
+    
+    const salaryLabel = document.getElementById('salaryLabel');
+    
+    switch(selectedType) {
+        case 'hourly':
+            salaryLabel.textContent = '시급';
+            break;
+        case 'weekly':
+            salaryLabel.textContent = '주급';
+            break;
+        case 'daily':
+            salaryLabel.textContent = '일급';
+            break;
+        case 'monthly':
+            salaryLabel.textContent = '월급';
+            break;
+        default:
+            salaryLabel.textContent = '급여';
+    }
+}
+</script>

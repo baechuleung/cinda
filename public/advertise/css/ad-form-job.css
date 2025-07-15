@@ -1,30 +1,69 @@
+/* 파일 경로: /public/advertise/css/ad-form-job.css */
+
 /* 채용관 광고 신청서 스타일 */
 
-/* 광고신청 폼 섹션 */
-#jobAdForm {
+/* 전체 래퍼 */
+.job-ad-form-wrapper {
     max-width: 800px !important;
     width: 100% !important;
     margin: 0 auto !important;
+}
+
+/* 선택한 광고 제목 */
+.selected-ad-title {
+    color: #353535;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* 폼 박스 공통 스타일 */
+.form-box {
+    width: 100% !important;
     background: white;
     border-radius: 12px;
-    padding: 2rem !important;
+    margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
+    overflow: hidden;
 }
 
-#jobAdForm h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 2rem;
-    margin-top: 0;
+/* 폼 박스 헤더 */
+.form-box-header {
+    background: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-/* 폼 요소 스타일 */
-#jobAdForm .form-group {
+.step-number {
+    border-radius: 50px;
+    background: linear-gradient(90deg, #6850FF 0%, #9584FF 100%);
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+.step-title {
+    color: #353535;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 폼 박스 내용 */
+.form-box-content {
+    padding: 2rem;
+}
+
+/* 기존 jobAdForm 스타일 제거하고 form-box-content에 적용 */
+.form-box-content .form-group {
     margin-bottom: 1.5rem;
 }
 
-#jobAdForm .form-group label {
+.form-box-content .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-size: 14px;
@@ -32,18 +71,18 @@
     font-weight: 500;
 }
 
-#jobAdForm .required {
+.form-box-content .required {
     color: #FF6666;
     margin-left: 4px;
 }
 
-#jobAdForm .form-group input[type="text"],
-#jobAdForm .form-group input[type="email"],
-#jobAdForm .form-group input[type="tel"],
-#jobAdForm .form-group input[type="url"],
-#jobAdForm .form-group input[type="date"],
-#jobAdForm .form-group select,
-#jobAdForm .form-group textarea {
+.form-box-content .form-group input[type="text"],
+.form-box-content .form-group input[type="email"],
+.form-box-content .form-group input[type="tel"],
+.form-box-content .form-group input[type="url"],
+.form-box-content .form-group input[type="date"],
+.form-box-content .form-group select,
+.form-box-content .form-group textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
@@ -52,32 +91,36 @@
     transition: border-color 0.3s ease;
 }
 
-#jobAdForm .form-group input[readonly] {
+.form-box-content .form-group input[readonly],
+.form-box-content .form-group select[disabled] {
     background: #f5f5f5;
     cursor: not-allowed;
+    color: #333;
+    opacity: 1;
+    -webkit-text-fill-color: #333;
 }
 
-#jobAdForm .form-group input:focus,
-#jobAdForm .form-group select:focus,
-#jobAdForm .form-group textarea:focus {
+.form-box-content .form-group input:focus,
+.form-box-content .form-group select:focus,
+.form-box-content .form-group textarea:focus {
     outline: none;
     border-color: #FF6666;
 }
 
-#jobAdForm .form-row {
+.form-box-content .form-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
 
-#jobAdForm .helper-text {
+.form-box-content .helper-text {
     font-size: 12px;
     color: #999;
     margin-top: 0.25rem;
 }
 
 /* 업종 선택 스타일 */
-#jobAdForm select#businessType {
+.form-box-content select {
     background-color: white;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
@@ -88,18 +131,18 @@
 }
 
 /* 파일 업로드 스타일 */
-#jobAdForm .file-input-wrapper {
+.form-box-content .file-input-wrapper {
     position: relative;
     overflow: hidden;
     display: inline-block;
 }
 
-#jobAdForm .file-input-wrapper input[type=file] {
+.form-box-content .file-input-wrapper input[type=file] {
     position: absolute;
     left: -9999px;
 }
 
-#jobAdForm .file-input-label {
+.form-box-content .file-input-label {
     display: block;
     padding: 0.75rem 1.5rem;
     background: #f5f5f5;
@@ -112,13 +155,171 @@
     color: #666;
 }
 
-#jobAdForm .file-input-label:hover {
+.form-box-content .file-input-label:hover {
     background: #eeeeee;
     border-color: #d0d0d0;
 }
 
+/* 라디오 버튼 그룹 */
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-text {
+    user-select: none;
+}
+
+/* 급여 입력 래퍼 */
+.salary-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.salary-input-wrapper input {
+    padding-right: 3rem;
+}
+
+.salary-suffix {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* 근무 시간 컨테이너 */
+#workTimeContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* 근무 시간 아이템 */
+.work-time-item {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* 시간 아이템 헤더 */
+.time-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.time-title {
+    flex: 1;
+    max-width: 200px;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.remove-time-btn {
+    padding: 0.5rem 1rem;
+    background: #ff6666;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.remove-time-btn:hover {
+    background: #ff5555;
+}
+
+/* 시간 선택기 래퍼 */
+.time-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.time-selector {
+    flex: 1;
+}
+
+.time-selector label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hour-select,
+.minute-select {
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+
+.time-separator {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.time-range-separator {
+    font-size: 18px;
+    color: #999;
+    margin: 0 0.5rem;
+    margin-top: 1.5rem;
+}
+
+/* 근무 시간 추가 버튼 */
+.add-time-btn {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: #6850FF;
+    border: 2px solid #6850FF;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-time-btn:hover {
+    background: #6850FF;
+    color: white;
+}
+
 /* 총 금액 표시 */
-#jobAdForm .total-amount {
+.form-box-content .total-amount {
     background: #f8f9fa;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -126,56 +327,56 @@
     margin-top: 2rem;
 }
 
-#jobAdForm .total-amount h3 {
+.form-box-content .total-amount h3 {
     font-size: 18px;
     color: #333;
     margin-bottom: 1rem;
 }
 
-#jobAdForm .amount-breakdown {
+.form-box-content .amount-breakdown {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
-#jobAdForm .amount-row {
+.form-box-content .amount-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-#jobAdForm .amount-row.total {
+.form-box-content .amount-row.total {
     border-top: 2px solid #e0e0e0;
     padding-top: 0.75rem;
     margin-top: 0.75rem;
     font-weight: 600;
 }
 
-#jobAdForm .amount-row span:first-child {
+.form-box-content .amount-row span:first-child {
     color: #666;
     font-size: 14px;
 }
 
-#jobAdForm .amount-row span:last-child {
+.form-box-content .amount-row span:last-child {
     color: #333;
     font-size: 14px;
 }
 
-#jobAdForm .amount-row.total span {
+.form-box-content .amount-row.total span {
     color: #FF6666;
     font-size: 16px;
 }
 
 /* 폼 액션 버튼 */
-#jobAdForm .form-actions {
+.form-box-content .form-actions {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
     margin-top: 2rem;
 }
 
-#jobAdForm .cancel-btn,
-#jobAdForm .submit-btn {
+.form-box-content .cancel-btn,
+.form-box-content .submit-btn {
     padding: 0.75rem 2rem;
     border: none;
     border-radius: 6px;
@@ -184,47 +385,96 @@
     transition: all 0.3s ease;
 }
 
-#jobAdForm .cancel-btn {
+.form-box-content .cancel-btn {
     background: white;
     color: #666;
     border: 1px solid #e0e0e0;
 }
 
-#jobAdForm .cancel-btn:hover {
+.form-box-content .cancel-btn:hover {
     background: #f5f5f5;
 }
 
-#jobAdForm .submit-btn {
+.form-box-content .submit-btn {
     background: #FF6666;
     color: white;
 }
 
-#jobAdForm .submit-btn:hover {
+.form-box-content .submit-btn:hover {
     background: #FF5555;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    #jobAdForm.ad-form-section {
+    .selected-ad-title {
+        font-size: 24px;
+    }
+    
+    .form-box-header {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .form-box-content {
         padding: 1.5rem;
     }
     
-    #jobAdForm .form-row {
+    .form-box-content .form-row {
         grid-template-columns: 1fr;
     }
     
-    #jobAdForm .form-actions {
+    .radio-group {
+        gap: 1rem;
+    }
+    
+    .time-selector-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .time-range-separator {
+        text-align: center;
+        margin: 0.5rem 0;
+    }
+    
+    .time-item-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .time-title {
+        max-width: 100%;
+    }
+    
+    .form-box-content .form-actions {
         flex-direction: column;
     }
     
-    #jobAdForm .cancel-btn,
-    #jobAdForm .submit-btn {
+    .form-box-content .cancel-btn,
+    .form-box-content .submit-btn {
         width: 100%;
     }
 }
 
 @media (max-width: 480px) {
-    #jobAdForm.ad-form-section {
+    .selected-ad-title {
+        font-size: 20px;
+    }
+    
+    .form-box-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .step-number {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+    
+    .step-title {
+        font-size: 18px;
+    }
+    
+    .form-box-content {
         padding: 1rem;
     }
 }

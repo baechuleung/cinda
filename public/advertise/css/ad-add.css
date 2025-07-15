@@ -1,3 +1,5 @@
+/* 파일 경로: /public/advertise/css/ad-add.css */
+
 /* 광고추가 페이지 스타일 */
 
 /* 광고 컨테이너 */
@@ -240,56 +242,68 @@
     width: 90%;
     max-width: 500px;
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.modal-close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    cursor: pointer;
-}
-
-.modal-close:hover,
-.modal-close:focus {
-    color: #000;
-}
-
-.modal-content h2 {
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1.5rem;
-    color: #333;
 }
 
-.modal-features {
-    list-style: none;
-    padding: 0;
+.modal-header h2 {
+    color: #333;
+    font-size: 20px;
     margin: 0;
 }
 
-.modal-features li {
-    padding: 0.75rem 0;
-    color: #333;
-    position: relative;
-    padding-left: 2rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.modal-features li:last-child {
-    border-bottom: none;
-}
-
-.modal-features li:before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: #00C33A;
+.close {
+    color: #aaa;
+    font-size: 28px;
     font-weight: bold;
-    font-size: 18px;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* 모달 내 상세 내용 */
+.detail-content h3 {
+    color: #333;
+    font-size: 16px;
+    margin: 1.5rem 0 0.5rem 0;
+}
+
+.detail-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.detail-content li {
+    color: #666;
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.detail-content li:before {
+    content: '•';
+    position: absolute;
+    left: 0.5rem;
+    color: #999;
+}
+
+/* 데이터 없음 메시지 */
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
 }
 
 /* 반응형 디자인 */
@@ -298,45 +312,40 @@
         padding: 0 1rem;
     }
     
-    .advertise-header h1 {
-        font-size: 24px;
-    }
-    
-    .advertise-header .subtitle {
-        font-size: 14px;
-    }
-    
     .ad-options-grid {
-        gap: 10px;
+        justify-content: center;
     }
     
     .ad-option-card {
         flex: 1 1 100%;
         max-width: 100%;
-        padding: 1.5rem;
-    }
-    
-    /* 모바일에서 자세히보기 버튼 테두리 제거 */
-    .detail-btn {
-        border: none;
-        background: transparent;
-        width: auto;
-        height: auto;
-        padding: 0.5rem 0;
-        margin-left: auto;
     }
 }
 
-@media (max-width: 480px) {
-    .advertise-container {
-        padding: 0 1rem;
-    }
-    
-    .advertise-header h1 {
-        font-size: 20px;
-    }
-    
-    .ad-option-card {
-        padding: 1rem;
-    }
+/* 광고 섹션 초기 숨김 - 로드 시 깜빡임 방지 */
+.ad-options-section h2:nth-of-type(1),
+.ad-options-section h2:nth-of-type(1) + .ad-options-grid,
+.ad-options-section h2:nth-of-type(2),
+.ad-options-section h2:nth-of-type(2) + .ad-options-grid {
+    display: none !important;
+}
+
+/* 파트너회원용 표시 클래스 */
+body.partner-user .ad-options-section h2:nth-of-type(1),
+body.partner-user .ad-options-section h2:nth-of-type(1) + .ad-options-grid {
+    display: block !important;
+}
+
+body.partner-user .ad-options-section h2:nth-of-type(1) + .ad-options-grid {
+    display: flex !important;
+}
+
+/* 업소회원용 표시 클래스 */
+body.business-user .ad-options-section h2:nth-of-type(2),
+body.business-user .ad-options-section h2:nth-of-type(2) + .ad-options-grid {
+    display: block !important;
+}
+
+body.business-user .ad-options-section h2:nth-of-type(2) + .ad-options-grid {
+    display: flex !important;
 }
