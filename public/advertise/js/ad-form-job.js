@@ -502,6 +502,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
+                userNickname: userData?.nickname || '', // nickname 추가!
                 storeCode: userData?.storeCode || '', // storeCode 추가
                 adType: selectedAdType?.type || '',
                 adCategory: 'job',
