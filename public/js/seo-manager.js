@@ -20,26 +20,34 @@ class SEOManager {
             },
             'register': {
                 title: '회원가입 - CINDA',
-                description: 'CINDA 회원가입 페이지입니다. 개인회원과 기업회원 중 선택하여 가입하세요.',
-                keywords: 'CINDA, 회원가입, 개인회원, 기업회원, 가입',
+                description: 'CINDA 회원가입 페이지입니다. 여성회원, 업소관계자, 파트너 중 선택하여 가입하세요.',
+                keywords: 'CINDA, 회원가입, 여성회원, 업소관계자, 파트너, 가입',
                 ogTitle: 'CINDA 회원가입',
                 ogDescription: '지금 CINDA에 가입하고 다양한 혜택을 누리세요.',
                 schemaType: 'WebPage'
             },
             'register-individual': {
-                title: '개인회원 가입 - CINDA',
-                description: 'CINDA 개인회원 가입 페이지입니다. 간편하게 가입하고 서비스를 이용하세요.',
-                keywords: 'CINDA, 개인회원, 회원가입, 개인가입',
-                ogTitle: 'CINDA 개인회원 가입',
-                ogDescription: '개인회원으로 가입하여 CINDA의 다양한 서비스를 경험하세요.',
+                title: '여성회원 가입 - CINDA',
+                description: 'CINDA 여성회원 가입 페이지입니다. 간편하게 가입하고 서비스를 이용하세요.',
+                keywords: 'CINDA, 여성회원, 회원가입, 여성가입',
+                ogTitle: 'CINDA 여성회원 가입',
+                ogDescription: '여성회원으로 가입하여 CINDA의 다양한 서비스를 경험하세요.',
                 schemaType: 'WebPage'
             },
             'register-business': {
-                title: '기업회원 가입 - CINDA',
-                description: 'CINDA 기업회원 가입 페이지입니다. 기업 전용 서비스를 이용하세요.',
-                keywords: 'CINDA, 기업회원, 사업자, 회원가입, 기업가입',
-                ogTitle: 'CINDA 기업회원 가입',
-                ogDescription: '기업회원으로 가입하여 비즈니스 전용 기능을 활용하세요.',
+                title: '업소관계자 가입 - CINDA',
+                description: 'CINDA 업소관계자 가입 페이지입니다. 업소 전용 서비스를 이용하세요.',
+                keywords: 'CINDA, 업소관계자, 사업자, 회원가입, 업소가입',
+                ogTitle: 'CINDA 업소관계자 가입',
+                ogDescription: '업소관계자로 가입하여 비즈니스 전용 기능을 활용하세요.',
+                schemaType: 'WebPage'
+            },
+            'register-partner': {
+                title: '파트너 가입 - CINDA',
+                description: 'CINDA 파트너 가입 페이지입니다. 파트너로 함께 성장하세요.',
+                keywords: 'CINDA, 파트너, 제휴, 회원가입, 파트너가입',
+                ogTitle: 'CINDA 파트너 가입',
+                ogDescription: '파트너로 가입하여 CINDA와 함께 비즈니스를 확장하세요.',
                 schemaType: 'WebPage'
             },
             'dashboard': {
@@ -71,6 +79,7 @@ class SEOManager {
         if (path.includes('/auth/login')) return 'login';
         if (path.includes('/auth/register-individual')) return 'register-individual';
         if (path.includes('/auth/register-business')) return 'register-business';
+        if (path.includes('/auth/register-partner')) return 'register-partner';
         if (path.includes('/auth/register')) return 'register';
         if (path.includes('dashboard')) return 'dashboard';
         if (filename === '' || filename === 'index') return 'index';
@@ -140,6 +149,7 @@ class SEOManager {
             { url: '/html/auth/register.html', priority: '0.8', changefreq: 'monthly' },
             { url: '/html/auth/register-individual.html', priority: '0.7', changefreq: 'monthly' },
             { url: '/html/auth/register-business.html', priority: '0.7', changefreq: 'monthly' },
+            { url: '/html/auth/register-partner.html', priority: '0.7', changefreq: 'monthly' },
             { url: '/dashboard.html', priority: '0.9', changefreq: 'daily' }
         ];
     }

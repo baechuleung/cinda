@@ -4,11 +4,17 @@ import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs
 
 // 드롭다운 초기화
 function initDropdowns() {
+    // 이메일 도메인 드롭다운
     const emailDropdownSelected = document.getElementById('emailDropdownSelected');
     const emailDropdownMenu = document.getElementById('emailDropdownMenu');
     const emailDropdownOptions = document.querySelectorAll('#emailDropdownOptions .dropdown-option');
     const emailDropdownSearch = document.getElementById('emailDropdownSearch');
     const emailDomainDirect = document.getElementById('emailDomainDirect');
+
+    // 업종 선택 드롭다운
+    const categoryDropdownSelected = document.getElementById('categoryDropdownSelected');
+    const categoryDropdownMenu = document.getElementById('categoryDropdownMenu');
+    const categoryDropdownOptions = document.querySelectorAll('#categoryDropdownOptions .dropdown-option');
 
     // 이메일 드롭다운 토글
     emailDropdownSelected.addEventListener('click', function() {
@@ -48,11 +54,34 @@ function initDropdowns() {
         });
     });
 
+    // 업종 드롭다운 토글
+    categoryDropdownSelected.addEventListener('click', function() {
+        const isOpen = categoryDropdownMenu.style.display === 'block';
+        categoryDropdownMenu.style.display = isOpen ? 'none' : 'block';
+        this.classList.toggle('active', !isOpen);
+    });
+
+    // 업종 옵션 선택
+    categoryDropdownOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const value = this.dataset.value;
+            const text = this.textContent;
+            
+            categoryDropdownSelected.querySelector('.selected-text').textContent = text;
+            document.getElementById('businessCategory').value = value;
+            
+            categoryDropdownMenu.style.display = 'none';
+            categoryDropdownSelected.classList.remove('active');
+        });
+    });
+
     // 외부 클릭시 드롭다운 닫기
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.custom-dropdown')) {
             emailDropdownMenu.style.display = 'none';
+            categoryDropdownMenu.style.display = 'none';
             emailDropdownSelected.classList.remove('active');
+            categoryDropdownSelected.classList.remove('active');
         }
     });
 }
@@ -89,6 +118,12 @@ function validatePassword(password) {
     return hasLetter && hasNumber && hasSpecial && hasLength;
 }
 
+// 사업자등록번호 포맷팅
+document.getElementById('businessNumber').addEventListener('input', function(e) {
+    // 숫자만 입력 가능
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
 // 폼 제출 처리
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -96,14 +131,17 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const nickname = document.getElementById('nickname').value;
-    const name = document.getElementById('name').value;
+    const companyName = document.getElementById('companyName').value;
+    const businessNumber = document.getElementById('businessNumber').value;
+    const businessCategory = document.getElementById('businessCategory').value;
+    const managerName = document.getElementById('managerName').value;
     const birthdate = document.getElementById('birthdate').value;
     const phone = document.getElementById('phone').value;
     
     const terms1 = document.getElementById('terms1').checked;
     const terms2 = document.getElementById('terms2').checked;
     const terms3 = document.getElementById('terms3').checked;
+    const terms4 = document.getElementById('terms4').checked;
     
     const errorMessage = document.getElementById('error-message');
     
@@ -123,12 +161,22 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         return;
     }
     
-    if (!nickname) {
-        errorMessage.textContent = '닉네임을 입력해주세요.';
+    if (!companyName) {
+        errorMessage.textContent = '업체명을 입력해주세요.';
         return;
     }
     
-    if (!terms1 || !terms2) {
+    if (!businessNumber || businessNumber.length !== 10) {
+        errorMessage.textContent = '올바른 사업자등록번호를 입력해주세요.';
+        return;
+    }
+    
+    if (!businessCategory) {
+        errorMessage.textContent = '업종을 선택해주세요.';
+        return;
+    }
+    
+    if (!terms1 || !terms2 || !terms3) {
         errorMessage.textContent = '필수 약관에 모두 동의해주세요.';
         return;
     }
@@ -140,20 +188,21 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         
         // 프로필 업데이트
         await updateProfile(user, {
-            displayName: nickname
+            displayName: companyName
         });
         
-        // Firestore에 여성회원 정보 저장 (컬렉션명 변경: individual_users -> female_users)
-        await setDoc(doc(db, 'female_users', user.uid), {
+        // Firestore에 파트너 정보 저장
+        await setDoc(doc(db, 'partner_users', user.uid), {
             uid: user.uid,
             email: email,
-            nickname: nickname,
-            name: name,
+            companyName: companyName,
+            businessNumber: businessNumber,
+            businessCategory: businessCategory,
+            managerName: managerName,
             birthdate: birthdate,
             phone: phone,
-            gender: 'female',
-            userType: 'female',
-            marketingAgree: terms3,
+            marketingAgree: terms4,
+            status: 'pending', // 승인 대기 상태
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         });
@@ -162,8 +211,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         await sendEmailVerification(user);
         
         // 성공 시 리다이렉트
-        alert('회원가입이 완료되었습니다. 이메일 인증을 완료해주세요.');
-        window.location.href = '/realtime-status/realtime-status.html';
+        alert('회원가입이 완료되었습니다. 관리자 승인 후 서비스를 이용하실 수 있습니다.');
+        window.location.href = '/auth/login.html';
         
     } catch (error) {
         console.error('Registration error:', error);
