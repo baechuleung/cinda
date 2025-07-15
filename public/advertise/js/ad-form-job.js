@@ -279,15 +279,6 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
     
     // 이미지 업로드 이벤트 초기화
     initImageUploadEvents();
-    
-    // 폼 제출 이벤트 설정
-    const form = document.getElementById('jobAdvertiseForm');
-    if (form) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await submitJobAdForm(auth.currentUser, selectedAdType, adPrice, userData);
-        });
-    }
 }
 
 // 이미지 업로드 이벤트 초기화
@@ -354,9 +345,11 @@ function initImageUploadEvents() {
                 return;
             }
             
-            if (preview) {
-                preview.innerHTML = '';
-            }
+            // 기존 미리보기에 추가하는 방식으로 변경
+            if (!preview) return;
+            
+            // 현재 미리보기 개수 확인
+            const currentPreviews = preview.querySelectorAll('.preview-item').length;
             
             // 파일 선택 텍스트 업데이트
             if (uploadText) {
@@ -394,10 +387,10 @@ function initImageUploadEvents() {
                     return;
                 }
                 
-                // 미리보기 표시
+                // 미리보기 추가 (기존 미리보기는 유지)
                 if (preview) {
                     const reader = new FileReader();
-                    const currentIndex = i; // 클로저 문제 해결
+                    const currentIndex = currentPreviews + i; // 기존 미리보기 개수에 현재 인덱스 추가
                     reader.onload = function(e) {
                         const previewItem = document.createElement('div');
                         previewItem.className = 'preview-item';
@@ -449,12 +442,18 @@ export function updateJobAdAmount(adPrice) {
 
 // 채용관 광고 폼 제출
 export async function submitJobAdForm(currentUser, selectedAdType, adPrice, userData) {
-    if (!currentUser) {
-        alert('로그인이 필요합니다.');
-        return;
-    }
+    const form = document.getElementById('jobAdvertiseForm');
+    if (!form) return;
     
-    try {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentUser) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        
+        try {
             // 소셜 연락처 맵 형태로 수집
             const socialContact = {
                 kakao: document.getElementById('kakaoContact')?.value.trim() || '',
@@ -502,8 +501,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
-                userNickname: userData?.nickname || '', // nickname 추가!
-                storeCode: userData?.storeCode || '', // storeCode 추가
+                userNickname: userData?.nickname || '', // nickname 추가
                 adType: selectedAdType?.type || '',
                 adCategory: 'job',
                 adName: selectedAdType?.name || '',
@@ -576,7 +574,8 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
             console.error('광고 신청 오류:', error);
             alert('광고 신청 중 오류가 발생했습니다.');
         }
-    };
+    });
+}
 
 // 커스텀 날짜 선택기 함수
 function initCustomDatePicker() {
