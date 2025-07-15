@@ -1,0 +1,158 @@
+<!-- 광고신청 폼 - 채용관 광고용 -->
+<div id="jobAdForm">
+    <h2>광고신청서 - 채용관 광고</h2>
+    <form id="jobAdvertiseForm">
+        <div class="form-group">
+            <label for="selectedAdType2">선택한 광고 유형</label>
+            <input type="text" id="selectedAdType2" readonly placeholder="위에서 광고를 선택해주세요">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="businessName2">업체명 <span class="required">*</span></label>
+                <input type="text" id="businessName2" required>
+            </div>
+            <div class="form-group">
+                <label for="businessType">업종 <span class="required">*</span></label>
+                <select id="businessType" required>
+                    <option value="">선택하세요</option>
+                    <option value="restaurant">음식점</option>
+                    <option value="cafe">카페</option>
+                    <option value="retail">소매업</option>
+                    <option value="service">서비스업</option>
+                    <option value="manufacturing">제조업</option>
+                    <option value="delivery">배달업</option>
+                    <option value="construction">건설업</option>
+                    <option value="cleaning">청소/미화</option>
+                    <option value="logistics">물류/유통</option>
+                    <option value="etc">기타</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="contactName2">담당자명 <span class="required">*</span></label>
+                <input type="text" id="contactName2" required>
+            </div>
+            <div class="form-group">
+                <label for="contactPhone2">연락처 <span class="required">*</span></label>
+                <input type="tel" id="contactPhone2" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="contactEmail2">이메일 <span class="required">*</span></label>
+            <input type="email" id="contactEmail2" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="jobTitle">채용 직종 <span class="required">*</span></label>
+            <input type="text" id="jobTitle" placeholder="예: 홀서빙, 주방보조, 배달직원" required>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="workLocation">근무지역 <span class="required">*</span></label>
+                <input type="text" id="workLocation" placeholder="예: 서울시 강남구" required>
+            </div>
+            <div class="form-group">
+                <label for="workAddress">상세주소</label>
+                <input type="text" id="workAddress" placeholder="예: 역삼동 123-45">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="salary">급여 <span class="required">*</span></label>
+                <input type="text" id="salary" placeholder="예: 시급 10,000원" required>
+            </div>
+            <div class="form-group">
+                <label for="workTime">근무시간 <span class="required">*</span></label>
+                <input type="text" id="workTime" placeholder="예: 09:00 ~ 18:00" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="jobDescription">채용 내용 <span class="required">*</span></label>
+            <textarea id="jobDescription" rows="4" placeholder="근무조건, 우대사항, 복리후생 등을 상세히 입력해주세요" required></textarea>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="recruitCount">모집인원</label>
+                <input type="text" id="recruitCount" placeholder="예: 2명">
+            </div>
+            <div class="form-group">
+                <label for="experience">경력사항</label>
+                <select id="experience">
+                    <option value="">선택하세요</option>
+                    <option value="none">경력무관</option>
+                    <option value="newcomer">신입</option>
+                    <option value="experienced">경력자</option>
+                    <option value="1year">1년 이상</option>
+                    <option value="3years">3년 이상</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate2">광고 시작일 <span class="required">*</span></label>
+                <input type="date" id="startDate2" required>
+            </div>
+            <div class="form-group">
+                <label for="duration2">광고 기간 <span class="required">*</span></label>
+                <select id="duration2" required onchange="updateTotalAmount()">
+                    <option value="">선택하세요</option>
+                    <option value="1">1개월</option>
+                    <option value="3">3개월</option>
+                    <option value="6">6개월</option>
+                    <option value="12">12개월</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="kakaoLink2">카카오톡 채팅방 링크</label>
+            <input type="url" id="kakaoLink2" placeholder="https://open.kakao.com/o/...">
+            <div class="helper-text">카카오톡 오픈채팅방 또는 채널 링크 (선택사항)</div>
+        </div>
+        
+        <!-- 파일 업로드 -->
+        <div class="form-group">
+            <label for="jobImage">회사 로고 또는 이미지</label>
+            <div class="file-input-wrapper">
+                <input type="file" id="jobImage" accept="image/*" style="display: none;">
+                <label for="jobImage" class="file-input-label">
+                    이미지 선택
+                </label>
+            </div>
+            <div class="helper-text">권장 크기: 500 x 500px (JPG, PNG)</div>
+        </div>
+        
+        <!-- 총 금액 표시 -->
+        <div class="total-amount">
+            <h3>총 광고비용</h3>
+            <div class="amount-breakdown">
+                <div class="amount-row">
+                    <span>월 광고비:</span>
+                    <span id="monthlyAmount2">0원</span>
+                </div>
+                <div class="amount-row">
+                    <span>광고 기간:</span>
+                    <span id="adDuration2">0개월</span>
+                </div>
+                <div class="amount-row total">
+                    <span>총 결제금액:</span>
+                    <span id="totalAmount2">0원</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+            <button type="submit" class="submit-btn">광고 신청하기</button>
+        </div>
+    </form>
+</div>

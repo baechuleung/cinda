@@ -1,0 +1,219 @@
+/* 일반 광고 신청서 스타일 */
+
+/* 광고신청 폼 섹션 */
+#generalAdForm {
+    max-width: 800px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+}
+
+#generalAdForm h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 2rem;
+    margin-top: 0;
+}
+
+/* 폼 요소 스타일 */
+#generalAdForm .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#generalAdForm .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+#generalAdForm .required {
+    color: #FF6666;
+    margin-left: 4px;
+}
+
+#generalAdForm .form-group input[type="text"],
+#generalAdForm .form-group input[type="email"],
+#generalAdForm .form-group input[type="tel"],
+#generalAdForm .form-group input[type="url"],
+#generalAdForm .form-group input[type="date"],
+#generalAdForm .form-group select,
+#generalAdForm .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+#generalAdForm .form-group input[readonly] {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+
+#generalAdForm .form-group input:focus,
+#generalAdForm .form-group select:focus,
+#generalAdForm .form-group textarea:focus {
+    outline: none;
+    border-color: #FF6666;
+}
+
+#generalAdForm .form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+#generalAdForm .helper-text {
+    font-size: 12px;
+    color: #999;
+    margin-top: 0.25rem;
+}
+
+/* 파일 업로드 스타일 */
+#generalAdForm .file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+#generalAdForm .file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+#generalAdForm .file-input-label {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+#generalAdForm .file-input-label:hover {
+    background: #eeeeee;
+    border-color: #d0d0d0;
+}
+
+/* 총 금액 표시 */
+#generalAdForm .total-amount {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+#generalAdForm .total-amount h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+#generalAdForm .amount-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#generalAdForm .amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#generalAdForm .amount-row.total {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    font-weight: 600;
+}
+
+#generalAdForm .amount-row span:first-child {
+    color: #666;
+    font-size: 14px;
+}
+
+#generalAdForm .amount-row span:last-child {
+    color: #333;
+    font-size: 14px;
+}
+
+#generalAdForm .amount-row.total span {
+    color: #FF6666;
+    font-size: 16px;
+}
+
+/* 폼 액션 버튼 */
+#generalAdForm .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+#generalAdForm .cancel-btn,
+#generalAdForm .submit-btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#generalAdForm .cancel-btn {
+    background: white;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+#generalAdForm .cancel-btn:hover {
+    background: #f5f5f5;
+}
+
+#generalAdForm .submit-btn {
+    background: #FF6666;
+    color: white;
+}
+
+#generalAdForm .submit-btn:hover {
+    background: #FF5555;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    #generalAdForm.ad-form-section {
+        padding: 1.5rem;
+    }
+    
+    #generalAdForm .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    #generalAdForm .form-actions {
+        flex-direction: column;
+    }
+    
+    #generalAdForm .cancel-btn,
+    #generalAdForm .submit-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    #generalAdForm.ad-form-section {
+        padding: 1rem;
+    }
+}
