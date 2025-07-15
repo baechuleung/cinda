@@ -25,7 +25,8 @@
     border-radius: 12px;
     margin-bottom: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
 }
 
 /* 폼 박스 헤더 */
@@ -94,7 +95,7 @@
 .form-box-content .form-group input[readonly],
 .form-box-content .form-group select[disabled] {
     background: #f5f5f5;
-    cursor: not-allowed;
+    cursor: default;
     color: #333;
     opacity: 1;
     -webkit-text-fill-color: #333;
@@ -209,75 +210,28 @@
 #workTimeContainer {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 /* 근무 시간 아이템 */
 .work-time-item {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-/* 시간 아이템 헤더 */
-.time-item-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    gap: 0.5rem;
 }
 
+/* 타이틀 입력 */
 .time-title {
-    flex: 1;
-    max-width: 200px;
+    width: 150px;
     padding: 0.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     font-size: 14px;
 }
 
-.remove-time-btn {
-    padding: 0.5rem 1rem;
-    background: #ff6666;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.remove-time-btn:hover {
-    background: #ff5555;
-}
-
-/* 시간 선택기 래퍼 */
-.time-selector-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.time-selector {
-    flex: 1;
-}
-
-.time-selector label {
-    display: block;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 0.5rem;
-}
-
-.time-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.hour-select,
-.minute-select {
+/* 시간 선택 */
+.start-hour,
+.end-hour {
     padding: 0.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -287,39 +241,66 @@
 }
 
 .time-separator {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-}
-
-.time-range-separator {
-    font-size: 18px;
-    color: #999;
-    margin: 0 0.5rem;
-    margin-top: 1.5rem;
-}
-
-/* 근무 시간 추가 버튼 */
-.add-time-btn {
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: white;
-    color: #6850FF;
-    border: 2px solid #6850FF;
-    border-radius: 6px;
     font-size: 14px;
-    font-weight: 600;
+    color: #666;
+}
+
+/* 추가/삭제 버튼 */
+.add-time-btn,
+.remove-time-btn {
+    padding: 0.5rem 1rem;
+    background: #6850FF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.add-time-btn:hover {
+    background: #5940E5;
+}
+
+.remove-time-btn {
+    background: #ff6666;
+}
+
+.remove-time-btn:hover {
+    background: #ff5555;
+}
+
+/* 복지 버튼 그룹 */
+.welfare-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.welfare-btn {
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #666;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.add-time-btn:hover {
+.welfare-btn:hover {
+    background: #f5f5f5;
+    border-color: #d0d0d0;
+}
+
+.welfare-btn.active {
     background: #6850FF;
     color: white;
+    border-color: #6850FF;
 }
 
 /* 총 금액 표시 */
-.form-box-content .total-amount {
+.total-amount-section {
     background: #f8f9fa;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -327,56 +308,51 @@
     margin-top: 2rem;
 }
 
-.form-box-content .total-amount h3 {
+.total-amount-section h3 {
     font-size: 18px;
     color: #333;
     margin-bottom: 1rem;
 }
 
-.form-box-content .amount-breakdown {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.form-box-content .amount-row {
+.amount-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.75rem;
 }
 
-.form-box-content .amount-row.total {
+.amount-row.total {
     border-top: 2px solid #e0e0e0;
     padding-top: 0.75rem;
     margin-top: 0.75rem;
     font-weight: 600;
 }
 
-.form-box-content .amount-row span:first-child {
+.amount-row span:first-child {
     color: #666;
     font-size: 14px;
 }
 
-.form-box-content .amount-row span:last-child {
+.amount-row span:last-child {
     color: #333;
     font-size: 14px;
 }
 
-.form-box-content .amount-row.total span {
+.amount-row.total span {
     color: #FF6666;
     font-size: 16px;
 }
 
 /* 폼 액션 버튼 */
-.form-box-content .form-actions {
+.form-actions {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
     margin-top: 2rem;
 }
 
-.form-box-content .cancel-btn,
-.form-box-content .submit-btn {
+.cancel-btn,
+.submit-btn {
     padding: 0.75rem 2rem;
     border: none;
     border-radius: 6px;
@@ -385,23 +361,408 @@
     transition: all 0.3s ease;
 }
 
-.form-box-content .cancel-btn {
+.cancel-btn {
     background: white;
     color: #666;
     border: 1px solid #e0e0e0;
 }
 
-.form-box-content .cancel-btn:hover {
+.cancel-btn:hover {
     background: #f5f5f5;
 }
 
-.form-box-content .submit-btn {
+.submit-btn {
     background: #FF6666;
     color: white;
 }
 
-.form-box-content .submit-btn:hover {
+.submit-btn:hover {
     background: #FF5555;
+}
+
+/* 커스텀 날짜 선택기 */
+.custom-date-picker {
+    position: relative;
+}
+
+.date-display {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: white !important;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.calendar-dropdown {
+    position: absolute;
+    top: auto;
+    bottom: 100%;
+    left: 0;
+    width: 280px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    z-index: 1000;
+    display: none;
+}
+
+.calendar-dropdown.show {
+    display: block;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cal-prev-btn,
+.cal-next-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    color: #666;
+}
+
+.cal-prev-btn:hover,
+.cal-next-btn:hover {
+    color: #6850FF;
+}
+
+.cal-month-year {
+    font-weight: 600;
+    color: #333;
+}
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 0.5rem;
+}
+
+.cal-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.cal-date {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.cal-date:hover:not(.disabled) {
+    background: #f5f5f5;
+}
+
+.cal-date.selected {
+    background: #6850FF;
+    color: white;
+}
+
+.cal-date.disabled {
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+/* 커스텀 기간 선택 */
+.custom-duration-select {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.duration-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.duration-btn:hover {
+    background: #f5f5f5;
+    border-color: #d0d0d0;
+}
+
+.duration-btn.active {
+    background: #6850FF;
+    color: white;
+    border-color: #6850FF;
+}
+
+/* 소셜 연락처 그룹 */
+.social-contact-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.social-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.social-input-wrapper label {
+    min-width: 80px;
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+}
+
+.social-input-wrapper input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* 결제 정보 섹션 */
+.payment-section {
+    margin-top: 2rem;
+}
+
+.payment-section h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.payment-box {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.amount-breakdown {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.amount-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.amount-row:last-child {
+    margin-bottom: 0;
+}
+
+.amount-row.total {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    font-weight: 600;
+}
+
+.amount-row span:first-child {
+    color: #666;
+    font-size: 14px;
+}
+
+.amount-row span:last-child {
+    color: #333;
+    font-size: 14px;
+}
+
+.amount-row.total span {
+    color: #FF6666;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.payment-notice {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #fff7ed;
+    border-radius: 6px;
+}
+
+.payment-notice p {
+    margin: 0.25rem 0;
+    font-size: 13px;
+    color: #666;
+}
+
+/* 이미지 미리보기 */
+.image-preview {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.preview-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 이미지 업로드 섹션 */
+.image-upload-section {
+    /* 회색 박스 제거 */
+}
+
+.upload-option {
+    margin-bottom: 1rem;
+}
+
+/* 커스텀 체크박스 */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-box {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-right: 0.75rem;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.custom-checkbox input[type="checkbox"]:checked ~ .checkbox-box {
+    background: #6850FF;
+}
+
+.custom-checkbox input[type="checkbox"]:checked ~ .checkbox-box::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.checkbox-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 24px;
+}
+
+#uploadAreaWrapper {
+    transition: all 0.3s ease;
+}
+
+#uploadAreaWrapper.hidden {
+    display: none;
+}
+
+.upload-area {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.upload-btn {
+    padding: 0.5rem 1.5rem;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+}
+
+.upload-btn:hover {
+    background: #f0f0f0;
+}
+
+.upload-text {
+    font-size: 14px;
+    color: #666;
+    flex: 1;
+}
+
+.upload-info {
+    font-size: 13px;
+    color: #999;
+    margin-top: 0.5rem;
 }
 
 /* 반응형 디자인 */
@@ -446,13 +807,21 @@
         max-width: 100%;
     }
     
-    .form-box-content .form-actions {
+    .form-actions {
         flex-direction: column;
     }
     
-    .form-box-content .cancel-btn,
-    .form-box-content .submit-btn {
+    .cancel-btn,
+    .submit-btn {
         width: 100%;
+    }
+    
+    .welfare-checkbox-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .social-contact-group {
+        grid-template-columns: 1fr;
     }
 }
 

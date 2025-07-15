@@ -38,6 +38,28 @@
                 <input type="email" id="contactEmail2" readonly>
             </div>
             
+            <div class="form-group">
+                <label>소셜 연락처</label>
+                <div class="social-contact-group">
+                    <div class="social-input-wrapper">
+                        <label for="kakaoContact">카카오톡</label>
+                        <input type="text" id="kakaoContact" placeholder="ID 혹은 링크를 입력하세요">
+                    </div>
+                    <div class="social-input-wrapper">
+                        <label for="telegramContact">텔레그램</label>
+                        <input type="text" id="telegramContact" placeholder="ID 혹은 링크를 입력하세요">
+                    </div>
+                    <div class="social-input-wrapper">
+                        <label for="lineContact">라인</label>
+                        <input type="text" id="lineContact" placeholder="ID 혹은 링크를 입력하세요">
+                    </div>
+                    <div class="social-input-wrapper">
+                        <label for="wechatContact">위챗</label>
+                        <input type="text" id="wechatContact" placeholder="ID 혹은 링크를 입력하세요">
+                    </div>
+                </div>
+            </div>
+            
             <div class="form-row">
                 <div class="form-group">
                     <label for="region1">근무 지역(시/도)</label>
@@ -55,10 +77,59 @@
         </div>
     </div>
     
-    <!-- STEP 02 - 채용 정보 입력 -->
+    <!-- STEP 02 - 광고기간 설정 및 추가 요청사항 -->
     <div class="form-box">
         <div class="form-box-header">
             <span class="step-number">STEP.02</span>
+            <span class="step-title">광고기간 설정 및 추가 요청사항</span>
+        </div>
+        <div class="form-box-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate2">광고 시작일 <span class="required">*</span></label>
+                        <div class="custom-date-picker">
+                            <input type="text" id="startDate2Display" class="date-display" placeholder="날짜를 선택하세요" readonly style="cursor: pointer;">
+                            <input type="hidden" id="startDate2" required>
+                            <div class="calendar-icon">📅</div>
+                            <div class="calendar-dropdown" id="calendarDropdown">
+                                <div class="calendar-header">
+                                    <button type="button" class="cal-prev-btn">◀</button>
+                                    <span class="cal-month-year"></span>
+                                    <button type="button" class="cal-next-btn">▶</button>
+                                </div>
+                                <div class="calendar-body">
+                                    <div class="cal-weekdays">
+                                        <div>일</div>
+                                        <div>월</div>
+                                        <div>화</div>
+                                        <div>수</div>
+                                        <div>목</div>
+                                        <div>금</div>
+                                        <div>토</div>
+                                    </div>
+                                    <div class="cal-dates"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="duration2">광고 기간 <span class="required">*</span></label>
+                        <div class="custom-duration-select">
+                            <button type="button" class="duration-btn" data-value="1">1개월</button>
+                            <button type="button" class="duration-btn" data-value="3">3개월</button>
+                            <button type="button" class="duration-btn" data-value="6">6개월</button>
+                            <button type="button" class="duration-btn" data-value="12">12개월</button>
+                        </div>
+                        <input type="hidden" id="duration2" required>
+                    </div>
+                </div>
+        </div>
+    </div>
+    
+    <!-- STEP 03 - 채용 정보 입력 (조건부 표시) -->
+    <div class="form-box" id="step3Box" style="display: none;">
+        <div class="form-box-header">
+            <span class="step-number">STEP.03</span>
             <span class="step-title">채용 정보 입력</span>
         </div>
         <div class="form-box-content">
@@ -96,193 +167,131 @@
                 <div class="form-group">
                     <label>근무 시간 <span class="required">*</span></label>
                     <div id="workTimeContainer">
-                        <!-- 근무 시간이 동적으로 추가됩니다 -->
+                        <div class="work-time-item">
+                            <input type="text" class="time-title" placeholder="타이틀 입력 (예: 주간조, 야간조, 1부, 2부)">
+                            <select class="start-hour">
+                                <option value="">시작시간</option>
+                            </select>
+                            <span class="time-separator">~</span>
+                            <select class="end-hour">
+                                <option value="">종료시간</option>
+                            </select>
+                            <button type="button" class="add-time-btn" onclick="addWorkTime()">+</button>
+                        </div>
                     </div>
-                    <button type="button" class="add-time-btn" onclick="addWorkTime()">+ 근무 시간 추가</button>
                 </div>
                 
                 <div class="form-group">
-                    <label for="welfare">복지 내용</label>
-                    <textarea id="welfare" rows="3" placeholder="제공되는 복지 및 혜택을 입력해주세요 (예: 식사 제공, 기숙사, 인센티브 등)"></textarea>
+                    <label>복지 내용</label>
+                    <div class="welfare-button-group">
+                        <button type="button" class="welfare-btn" data-value="선불가능">선불가능</button>
+                        <button type="button" class="welfare-btn" data-value="순번확실">순번확실</button>
+                        <button type="button" class="welfare-btn" data-value="원룸제공">원룸제공</button>
+                        <button type="button" class="welfare-btn" data-value="만근비지원">만근비지원</button>
+                        <button type="button" class="welfare-btn" data-value="성형지원">성형지원</button>
+                        <button type="button" class="welfare-btn" data-value="출퇴근지원">출퇴근지원</button>
+                        <button type="button" class="welfare-btn" data-value="식사제공">식사제공</button>
+                        <button type="button" class="welfare-btn" data-value="팁별도">팁별도</button>
+                        <button type="button" class="welfare-btn" data-value="인센티브">인센티브</button>
+                        <button type="button" class="welfare-btn" data-value="홀복지원">홀복지원</button>
+                        <button type="button" class="welfare-btn" data-value="갯수보장">갯수보장</button>
+                        <button type="button" class="welfare-btn" data-value="지명우대">지명우대</button>
+                        <button type="button" class="welfare-btn" data-value="초이스없음">초이스없음</button>
+                        <button type="button" class="welfare-btn" data-value="해외여행지원">해외여행지원</button>
+                        <button type="button" class="welfare-btn" data-value="뒷방없음">뒷방없음</button>
+                        <button type="button" class="welfare-btn" data-value="따당가능">따당가능</button>
+                        <button type="button" class="welfare-btn" data-value="푸쉬가능">푸쉬가능</button>
+                        <button type="button" class="welfare-btn" data-value="밀방없음">밀방없음</button>
+                        <button type="button" class="welfare-btn" data-value="칼퇴보장">칼퇴보장</button>
+                        <button type="button" class="welfare-btn" data-value="텃세없음">텃세없음</button>
+                        <button type="button" class="welfare-btn" data-value="숙식제공">숙식제공</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
     
-    <!-- STEP 03 - 광고기간 설정 및 추가 요청사항 -->
-    <div class="form-box">
+    <!-- STEP 04 - 광고내용 및 이미지 업로드 (조건부 표시) -->
+    <div class="form-box" id="step4Box" style="display: none;">
         <div class="form-box-header">
-            <span class="step-number">STEP.03</span>
-            <span class="step-title">광고기간 설정 및 추가 요청사항</span>
+            <span class="step-number">STEP.04</span>
+            <span class="step-title">광고내용 및 이미지 업로드</span>
         </div>
         <div class="form-box-content">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="startDate2">광고 시작일 <span class="required">*</span></label>
-                        <input type="date" id="startDate2" required>
+            <div class="form-group">
+                <label>상세페이지 이미지 업로드</label>
+                
+                <div class="image-upload-section">
+                    <div class="upload-option">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="imageCreationRequest" name="imageCreationRequest">
+                            <span class="checkbox-box"></span>
+                            <span class="checkbox-text">상세페이지 디자인 의뢰비용 +50,000원</span>
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label for="duration2">광고 기간 <span class="required">*</span></label>
-                        <select id="duration2" required onchange="updateTotalAmount()">
-                            <option value="">선택하세요</option>
-                            <option value="1">1개월</option>
-                            <option value="3">3개월</option>
-                            <option value="6">6개월</option>
-                            <option value="12">12개월</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="additionalRequest">추가 요청사항</label>
-                    <textarea id="additionalRequest" rows="4" placeholder="광고 진행 시 추가로 요청하실 사항이 있으시면 자유롭게 작성해주세요"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="kakaoLink2">카카오톡 문의 링크</label>
-                    <input type="url" id="kakaoLink2" placeholder="https://open.kakao.com/...">
-                    <div class="helper-text">지원자가 직접 문의할 수 있는 카카오톡 오픈채팅 링크</div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="jobImage">회사 이미지</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="jobImage" accept="image/*">
-                        <label for="jobImage" class="file-input-label">이미지 선택</label>
-                    </div>
-                    <div class="helper-text">최대 5MB, JPG/PNG/GIF 형식</div>
-                </div>
-                
-                <div class="total-amount">
-                    <h3>결제 금액</h3>
-                    <div class="amount-breakdown">
-                        <div class="amount-row">
-                            <span>월 광고비</span>
-                            <span id="monthlyAmount2">0원</span>
+                    
+                    <div id="uploadAreaWrapper">
+                        <div class="upload-area">
+                            <button type="button" class="upload-btn" onclick="document.getElementById('detailImages').click()">
+                                파일선택
+                            </button>
+                            <span class="upload-text">선택된 파일 없음</span>
+                            <input type="file" id="detailImages" accept="image/*" multiple style="display: none;" max="5">
                         </div>
-                        <div class="amount-row">
-                            <span>광고 기간</span>
-                            <span id="adDuration2">0개월</span>
+                        
+                        <div class="upload-info">
+                            상세 페이지 이미지 권장 사이즈 1200px X 750px, 최대 5MB
                         </div>
-                        <div class="amount-row total">
-                            <span>총 결제 금액</span>
-                            <span id="totalAmount2">0원</span>
-                        </div>
+                        
+                        <div id="detailImagesPreview" class="image-preview"></div>
                     </div>
                 </div>
-                
-                <div class="form-actions">
-                    <button type="button" class="cancel-btn" onclick="window.history.back()">취소</button>
-                    <button type="submit" class="submit-btn">광고 신청</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="detailContent">상세 내용 <span class="required">*</span></label>
+                <textarea id="detailContent" rows="8" placeholder="광고 상세 내용을 입력해주세요. 업체 소개, 근무 환경, 특별한 혜택 등을 자세히 작성해주세요." required></textarea>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 결제 정보 -->
+    <div class="payment-section">
+        <h3>결제 정보</h3>
+        <div class="payment-box">
+            <div class="amount-breakdown">
+                <div class="amount-row">
+                    <span>선택한 광고 상품</span>
+                    <span id="selectedAdName">-</span>
                 </div>
-            </form>
+                <div class="amount-row">
+                    <span>월 광고료</span>
+                    <span id="monthlyAmount2">0원</span>
+                </div>
+                <div class="amount-row">
+                    <span>광고 기간</span>
+                    <span id="adDuration2">-</span>
+                </div>
+                <div class="amount-row total">
+                    <span>총 결제금액</span>
+                    <span id="totalAmount2">0원</span>
+                </div>
+            </div>
+            
+            <div class="payment-notice">
+                <p>* 광고 승인 후 별도로 결제 안내를 드립니다.</p>
+                <p>* 부가세 별도입니다.</p>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
+            <button type="submit" class="submit-btn" form="jobAdvertiseForm">광고 신청하기</button>
         </div>
     </div>
 </div>
 
 <script>
-// 근무 시간 인덱스
-let workTimeIndex = 0;
-
-// 페이지 로드 시 첫 번째 근무 시간 추가
-document.addEventListener('DOMContentLoaded', function() {
-    addWorkTime();
-});
-
-// 근무 시간 추가
-function addWorkTime() {
-    const container = document.getElementById('workTimeContainer');
-    const timeItem = document.createElement('div');
-    timeItem.className = 'work-time-item';
-    timeItem.dataset.index = workTimeIndex;
-    
-    timeItem.innerHTML = `
-        <div class="time-item-header">
-            <input type="text" class="time-title" placeholder="예: 주간조, 1부" required>
-            <button type="button" class="remove-time-btn" onclick="removeWorkTime(${workTimeIndex})">삭제</button>
-        </div>
-        <div class="time-selector-wrapper">
-            <div class="time-selector">
-                <label>시작 시간</label>
-                <div class="time-inputs">
-                    <select class="hour-select start-hour" required>
-                        <option value="">시</option>
-                        ${generateHourOptions()}
-                    </select>
-                    <span class="time-separator">:</span>
-                    <select class="minute-select start-minute" required>
-                        <option value="">분</option>
-                        ${generateMinuteOptions()}
-                    </select>
-                </div>
-            </div>
-            <span class="time-range-separator">~</span>
-            <div class="time-selector">
-                <label>종료 시간</label>
-                <div class="time-inputs">
-                    <select class="hour-select end-hour" required>
-                        <option value="">시</option>
-                        ${generateHourOptions()}
-                    </select>
-                    <span class="time-separator">:</span>
-                    <select class="minute-select end-minute" required>
-                        <option value="">분</option>
-                        ${generateMinuteOptions()}
-                    </select>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(timeItem);
-    workTimeIndex++;
-    
-    // 첫 번째 항목의 삭제 버튼 숨기기/표시
-    updateDeleteButtons();
-}
-
-// 근무 시간 제거
-function removeWorkTime(index) {
-    const item = document.querySelector(`.work-time-item[data-index="${index}"]`);
-    if (item) {
-        item.remove();
-        updateDeleteButtons();
-    }
-}
-
-// 삭제 버튼 업데이트
-function updateDeleteButtons() {
-    const items = document.querySelectorAll('.work-time-item');
-    items.forEach((item, index) => {
-        const deleteBtn = item.querySelector('.remove-time-btn');
-        if (items.length === 1) {
-            deleteBtn.style.display = 'none';
-        } else {
-            deleteBtn.style.display = 'block';
-        }
-    });
-}
-
-// 시간 옵션 생성
-function generateHourOptions() {
-    let options = '';
-    for (let i = 0; i < 24; i++) {
-        const hour = i.toString().padStart(2, '0');
-        options += `<option value="${hour}">${hour}</option>`;
-    }
-    return options;
-}
-
-// 분 옵션 생성
-function generateMinuteOptions() {
-    let options = '';
-    for (let i = 0; i < 60; i += 10) {
-        const minute = i.toString().padStart(2, '0');
-        options += `<option value="${minute}">${minute}</option>`;
-    }
-    return options;
-}
-
 // 급여 형태에 따른 라벨 변경
 function updateSalaryLabel() {
     const salaryTypeRadios = document.getElementsByName('salaryType');
