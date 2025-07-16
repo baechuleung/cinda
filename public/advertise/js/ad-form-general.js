@@ -183,7 +183,7 @@ export function submitGeneralAdForm(currentUser, selectedAdType, adPrice) {
             }
             
             // 광고 정보 먼저 저장
-            const docRef = await addDoc(collection(db, 'advertise'), formData);
+            const docRef = await addDoc(collection(db, 'ad_requests_general'), formData);
             
             // 이미지 업로드
             const imageUrls = await uploadImages(adImages, currentUser.uid, docRef.id);
