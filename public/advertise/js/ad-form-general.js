@@ -1,8 +1,57 @@
 // 파일 경로: /advertise/js/ad-form-general.js
 
 import { db, storage } from '/js/firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+// 전역 변수로 선택된 파일들을 관리
+window.selectedFiles = [];
+
+// 미리보기 업데이트 함수를 전역으로 등록
+window.updatePreview = function() {
+    const preview = document.getElementById('adImagesPreview');
+    if (!preview) return;
+    
+    preview.innerHTML = '';
+    
+    window.selectedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            previewItem.innerHTML = `
+                <img src="${e.target.result}" alt="광고 이미지 ${index + 1}">
+                <button type="button" class="preview-remove" onclick="removePreviewImage(${index})">×</button>
+            `;
+            preview.appendChild(previewItem);
+        };
+        reader.readAsDataURL(file);
+    });
+};
+
+// 업로드 텍스트 업데이트 함수를 전역으로 등록
+window.updateUploadText = function() {
+    const uploadText = document.querySelector('.upload-text');
+    if (uploadText) {
+        if (window.selectedFiles.length > 0) {
+            uploadText.textContent = `${window.selectedFiles.length}개 파일 선택됨`;
+        } else {
+            uploadText.textContent = '이미지를 선택하세요';
+        }
+    }
+};
+
+// 미리보기 이미지 제거 함수
+window.removePreviewImage = function(index) {
+    // 해당 인덱스의 파일 제거
+    window.selectedFiles.splice(index, 1);
+    
+    // 미리보기 업데이트
+    window.updatePreview();
+    
+    // 텍스트 업데이트
+    window.updateUploadText();
+};
 
 // 일반 광고 폼 초기화
 export function initGeneralAdForm(userData, selectedAdType, adPrice) {
@@ -79,8 +128,61 @@ export function initGeneralAdForm(userData, selectedAdType, adPrice) {
         });
     });
     
+    // 이미지 업로드 이벤트 초기화
+    initImageUploadEvents();
+    
     // 초기 금액 표시
     updateGeneralAdAmount(adPrice);
+}
+
+// 이미지 업로드 이벤트 초기화
+function initImageUploadEvents() {
+    const adImagesInput = document.getElementById('adImages1');
+    if (adImagesInput) {
+        adImagesInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            
+            // 새로 선택한 파일들을 기존 파일 목록에 추가
+            files.forEach(file => {
+                // 이미 5장이면 추가 안함
+                if (window.selectedFiles.length >= 5) {
+                    alert('광고 이미지는 최대 5장까지 업로드 가능합니다.');
+                    return;
+                }
+                
+                // 파일 크기 검사
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`${file.name}: 이미지 파일은 5MB 이하만 업로드 가능합니다.`);
+                    return;
+                }
+                
+                // 파일 타입 검사
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert(`${file.name}: 이미지 파일만 업로드 가능합니다. (JPG, PNG, GIF)`);
+                    return;
+                }
+                
+                // 중복 파일 체크
+                const isDuplicate = window.selectedFiles.some(f => 
+                    f.name === file.name && f.size === file.size
+                );
+                
+                if (!isDuplicate) {
+                    window.selectedFiles.push(file);
+                }
+            });
+            
+            // 미리보기 업데이트
+            window.updatePreview();
+            
+            // 파일 선택 텍스트 업데이트
+            window.updateUploadText();
+            
+            // input 초기화 (같은 파일 다시 선택 가능하도록)
+            e.target.value = '';
+        });
+    }
 }
 
 // 금액 업데이트
@@ -95,25 +197,6 @@ export function updateGeneralAdAmount(adPrice) {
     if (monthlyAmount1) monthlyAmount1.textContent = adPrice.toLocaleString() + '원';
     if (adDuration1) adDuration1.textContent = duration > 0 ? duration + '개월' : '-';
     if (totalAmount1) totalAmount1.textContent = totalPrice.toLocaleString() + '원';
-}
-
-// 이미지 업로드
-async function uploadImages(files, userId, adId) {
-    const uploadPromises = [];
-    
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileName = `ads/${userId}/${adId}/${Date.now()}_${i}_${file.name}`;
-        const storageRef = ref(storage, fileName);
-        
-        uploadPromises.push(
-            uploadBytes(storageRef, file).then(snapshot => 
-                getDownloadURL(snapshot.ref)
-            )
-        );
-    }
-    
-    return Promise.all(uploadPromises);
 }
 
 // 일반 광고 폼 제출
@@ -136,22 +219,23 @@ export function submitGeneralAdForm(currentUser, selectedAdType, adPrice) {
             return;
         }
         
+        // 이미지 확인
+        if (window.selectedFiles.length === 0) {
+            alert('광고 이미지를 업로드해주세요.');
+            return;
+        }
+        
         try {
-            // business_users 컬렉션에서 현재 사용자 정보 가져오기
-            let userDoc = await getDoc(doc(db, 'business_users', currentUser.uid));
-            let userData = userDoc.exists() ? userDoc.data() : null;
-            
-            // business_users에 없으면 partner_users에서 확인
-            if (!userData) {
-                userDoc = await getDoc(doc(db, 'partner_users', currentUser.uid));
-                userData = userDoc.exists() ? userDoc.data() : null;
-            }
+            // partner_users 컬렉션에서 현재 사용자 정보 가져오기
+            const userDoc = await getDoc(doc(db, 'partner_users', currentUser.uid));
+            const userData = userDoc.exists() ? userDoc.data() : null;
             
             if (!userData) {
                 alert('사용자 정보를 찾을 수 없습니다.');
                 return;
             }
             
+            // 기본 폼 데이터 준비
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
@@ -175,23 +259,28 @@ export function submitGeneralAdForm(currentUser, selectedAdType, adPrice) {
                 updatedAt: serverTimestamp()
             };
             
-            // 이미지 파일 처리
-            const adImages = document.getElementById('adImages1')?.files;
-            if (!adImages || adImages.length === 0) {
-                alert('광고 이미지를 업로드해주세요.');
-                return;
+            // 임시 문서 ID 생성 (이미지 업로드용)
+            const tempDocId = `${currentUser.uid}_${Date.now()}`;
+            
+            // 이미지 업로드 처리
+            const imageUrls = [];
+            for (let i = 0; i < window.selectedFiles.length; i++) {
+                const file = window.selectedFiles[i];
+                const fileName = `ad_requests_general/${currentUser.uid}/${tempDocId}/${Date.now()}_${i}_${file.name}`;
+                const storageRef = ref(storage, fileName);
+                
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+                imageUrls.push(downloadUrl);
             }
             
-            // 광고 정보 먼저 저장
+            // 이미지 정보를 formData에 추가
+            formData.adImages = imageUrls;
+            formData.hasImages = true;
+            formData.imagesCount = window.selectedFiles.length;
+            
+            // 최종적으로 한 번에 DB에 저장
             const docRef = await addDoc(collection(db, 'ad_requests_general'), formData);
-            
-            // 이미지 업로드
-            const imageUrls = await uploadImages(adImages, currentUser.uid, docRef.id);
-            
-            // 이미지 URL 업데이트
-            await updateDoc(doc(db, 'advertise', docRef.id), {
-                adImages: imageUrls
-            });
             
             alert('광고 신청이 완료되었습니다. 관리자 검토 후 연락드리겠습니다.');
             

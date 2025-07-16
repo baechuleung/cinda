@@ -4,6 +4,7 @@ import { collection, query, where, orderBy, getDocs, doc, getDoc, updateDoc, del
 
 let currentUser = null;
 let allAds = [];
+let userType = null; // 'business' or 'partner'
 
 // 광고 유형별 이름
 const adTypeNames = {
@@ -11,7 +12,9 @@ const adTypeNames = {
     vip: 'VIP 채용관',
     premium: 'Premium 채용관',
     basic: 'Basic 채용관',
-    inquiry: '실시간 현황 문의하기'
+    realtime: '실시간 현황판',
+    banner: '배너 광고',
+    popup: '팝업 광고'
 };
 
 // 상태별 이름
@@ -35,10 +38,18 @@ onAuthStateChanged(auth, async (user) => {
     
     // 기업회원인지 확인
     const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
-    if (!businessDoc.exists()) {
-        alert('기업회원만 이용할 수 있습니다.');
-        window.location.href = '/index.html';
-        return;
+    if (businessDoc.exists()) {
+        userType = 'business';
+    } else {
+        // 파트너회원인지 확인
+        const partnerDoc = await getDoc(doc(db, 'partner_users', user.uid));
+        if (partnerDoc.exists()) {
+            userType = 'partner';
+        } else {
+            alert('기업회원 또는 파트너회원만 이용할 수 있습니다.');
+            window.location.href = '/index.html';
+            return;
+        }
     }
     
     // 광고 목록 로드
@@ -48,22 +59,43 @@ onAuthStateChanged(auth, async (user) => {
 // 광고 목록 로드
 async function loadAdList() {
     try {
-        // 현재 사용자의 광고만 가져오기
-        const q = query(
-            collection(db, 'ad_requests'),
-            where('userId', '==', currentUser.uid),
-            orderBy('createdAt', 'desc')
-        );
-        
-        const querySnapshot = await getDocs(q);
-        
         allAds = [];
-        querySnapshot.forEach((doc) => {
-            allAds.push({
-                id: doc.id,
-                ...doc.data()
+        
+        // 사용자 유형에 따라 다른 컬렉션에서 가져오기
+        if (userType === 'business') {
+            // 채용관 광고 가져오기
+            const jobQuery = query(
+                collection(db, 'ad_requests_job'),
+                where('userId', '==', currentUser.uid),
+                orderBy('createdAt', 'desc')
+            );
+            
+            const jobSnapshot = await getDocs(jobQuery);
+            jobSnapshot.forEach((doc) => {
+                allAds.push({
+                    id: doc.id,
+                    collection: 'ad_requests_job',
+                    ...doc.data()
+                });
             });
-        });
+            
+        } else if (userType === 'partner') {
+            // 일반 광고 가져오기
+            const generalQuery = query(
+                collection(db, 'ad_requests_general'),
+                where('userId', '==', currentUser.uid),
+                orderBy('createdAt', 'desc')
+            );
+            
+            const generalSnapshot = await getDocs(generalQuery);
+            generalSnapshot.forEach((doc) => {
+                allAds.push({
+                    id: doc.id,
+                    collection: 'ad_requests_general',
+                    ...doc.data()
+                });
+            });
+        }
         
         // 광고 상태 업데이트 (날짜 기반)
         updateAdStatuses();
@@ -140,7 +172,7 @@ function displayAds(ads) {
                 <div class="ad-info">
                     <div class="info-row">
                         <span class="info-label">광고 유형:</span>
-                        <span class="ad-type-badge ${ad.adType}">${adTypeNames[ad.adType]}</span>
+                        <span class="ad-type-badge ${ad.adType}">${adTypeNames[ad.adType] || ad.adName}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">신청일:</span>
@@ -180,16 +212,10 @@ function displayAds(ads) {
                         <span class="amount-label">월 광고비:</span>
                         <span class="amount-value">${ad.monthlyAmount.toLocaleString()}원</span>
                     </div>
-                    ${ad.bannerCost > 0 ? `
+                    ${ad.imageCreationFee > 0 ? `
                     <div class="amount-row">
-                        <span class="amount-label">배너 제작비:</span>
-                        <span class="amount-value">${ad.bannerCost.toLocaleString()}원</span>
-                    </div>
-                    ` : ''}
-                    ${ad.designCost > 0 ? `
-                    <div class="amount-row">
-                        <span class="amount-label">페이지 디자인비:</span>
-                        <span class="amount-value">${ad.designCost.toLocaleString()}원</span>
+                        <span class="amount-label">이미지 제작비:</span>
+                        <span class="amount-value">${ad.imageCreationFee.toLocaleString()}원</span>
                     </div>
                     ` : ''}
                     <div class="amount-row total">
@@ -201,7 +227,7 @@ function displayAds(ads) {
                 <div class="ad-actions">
                     ${ad.status === 'pending' ? `
                         <button class="action-btn" onclick="viewDetails('${ad.id}')">상세보기</button>
-                        <button class="action-btn" onclick="cancelAd('${ad.id}')">신청취소</button>
+                        <button class="action-btn" onclick="cancelAd('${ad.id}', '${ad.collection}')">신청취소</button>
                     ` : ad.status === 'approved' ? `
                         <button class="action-btn" onclick="viewDetails('${ad.id}')">상세보기</button>
                         <button class="action-btn primary" onclick="makePayment('${ad.id}')">결제하기</button>
@@ -257,32 +283,42 @@ window.viewDetails = function(adId) {
     if (!ad) return;
     
     // 상세 정보 모달 표시 (간단한 alert로 대체)
-    const details = `
+    let details = `
 광고 상세 정보
 ================
 업체명: ${ad.businessName}
-광고 유형: ${adTypeNames[ad.adType]}
+광고 유형: ${adTypeNames[ad.adType] || ad.adName}
 상태: ${statusNames[ad.status]}
-광고 내용: ${ad.adContent}
+광고 내용: ${ad.adContent || ad.detailContent || '-'}
 시작일: ${formatDateString(ad.startDate)}
 기간: ${ad.duration}개월
 총 금액: ${ad.totalAmount.toLocaleString()}원
-${ad.targetUrl ? '\n연결 URL: ' + ad.targetUrl : ''}
-${ad.kakaoLink ? '\n카카오톡 링크: ' + ad.kakaoLink : ''}
-${ad.additionalRequest ? '\n추가 요청사항: ' + ad.additionalRequest : ''}
-    `;
+`;
+
+    // 일반 광고 추가 정보
+    if (ad.targetUrl) {
+        details += `\n연결 URL: ${ad.targetUrl}`;
+    }
+    
+    // 채용관 광고 추가 정보
+    if (ad.workRegion1) {
+        details += `\n근무지역: ${ad.workRegion1} ${ad.workRegion2}`;
+    }
+    if (ad.salaryType) {
+        details += `\n급여: ${ad.salaryType} ${ad.salary}`;
+    }
     
     alert(details);
 };
 
-window.cancelAd = async function(adId) {
+window.cancelAd = async function(adId, collection) {
     if (!confirm('정말로 광고 신청을 취소하시겠습니까?\n취소 후에는 복구할 수 없습니다.')) {
         return;
     }
     
     try {
         // Firestore에서 문서 삭제
-        await deleteDoc(doc(db, 'ad_requests', adId));
+        await deleteDoc(doc(db, collection, adId));
         
         alert('광고 신청이 취소되었습니다.');
         
@@ -310,7 +346,7 @@ window.viewStats = function(adId) {
 광고 통계
 ================
 광고명: ${ad.businessName}
-광고 유형: ${adTypeNames[ad.adType]}
+광고 유형: ${adTypeNames[ad.adType] || ad.adName}
 
 일일 노출수: ${Math.floor(Math.random() * 10000 + 5000)}회
 일일 클릭수: ${Math.floor(Math.random() * 500 + 100)}회

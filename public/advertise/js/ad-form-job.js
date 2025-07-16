@@ -1,7 +1,7 @@
 // 파일 경로: /public/advertise/js/ad-form-job.js
 
 import { auth, db, storage } from '/js/firebase-config.js';
-import { collection, addDoc, serverTimestamp, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
 // 전역 함수로 선언하여 HTML onclick에서 접근 가능하도록 함
@@ -63,6 +63,28 @@ window.addWorkTime = function() {
 window.removeWorkTime = function(button) {
     const item = button.closest('.work-time-item');
     item.remove();
+};
+
+// 급여 형태 라벨 업데이트 함수
+window.updateSalaryLabel = function() {
+    const salaryType = document.querySelector('input[name="salaryType"]:checked')?.value;
+    const salaryLabel = document.getElementById('salaryLabel');
+    
+    if (salaryLabel) {
+        switch(salaryType) {
+            case 'hourly':
+                salaryLabel.textContent = '시급';
+                break;
+            case 'daily':
+                salaryLabel.textContent = '일급';
+                break;
+            case 'monthly':
+                salaryLabel.textContent = '월급';
+                break;
+            default:
+                salaryLabel.textContent = '급여';
+        }
+    }
 };
 
 // 미리보기 이미지 제거 함수
@@ -534,11 +556,12 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 welfareList = Array.from(welfareBtns).map(btn => btn.getAttribute('data-value'));
             }
             
+            // 기본 폼 데이터 준비
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
-                userNickname: userData?.nickname || '', // business_users에서 가져온 nickname
-                storeCode: userData?.storeCode || '', // storeCode 추가
+                userNickname: userData?.nickname || '',
+                storeCode: userData?.storeCode || '',
                 adType: selectedAdType?.type || '',
                 adCategory: 'job',
                 adName: selectedAdType?.name || '',
@@ -583,26 +606,32 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                     formData.imageCreationFee = 50000;
                     formData.totalAmount = formData.totalAmount + 50000; // 제작비 추가
                 }
-                
-                if (detailImages && detailImages.length > 0) {
-                    const detailImageUrls = [];
-                    
-                    for (let i = 0; i < detailImages.length; i++) {
-                        const file = detailImages[i];
-                        const detailRef = ref(storage, `ad_images/${currentUser.uid}/${Date.now()}_detail_${i}_${file.name}`);
-                        const detailSnapshot = await uploadBytes(detailRef, file);
-                        const detailUrl = await getDownloadURL(detailSnapshot.ref);
-                        detailImageUrls.push(detailUrl);
-                    }
-                    
-                    formData.hasDetailImages = true;
-                    formData.detailImagesCount = detailImages.length;
-                    formData.detailImageUrls = detailImageUrls;
-                    formData.detailImageNames = Array.from(detailImages).map(file => file.name);
-                }
             }
             
-            await addDoc(collection(db, 'ad_requests_job'), formData);
+            // 임시 문서 ID 생성 (이미지 업로드용)
+            const tempDocId = `${currentUser.uid}_${Date.now()}`;
+            
+            // 이미지 업로드 처리 (실시간 현황판이 아닌 경우에만)
+            if (detailImages && detailImages.length > 0 && selectedAdType?.type !== 'realtime') {
+                const detailImageUrls = [];
+                
+                for (let i = 0; i < detailImages.length; i++) {
+                    const file = detailImages[i];
+                    const detailRef = ref(storage, `ad_requests_job/${currentUser.uid}/${tempDocId}/${Date.now()}_detail_${i}_${file.name}`);
+                    const detailSnapshot = await uploadBytes(detailRef, file);
+                    const detailUrl = await getDownloadURL(detailSnapshot.ref);
+                    detailImageUrls.push(detailUrl);
+                }
+                
+                // 이미지 정보를 formData에 추가
+                formData.detailImageUrls = detailImageUrls;
+                formData.hasDetailImages = true;
+                formData.detailImagesCount = detailImages.length;
+            }
+            
+            // 최종적으로 한 번에 DB에 저장
+            const docRef = await addDoc(collection(db, 'ad_requests_job'), formData);
+            
             alert('광고 신청이 완료되었습니다.\n검토 후 연락드리겠습니다.');
             window.location.href = '/advertise/html/ad-list.html';
             
