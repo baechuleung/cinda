@@ -1,3 +1,6 @@
+// 파일 경로: public/js/auth/register-partner.js
+// 파일 이름: register-partner.js
+
 import { auth, db } from '../firebase-config.js';
 import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
@@ -28,6 +31,11 @@ function initDropdowns() {
         option.addEventListener('click', function() {
             const value = this.dataset.value;
             const text = this.textContent;
+            
+            // 모든 옵션에서 selected 클래스 제거
+            emailDropdownOptions.forEach(opt => opt.classList.remove('selected'));
+            // 현재 선택한 옵션에 selected 클래스 추가
+            this.classList.add('selected');
             
             emailDropdownSelected.querySelector('.selected-text').textContent = text;
             
@@ -89,18 +97,24 @@ function initDropdowns() {
 // 이메일 업데이트
 function updateEmail() {
     const emailId = document.getElementById('emailId').value;
-    const selectedDomain = document.querySelector('#emailDropdownOptions .dropdown-option.selected')?.dataset.value || '';
+    const selectedOption = document.querySelector('#emailDropdownOptions .dropdown-option.selected');
     const directDomain = document.getElementById('emailDomainDirect').value;
     
     let domain = '';
-    if (selectedDomain === 'direct') {
-        domain = directDomain;
-    } else if (selectedDomain) {
-        domain = selectedDomain;
+    
+    if (selectedOption) {
+        const selectedDomain = selectedOption.dataset.value;
+        if (selectedDomain === 'direct') {
+            domain = directDomain;
+        } else if (selectedDomain) {
+            domain = selectedDomain;
+        }
     }
     
     if (emailId && domain) {
         document.getElementById('email').value = `${emailId}@${domain}`;
+    } else if (emailId) {
+        document.getElementById('email').value = emailId;
     }
 }
 
