@@ -33,9 +33,19 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="contactEmail2">이메일</label>
-                <input type="email" id="contactEmail2" readonly>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="region1">근무 지역(시/도)</label>
+                    <select id="region1" disabled>
+                        <option value="">시/도를 선택하세요</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="region2">근무 지역(시/군/구)</label>
+                    <select id="region2" disabled>
+                        <option value="">시/도를 먼저 선택하세요</option>
+                    </select>
+                </div>
             </div>
             
             <div class="form-group">
@@ -57,21 +67,6 @@
                         <label for="wechatContact">위챗</label>
                         <input type="text" id="wechatContact" placeholder="ID 혹은 링크를 입력하세요">
                     </div>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="region1">근무 지역(시/도)</label>
-                    <select id="region1" disabled>
-                        <option value="">시/도를 선택하세요</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="region2">근무 지역(시/군/구)</label>
-                    <select id="region2" disabled>
-                        <option value="">시/도를 먼저 선택하세요</option>
-                    </select>
                 </div>
             </div>
         </div>
@@ -168,7 +163,7 @@
                     <label>근무 시간 <span class="required">*</span></label>
                     <div id="workTimeContainer">
                         <div class="work-time-item">
-                            <input type="text" class="time-title" placeholder="타이틀 입력 (예: 주간조, 야간조, 1부, 2부)">
+                            <input type="text" class="time-title" placeholder="예: 주간조,1부,2부">
                             <select class="start-hour">
                                 <option value="">시작시간</option>
                             </select>
@@ -258,28 +253,25 @@
     <!-- 결제 정보 -->
     <div class="payment-section">
         <div class="payment-box">
+            <div class="selected-product-name" id="selectedAdName">-</div>
+            
             <div class="amount-breakdown">
                 <div class="amount-row">
-                    <span>선택한 광고 상품</span>
-                    <span id="selectedAdName">-</span>
+                    <span class="amount-label">광고기간</span>
+                    <span class="amount-value" id="adDuration2">-</span>
                 </div>
                 <div class="amount-row">
-                    <span>월 광고료</span>
-                    <span id="monthlyAmount2">0원</span>
+                    <span class="amount-label">월 광고비</span>
+                    <span class="amount-value" id="monthlyAmount2">0원</span>
                 </div>
-                <div class="amount-row">
-                    <span>광고 기간</span>
-                    <span id="adDuration2">-</span>
+                <div class="amount-row" id="imageCreationFeeRow" style="display: none;">
+                    <span class="amount-label">상세 페이지</span>
+                    <span class="amount-value">50,000원</span>
                 </div>
                 <div class="amount-row total">
-                    <span>총 결제금액</span>
-                    <span id="totalAmount2">0원</span>
+                    <span class="amount-label">총 결제 금액 <span class="vat-info">(VAT포함)</span></span>
+                    <span class="amount-value total-amount" id="totalAmount2">0원</span>
                 </div>
-            </div>
-            
-            <div class="payment-notice">
-                <p>* 광고 승인 후 별도로 결제 안내를 드립니다.</p>
-                <p>* 부가세 별도입니다.</p>
             </div>
         </div>
         

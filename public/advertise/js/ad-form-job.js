@@ -1,7 +1,7 @@
 // 파일 경로: /public/advertise/js/ad-form-job.js
 
 import { auth, db, storage } from '/js/firebase-config.js';
-import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
 // 전역 함수로 선언하여 HTML onclick에서 접근 가능하도록 함
@@ -14,7 +14,7 @@ window.addWorkTime = function() {
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
     titleInput.className = 'time-title';
-    titleInput.placeholder = '타이틀 입력 (예: 주간조, 야간조, 1부, 2부)';
+    titleInput.placeholder = '예: 주간조,1부,2부';
     
     const startHour = document.createElement('select');
     startHour.className = 'start-hour';
@@ -157,11 +157,15 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
     
     // 기업회원 정보로 폼 자동 채우기 (읽기 전용 필드)
     if (userData) {
-        document.getElementById('businessName2').value = userData.storeName || '';
-        document.getElementById('contactName2').value = userData.name || '';
-        document.getElementById('contactPhone2').value = userData.phone || '';
-        document.getElementById('contactEmail2').value = userData.email || '';
-        document.getElementById('businessType').value = userData.businessType || '';
+        const businessName2 = document.getElementById('businessName2');
+        const contactName2 = document.getElementById('contactName2');
+        const contactPhone2 = document.getElementById('contactPhone2');
+        const businessType = document.getElementById('businessType');
+        
+        if (businessName2 && userData.storeName) businessName2.value = userData.storeName;
+        if (contactName2 && userData.name) contactName2.value = userData.name;
+        if (contactPhone2 && userData.phone) contactPhone2.value = userData.phone;
+        if (businessType && userData.businessType) businessType.value = userData.businessType;
     }
     
     // 먼저 region1 옵션을 로드
@@ -185,6 +189,7 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
             
             // 회원정보에서 region1, region2 설정
             if (userData && userData.region1) {
+                // region1 값 설정
                 region1Select.value = userData.region1;
                 
                 // region2 옵션 로드 후 값 설정
@@ -208,12 +213,15 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
                         });
                     }
                     
+                    // region2 값 설정
                     if (userData.region2) {
                         region2Select.value = userData.region2;
                     }
                 }
-                
-                // 지역 선택 비활성화 (읽기 전용)
+            }
+            
+            // 지역 선택 비활성화 (읽기 전용) - userData가 있고 region1이 있을 때만
+            if (userData && userData.region1) {
                 region1Select.disabled = true;
                 document.getElementById('region2').disabled = true;
             }
@@ -239,6 +247,14 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
     const endHour = document.querySelector('.end-hour');
     
     if (startHour && endHour) {
+        // 기존 옵션 제거 (첫 번째 옵션 제외)
+        while (startHour.options.length > 1) {
+            startHour.remove(1);
+        }
+        while (endHour.options.length > 1) {
+            endHour.remove(1);
+        }
+        
         for (let i = 0; i < 24; i++) {
             const hour = i.toString().padStart(2, '0');
             
@@ -293,6 +309,7 @@ function initImageUploadEvents() {
             const totalAmountElement = document.getElementById('totalAmount2');
             const monthlyAmount = parseInt(document.getElementById('monthlyAmount2')?.textContent.replace(/[^0-9]/g, '')) || 0;
             const duration = parseInt(document.getElementById('duration2')?.value) || 0;
+            const imageCreationFeeRow = document.getElementById('imageCreationFeeRow');
             
             if (e.target.checked) {
                 // 제작 의뢰 선택 시 업로드 영역 숨기기
@@ -308,8 +325,14 @@ function initImageUploadEvents() {
                     if (uploadText) uploadText.textContent = '선택된 파일 없음';
                 }
                 
-                // 총 금액에 제작비 추가
-                const totalWithCreation = (monthlyAmount * duration) + 50000;
+                // 상세 페이지 행 표시
+                if (imageCreationFeeRow) {
+                    imageCreationFeeRow.style.display = 'flex';
+                }
+                
+                // 총 금액에 제작비 추가 (VAT 10% 포함)
+                const subTotal = (monthlyAmount * duration) + 50000;
+                const totalWithCreation = Math.round(subTotal * 1.1);
                 if (totalAmountElement) {
                     totalAmountElement.textContent = totalWithCreation.toLocaleString() + '원';
                 }
@@ -319,8 +342,14 @@ function initImageUploadEvents() {
                     uploadAreaWrapper.style.display = 'block';
                 }
                 
-                // 원래 금액으로 복원
-                const originalTotal = monthlyAmount * duration;
+                // 상세 페이지 행 숨기기
+                if (imageCreationFeeRow) {
+                    imageCreationFeeRow.style.display = 'none';
+                }
+                
+                // 원래 금액으로 복원 (VAT 10% 포함)
+                const subTotal = monthlyAmount * duration;
+                const originalTotal = Math.round(subTotal * 1.1);
                 if (totalAmountElement) {
                     totalAmountElement.textContent = originalTotal.toLocaleString() + '원';
                 }
@@ -429,7 +458,10 @@ function updateRegion2OptionsForJob(region1Code) {
 // 채용관 광고 금액 업데이트
 export function updateJobAdAmount(adPrice) {
     const duration = parseInt(document.getElementById('duration2')?.value) || 0;
-    const totalPrice = adPrice * duration;
+    const imageCreationCheckbox = document.getElementById('imageCreationRequest');
+    const imageCreationFee = (imageCreationCheckbox?.checked) ? 50000 : 0;
+    const subTotal = (adPrice * duration) + imageCreationFee;
+    const totalPrice = Math.round(subTotal * 1.1); // VAT 10% 포함
     
     const monthlyAmount2 = document.getElementById('monthlyAmount2');
     const adDuration2 = document.getElementById('adDuration2');
@@ -441,7 +473,7 @@ export function updateJobAdAmount(adPrice) {
 }
 
 // 채용관 광고 폼 제출
-export async function submitJobAdForm(currentUser, selectedAdType, adPrice, userData) {
+export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
     const form = document.getElementById('jobAdvertiseForm');
     if (!form) return;
     
@@ -454,6 +486,10 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
         }
         
         try {
+            // business_users 컬렉션에서 현재 사용자 정보 가져오기
+            const userDoc = await getDoc(doc(db, 'business_users', currentUser.uid));
+            const userData = userDoc.exists() ? userDoc.data() : null;
+            
             // 소셜 연락처 맵 형태로 수집
             const socialContact = {
                 kakao: document.getElementById('kakaoContact')?.value.trim() || '',
@@ -501,7 +537,8 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
-                userNickname: userData?.nickname || '', // nickname 추가
+                userNickname: userData?.nickname || '', // business_users에서 가져온 nickname
+                storeCode: userData?.storeCode || '', // storeCode 추가
                 adType: selectedAdType?.type || '',
                 adCategory: 'job',
                 adName: selectedAdType?.name || '',
@@ -509,7 +546,6 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice, user
                 businessType: document.getElementById('businessType')?.value.trim() || '',
                 contactName: document.getElementById('contactName2')?.value.trim() || '',
                 contactPhone: document.getElementById('contactPhone2')?.value.trim() || '',
-                contactEmail: document.getElementById('contactEmail2')?.value.trim() || '',
                 socialContact: socialContact,
                 workRegion1: document.getElementById('region1')?.value || '',
                 workRegion2: document.getElementById('region2')?.value || '',

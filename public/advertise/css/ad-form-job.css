@@ -23,9 +23,9 @@
     width: 100% !important;
     background: white;
     border-radius: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    overflow: visible;
+    overflow: visible; /* 달력이 보이도록 visible로 변경 */
     position: relative;
 }
 
@@ -36,6 +36,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    border-radius: 12px 12px 0 0;
 }
 
 .step-number {
@@ -57,6 +58,7 @@
 /* 폼 박스 내용 */
 .form-box-content {
     padding: 2rem;
+    position: relative; /* 달력의 위치 기준점이 되도록 추가 */
 }
 
 /* 기존 jobAdForm 스타일 제거하고 form-box-content에 적용 */
@@ -65,10 +67,17 @@
 }
 
 .form-box-content .form-group label {
-    margin-bottom: 0.5rem;
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #4E5968;
+    font-weight: 600;
+}
+
+/* 체크박스는 라벨 역할을 하지만 마진 제거 */
+.custom-checkbox {
+    margin-bottom: 0 !important;
 }
 
 .form-box-content .required {
@@ -221,7 +230,8 @@
 
 /* 타이틀 입력 */
 .time-title {
-    width: 150px;
+    flex: 0 0 20%;
+    min-width: 80px;
     padding: 0.5rem;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -348,10 +358,12 @@
     gap: 1rem;
     justify-content: flex-end;
     margin-top: 2rem;
+    margin-bottom: 20px;
 }
 
 .cancel-btn,
 .submit-btn {
+    width: 100%;
     padding: 0.75rem 2rem;
     border: none;
     border-radius: 6px;
@@ -371,12 +383,12 @@
 }
 
 .submit-btn {
-    background: #FF6666;
+    background: #725BFF;
     color: white;
 }
 
 .submit-btn:hover {
-    background: #FF5555;
+    background: #5940E5;
 }
 
 /* 커스텀 날짜 선택기 */
@@ -404,17 +416,16 @@
 
 .calendar-dropdown {
     position: absolute;
-    top: auto;
-    bottom: 100%;
+    top: 100%;
     left: 0;
     width: 280px;
     background: white;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     padding: 1rem;
-    margin-bottom: 0.5rem;
-    z-index: 1000;
+    margin-top: 0.5rem;
+    z-index: 9999; /* z-index를 높여서 최상위에 표시 */
     display: none;
 }
 
@@ -533,9 +544,11 @@
 
 .social-input-wrapper label {
     min-width: 80px;
-    font-size: 13px;
-    color: #666;
+    font-size: 14px !important;
+    color: #353535 !important;
+    font-weight: 600 !important;
     text-align: center;
+    margin-bottom: 0 !important;
 }
 
 .social-input-wrapper input {
@@ -548,15 +561,14 @@
 
 /* 결제 정보 섹션 */
 .payment-section {
-    margin-top: 2rem;
+    margin-top: 24px;
 }
 
-.payment-section h3 {
-    font-size: 24px;
+.payment-title {
+    font-size: 20px;
     font-weight: 700;
-    color: #333;
+    color: #353535;
     margin-bottom: 1.5rem;
-    text-align: center;
 }
 
 .payment-box {
@@ -564,47 +576,68 @@
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+.selected-product-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #353535;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .amount-breakdown {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
+    background: white;
+    padding: 0;
 }
 
 .amount-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
 }
 
-.amount-row:last-child {
-    margin-bottom: 0;
+.amount-row:first-child {
+    padding-top: 0;
 }
 
 .amount-row.total {
-    border-top: 2px solid #e0e0e0;
-    padding-top: 0.75rem;
-    margin-top: 0.75rem;
-    font-weight: 600;
+    border-top: 2px dashed #FF6666;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
 }
 
-.amount-row span:first-child {
+.amount-label {
     color: #666;
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 400;
 }
 
-.amount-row span:last-child {
-    color: #333;
-    font-size: 14px;
+.amount-value {
+    color: #353535;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
 }
 
-.amount-row.total span {
-    color: #FF6666;
+.amount-row.total .amount-label {
+    color: #353535;
     font-size: 18px;
     font-weight: 700;
+}
+
+.amount-row.total .amount-value {
+    color: #FF6666;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.vat-info {
+    font-size: 14px;
+    font-weight: 400;
+    color: #999;
 }
 
 .payment-notice {
@@ -677,6 +710,11 @@
     user-select: none;
 }
 
+/* 체크박스는 라벨 역할을 하지만 마진 제거 */
+.custom-checkbox {
+    margin-bottom: 0 !important;
+}
+
 .custom-checkbox input[type="checkbox"] {
     position: absolute;
     opacity: 0;
@@ -695,6 +733,7 @@
     position: relative;
     transition: all 0.3s ease;
     flex-shrink: 0;
+    vertical-align: middle;
 }
 
 .custom-checkbox input[type="checkbox"]:checked ~ .checkbox-box {
@@ -716,6 +755,7 @@
     font-size: 14px;
     color: #333;
     line-height: 24px;
+    vertical-align: middle;
 }
 
 #uploadAreaWrapper {
