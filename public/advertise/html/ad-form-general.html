@@ -1,96 +1,130 @@
-<!-- 광고신청 폼 - 일반 광고용 -->
-<div id="generalAdForm">
-    <h2>광고신청서 - 일반 광고</h2>
-    <form id="generalAdvertiseForm">
-        <div class="form-group">
-            <label for="selectedAdType1">선택한 광고 유형</label>
-            <input type="text" id="selectedAdType1" readonly placeholder="위에서 광고를 선택해주세요">
-        </div>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일반 광고 신청</title>
+    <link rel="stylesheet" href="/advertise/css/ad-form-general.css">
+</head>
+<body>
+    <!-- 광고신청 폼 - 일반 광고용 -->
+    <div class="general-ad-form-wrapper">
+        <h2 id="selectedAdTitle" class="selected-ad-title"></h2>
         
-        <div class="form-row">
-            <div class="form-group">
-                <label for="businessName1">업체명 <span class="required">*</span></label>
-                <input type="text" id="businessName1" required>
+        <!-- STEP 01 - 광고업체 기본정보 입력 -->
+        <div class="form-box">
+            <div class="form-box-header">
+                <span class="step-number">STEP.01</span>
+                <span class="step-title">광고업체 기본정보 입력</span>
             </div>
-            <div class="form-group">
-                <label for="contactName1">담당자명 <span class="required">*</span></label>
-                <input type="text" id="contactName1" required>
-            </div>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="contactPhone1">연락처 <span class="required">*</span></label>
-                <input type="tel" id="contactPhone1" required>
-            </div>
-            <div class="form-group">
-                <label for="contactEmail1">이메일 <span class="required">*</span></label>
-                <input type="email" id="contactEmail1" required>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="targetUrl1">연결 URL <span class="required">*</span></label>
-            <input type="url" id="targetUrl1" placeholder="https://example.com" required>
-            <div class="helper-text">광고 클릭 시 이동할 웹사이트 주소</div>
-        </div>
-        
-        <div class="form-group">
-            <label for="adContent1">광고 내용 <span class="required">*</span></label>
-            <textarea id="adContent1" rows="4" placeholder="광고에 표시될 내용을 입력해주세요" required></textarea>
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="startDate1">광고 시작일 <span class="required">*</span></label>
-                <input type="date" id="startDate1" required>
-            </div>
-            <div class="form-group">
-                <label for="duration1">광고 기간 <span class="required">*</span></label>
-                <select id="duration1" required onchange="updateTotalAmount()">
-                    <option value="">선택하세요</option>
-                    <option value="1">1개월</option>
-                    <option value="3">3개월</option>
-                    <option value="6">6개월</option>
-                    <option value="12">12개월</option>
-                </select>
-            </div>
-        </div>
-        
-        <!-- 파일 업로드 -->
-        <div class="form-group">
-            <label for="adImage1">광고 이미지</label>
-            <div class="file-input-wrapper">
-                <input type="file" id="adImage1" accept="image/*" style="display: none;">
-                <label for="adImage1" class="file-input-label">
-                    이미지 선택
-                </label>
-            </div>
-            <div class="helper-text">권장 크기: 1200 x 628px (JPG, PNG)</div>
-        </div>
-        
-        <!-- 총 금액 표시 -->
-        <div class="total-amount">
-            <h3>총 광고비용</h3>
-            <div class="amount-breakdown">
-                <div class="amount-row">
-                    <span>월 광고비:</span>
-                    <span id="monthlyAmount1">0원</span>
+            <div class="form-box-content">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="businessName1">업체명</label>
+                        <input type="text" id="businessName1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactName1">담당자명</label>
+                        <input type="text" id="contactName1" readonly>
+                    </div>
                 </div>
-                <div class="amount-row">
-                    <span>광고 기간:</span>
-                    <span id="adDuration1">0개월</span>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contactPhone1">연락처</label>
+                        <input type="tel" id="contactPhone1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail1">이메일</label>
+                        <input type="email" id="contactEmail1" readonly>
+                    </div>
                 </div>
-                <div class="amount-row total">
-                    <span>총 결제금액:</span>
-                    <span id="totalAmount1">0원</span>
+                
+                <div class="form-group">
+                    <label for="targetUrl1">연결 URL <span class="required">*</span></label>
+                    <input type="url" id="targetUrl1" placeholder="https://example.com" required>
+                    <div class="helper-text">광고 클릭 시 이동할 웹사이트 주소</div>
                 </div>
             </div>
         </div>
         
+        <!-- STEP 02 - 광고 내용 및 이미지 -->
+        <div class="form-box">
+            <div class="form-box-header">
+                <span class="step-number">STEP.02</span>
+                <span class="step-title">광고 내용 및 이미지</span>
+            </div>
+            <div class="form-box-content">
+                <div class="form-group">
+                    <label for="adContent1">광고 내용 <span class="required">*</span></label>
+                    <textarea id="adContent1" rows="4" placeholder="광고에 표시될 내용을 입력해주세요" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="adImages1">광고 이미지 <span class="required">*</span></label>
+                    <input type="file" id="adImages1" accept="image/*" multiple required>
+                    <div class="helper-text">광고에 사용할 이미지를 업로드해주세요 (최대 5MB)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STEP 03 - 광고기간 설정 -->
+        <div class="form-box">
+            <div class="form-box-header">
+                <span class="step-number">STEP.03</span>
+                <span class="step-title">광고기간 설정</span>
+            </div>
+            <div class="form-box-content">
+                <form id="generalAdvertiseForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate1">광고 시작일 <span class="required">*</span></label>
+                            <input type="date" id="startDate1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duration1">광고 기간 <span class="required">*</span></label>
+                            <div class="custom-duration-select">
+                                <button type="button" class="duration-btn" data-value="1">1개월</button>
+                                <button type="button" class="duration-btn" data-value="3">3개월</button>
+                                <button type="button" class="duration-btn" data-value="6">6개월</button>
+                                <button type="button" class="duration-btn" data-value="12">12개월</button>
+                            </div>
+                            <input type="hidden" id="duration1" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 결제 정보 -->
+        <div class="payment-section">
+            <h3 class="payment-title">결제 정보</h3>
+            <div class="payment-box">
+                <div class="selected-product-name" id="selectedProductName">-</div>
+                <div class="amount-breakdown">
+                    <div class="amount-row">
+                        <span class="amount-label">월 광고비</span>
+                        <span class="amount-value" id="monthlyAmount1">-</span>
+                    </div>
+                    <div class="amount-row">
+                        <span class="amount-label">광고 기간</span>
+                        <span class="amount-value" id="adDuration1">-</span>
+                    </div>
+                    <div class="amount-row total">
+                        <span class="amount-label">총 결제 금액 (VAT 포함)</span>
+                        <span class="amount-value total-value" id="totalAmount1">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 제출 버튼 -->
         <div class="form-actions">
-            <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
-            <button type="submit" class="submit-btn">광고 신청하기</button>
+            <button type="button" class="cancel-btn" onclick="cancelAdForm()">취소</button>
+            <button type="submit" form="generalAdvertiseForm" class="submit-btn">광고 신청</button>
         </div>
-    </form>
-</div>
+    </div>
+    
+    <script src="/advertise/js/ad-form-general.js"></script>
+</body>
+</html>

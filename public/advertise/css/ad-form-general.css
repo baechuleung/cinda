@@ -1,49 +1,92 @@
+/* 파일 경로: /advertise/css/ad-form-general.css */
+
 /* 일반 광고 신청서 스타일 */
 
-/* 광고신청 폼 섹션 */
-#generalAdForm {
+/* 전체 래퍼 */
+.general-ad-form-wrapper {
     max-width: 800px !important;
     width: 100% !important;
     margin: 0 auto !important;
+}
+
+/* 선택한 광고 제목 */
+.selected-ad-title {
+    color: #353535;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* 폼 박스 공통 스타일 */
+.form-box {
+    width: 100% !important;
     background: white;
     border-radius: 12px;
-    padding: 2rem !important;
+    margin-bottom: 24px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
+    overflow: visible;
+    position: relative;
 }
 
-#generalAdForm h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 2rem;
-    margin-top: 0;
+/* 폼 박스 헤더 */
+.form-box-header {
+    background: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-radius: 12px 12px 0 0;
 }
 
-/* 폼 요소 스타일 */
-#generalAdForm .form-group {
+.step-number {
+    border-radius: 50px;
+    background: linear-gradient(90deg, #F66 0%, #FFA6A6 100%);
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+.step-title {
+    color: #353535;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 폼 박스 내용 */
+.form-box-content {
+    padding: 2rem;
+    position: relative;
+}
+
+.form-box-content .form-group {
     margin-bottom: 1.5rem;
 }
 
-#generalAdForm .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
+.form-box-content .form-group label {
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #4E5968;
+    font-weight: 600;
 }
 
-#generalAdForm .required {
+.form-box-content .required {
     color: #FF6666;
     margin-left: 4px;
 }
 
-#generalAdForm .form-group input[type="text"],
-#generalAdForm .form-group input[type="email"],
-#generalAdForm .form-group input[type="tel"],
-#generalAdForm .form-group input[type="url"],
-#generalAdForm .form-group input[type="date"],
-#generalAdForm .form-group select,
-#generalAdForm .form-group textarea {
+.form-box-content .form-group input[type="text"],
+.form-box-content .form-group input[type="email"],
+.form-box-content .form-group input[type="tel"],
+.form-box-content .form-group input[type="url"],
+.form-box-content .form-group input[type="date"],
+.form-box-content .form-group input[type="file"],
+.form-box-content .form-group select,
+.form-box-content .form-group textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
@@ -52,168 +95,226 @@
     transition: border-color 0.3s ease;
 }
 
-#generalAdForm .form-group input[readonly] {
+.form-box-content .form-group input[readonly] {
     background: #f5f5f5;
-    cursor: not-allowed;
+    cursor: default;
+    color: #333;
+    opacity: 1;
+    -webkit-text-fill-color: #333;
 }
 
-#generalAdForm .form-group input:focus,
-#generalAdForm .form-group select:focus,
-#generalAdForm .form-group textarea:focus {
+.form-box-content .form-group input:focus,
+.form-box-content .form-group select:focus,
+.form-box-content .form-group textarea:focus {
     outline: none;
     border-color: #FF6666;
 }
 
-#generalAdForm .form-row {
+.form-box-content .form-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 }
 
-#generalAdForm .helper-text {
+.form-box-content .helper-text {
     font-size: 12px;
     color: #999;
     margin-top: 0.25rem;
 }
 
-/* 파일 업로드 스타일 */
-#generalAdForm .file-input-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
+.form-box-content textarea {
+    resize: vertical;
+    line-height: 1.5;
 }
 
-#generalAdForm .file-input-wrapper input[type=file] {
-    position: absolute;
-    left: -9999px;
+/* 커스텀 기간 선택 */
+.custom-duration-select {
+    display: flex;
+    gap: 0.5rem;
 }
 
-#generalAdForm .file-input-label {
-    display: block;
-    padding: 0.75rem 1.5rem;
-    background: #f5f5f5;
+.duration-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: white;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
     font-size: 14px;
     color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-#generalAdForm .file-input-label:hover {
-    background: #eeeeee;
+.duration-btn:hover {
+    background: #f5f5f5;
     border-color: #d0d0d0;
 }
 
-/* 총 금액 표시 */
-#generalAdForm .total-amount {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-top: 2rem;
+.duration-btn.active {
+    background: #FF6666;
+    color: white;
+    border-color: #FF6666;
 }
 
-#generalAdForm .total-amount h3 {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 1rem;
+/* 결제 정보 섹션 */
+.payment-section {
+    margin-top: 24px;
 }
 
-#generalAdForm .amount-breakdown {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+.payment-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #353535;
+    margin-bottom: 1.5rem;
 }
 
-#generalAdForm .amount-row {
+.payment-box {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+.selected-product-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #353535;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.amount-breakdown {
+    background: white;
+    padding: 0;
+}
+
+.amount-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
-#generalAdForm .amount-row.total {
-    border-top: 2px solid #e0e0e0;
-    padding-top: 0.75rem;
-    margin-top: 0.75rem;
+.amount-row:first-child {
+    padding-top: 0;
+}
+
+.amount-row.total {
+    border-top: 2px dashed #FF6666;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.amount-label {
+    color: #666;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.amount-value {
+    color: #353535;
+    font-size: 16px;
     font-weight: 600;
 }
 
-#generalAdForm .amount-row span:first-child {
-    color: #666;
-    font-size: 14px;
-}
-
-#generalAdForm .amount-row span:last-child {
-    color: #333;
-    font-size: 14px;
-}
-
-#generalAdForm .amount-row.total span {
+.total-value {
     color: #FF6666;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 /* 폼 액션 버튼 */
-#generalAdForm .form-actions {
+.form-actions {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
-    margin-top: 2rem;
 }
 
-#generalAdForm .cancel-btn,
-#generalAdForm .submit-btn {
-    padding: 0.75rem 2rem;
+.cancel-btn,
+.submit-btn {
+    padding: 0.875rem 2.5rem;
     border: none;
     border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 600;
 }
 
-#generalAdForm .cancel-btn {
+.cancel-btn {
     background: white;
     color: #666;
     border: 1px solid #e0e0e0;
 }
 
-#generalAdForm .cancel-btn:hover {
+.cancel-btn:hover {
     background: #f5f5f5;
 }
 
-#generalAdForm .submit-btn {
+.submit-btn {
     background: #FF6666;
     color: white;
 }
 
-#generalAdForm .submit-btn:hover {
+.submit-btn:hover {
     background: #FF5555;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 102, 102, 0.3);
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-    #generalAdForm.ad-form-section {
+    .selected-ad-title {
+        font-size: 24px;
+    }
+    
+    .form-box-header {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .form-box-content {
         padding: 1.5rem;
     }
     
-    #generalAdForm .form-row {
+    .form-box-content .form-row {
         grid-template-columns: 1fr;
     }
     
-    #generalAdForm .form-actions {
+    .custom-duration-select {
         flex-direction: column;
     }
     
-    #generalAdForm .cancel-btn,
-    #generalAdForm .submit-btn {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .cancel-btn,
+    .submit-btn {
         width: 100%;
     }
 }
 
 @media (max-width: 480px) {
-    #generalAdForm.ad-form-section {
+    .selected-ad-title {
+        font-size: 20px;
+    }
+    
+    .form-box-header {
+        padding: 1rem 1.25rem;
+    }
+    
+    .step-number {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+    
+    .step-title {
+        font-size: 18px;
+    }
+    
+    .form-box-content {
         padding: 1rem;
     }
 }

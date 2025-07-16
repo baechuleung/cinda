@@ -2,8 +2,8 @@
 // 파일 이름: register-partner.js
 
 import { auth, db } from '../firebase-config.js';
-import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // 드롭다운 초기화
 function initDropdowns() {
@@ -221,12 +221,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             updatedAt: serverTimestamp()
         });
         
-        // 이메일 인증 발송
-        await sendEmailVerification(user);
-        
         // 성공 시 리다이렉트
-        alert('회원가입이 완료되었습니다. 관리자 승인 후 서비스를 이용하실 수 있습니다.');
-        window.location.href = '/auth/login.html';
+        alert('회원가입이 완료되었습니다.');
+        window.location.href = '/realtime-status/realtime-status.html';
         
     } catch (error) {
         console.error('Registration error:', error);

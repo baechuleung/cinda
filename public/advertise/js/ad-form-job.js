@@ -602,7 +602,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 }
             }
             
-            await addDoc(collection(db, 'ad_requests'), formData);
+            await addDoc(collection(db, 'ad_requests_job'), formData);
             alert('광고 신청이 완료되었습니다.\n검토 후 연락드리겠습니다.');
             window.location.href = '/advertise/html/ad-list.html';
             

@@ -1,232 +1,141 @@
-// 헤더 관리 스크립트
-import { auth, db } from './firebase-config.js';
+// 파일 경로: public/js/header.js
+// 파일 이름: header.js
+
+// Firebase imports
+import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// 광고 배너 슬라이드 기능
+// 광고 슬라이드 관련 변수
 let currentSlide = 0;
-const totalSlides = 6; // 전체 배너 수
-let visibleSlides = 4; // 한 번에 보이는 배너 수 (PC 기본값)
-let maxSlide = totalSlides - visibleSlides;
-let autoSlideInterval = null; // 자동 슬라이드 인터벌
+let slidesPerView = 4;
+let gap = 16;
+let maxSlide = 0;
 
-// 모바일 체크 함수
-function isMobile() {
-    return window.innerWidth <= 768;
-}
-
-// 화면 크기에 따라 설정 업데이트
+// 슬라이드 설정 업데이트
 function updateSlideSettings() {
-    if (isMobile()) {
-        visibleSlides = 1; // 모바일은 1개씩
+    const width = window.innerWidth;
+    
+    if (width > 1440) {
+        slidesPerView = 4;
+        gap = 16;
+    } else if (width > 1024) {
+        slidesPerView = 3;
+        gap = 14;
+    } else if (width > 768) {
+        slidesPerView = 2;
+        gap = 12;
     } else {
-        visibleSlides = 4; // PC는 4개씩
+        slidesPerView = 1;
+        gap = 0;
     }
-    maxSlide = totalSlides - visibleSlides;
+    
+    const banners = document.querySelectorAll('.ad-banner');
+    maxSlide = Math.max(0, banners.length - slidesPerView);
 }
 
-function slideAds(direction) {
-    const wrapper = document.querySelector('.ad-banner-wrapper');
-    
-    if (!wrapper) {
-        return;
-    }
-    
-    if (direction === 'next' && currentSlide < maxSlide) {
-        currentSlide++;
-    } else if (direction === 'prev' && currentSlide > 0) {
-        currentSlide--;
-    }
-    
-    // 슬라이드 이동
-    moveSlide();
-    
-    // 버튼 활성화/비활성화
-    updateSlideButtons();
-}
-
-// 슬라이드 이동 함수
+// 슬라이드 이동
 function moveSlide() {
     const wrapper = document.querySelector('.ad-banner-wrapper');
     if (!wrapper) return;
     
-    if (isMobile()) {
-        // 모바일: 배너 너비 + margin-right으로 이동
-        const firstBanner = wrapper.querySelector('.ad-banner');
-        if (firstBanner) {
-            const bannerWidth = firstBanner.offsetWidth;
-            const marginRight = 16; // 1rem
-            const slideWidth = bannerWidth + marginRight;
-            const translateValue = currentSlide * slideWidth;
-            
-            wrapper.style.transform = `translateX(-${translateValue}px)`;
-        }
+    if (window.innerWidth <= 768) {
+        wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
     } else {
-        // PC: 배너 너비와 gap을 정확히 계산
-        const firstBanner = wrapper.querySelector('.ad-banner');
-        if (firstBanner) {
-            const bannerWidth = firstBanner.offsetWidth;
-            const computedStyle = window.getComputedStyle(wrapper);
-            const gap = parseFloat(computedStyle.gap) || 16;
-            
-            // 픽셀 단위로 정확히 이동
-            const slideWidth = bannerWidth + gap;
-            const translateValue = currentSlide * slideWidth;
-            
-            wrapper.style.transform = `translateX(-${translateValue}px)`;
-        }
+        const container = document.querySelector('.ad-banner-container');
+        const containerWidth = container ? container.offsetWidth : 0;
+        const slideWidth = (containerWidth - gap * (slidesPerView - 1)) / slidesPerView;
+        const offset = currentSlide * (slideWidth + gap);
+        wrapper.style.transform = `translateX(-${offset}px)`;
     }
 }
 
+// 슬라이드 버튼 업데이트
 function updateSlideButtons() {
     const prevBtn = document.querySelector('.slide-btn.prev');
     const nextBtn = document.querySelector('.slide-btn.next');
     
-    if (prevBtn) {
-        prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
-        prevBtn.style.cursor = currentSlide === 0 ? 'not-allowed' : 'pointer';
-    }
+    if (!prevBtn || !nextBtn) return;
     
-    if (nextBtn) {
-        nextBtn.style.opacity = currentSlide === maxSlide ? '0.5' : '1';
-        nextBtn.style.cursor = currentSlide === maxSlide ? 'not-allowed' : 'pointer';
-    }
+    prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
+    prevBtn.style.pointerEvents = currentSlide === 0 ? 'none' : 'auto';
+    
+    nextBtn.style.opacity = currentSlide >= maxSlide ? '0.5' : '1';
+    nextBtn.style.pointerEvents = currentSlide >= maxSlide ? 'none' : 'auto';
 }
 
-// 전역 함수로 등록 (onclick에서 사용하기 위해)
-window.slideAds = slideAds;
-
-// 자동 슬라이드 시작
-function startAutoSlide() {
-    // 기존 인터벌 제거
-    if (autoSlideInterval) {
-        clearInterval(autoSlideInterval);
+// 광고 슬라이드 함수
+window.slideAds = function(direction) {
+    if (direction === 'prev' && currentSlide > 0) {
+        currentSlide--;
+    } else if (direction === 'next' && currentSlide < maxSlide) {
+        currentSlide++;
     }
     
-    // 3초마다 자동 슬라이드
-    autoSlideInterval = setInterval(() => {
-        if (currentSlide < maxSlide) {
-            slideAds('next');
-        } else {
-            // 마지막에 도달하면 처음으로
-            currentSlide = -1;
-            slideAds('next');
-        }
-    }, 3000);
-}
+    moveSlide();
+    updateSlideButtons();
+};
 
-// 자동 슬라이드 정지
-function stopAutoSlide() {
-    if (autoSlideInterval) {
-        clearInterval(autoSlideInterval);
-        autoSlideInterval = null;
-    }
-}
-
-// 배너 순서 랜덤 섞기
-function shuffleBanners() {
-    const wrapper = document.querySelector('.ad-banner-wrapper');
-    if (!wrapper) return;
-    
-    const banners = Array.from(wrapper.children);
-    
-    // Fisher-Yates 셔플 알고리즘
-    for (let i = banners.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        wrapper.appendChild(banners[j]);
-    }
-}
-
-// 슬라이더 초기화 함수
+// 슬라이더 초기화
 function initializeSlider() {
-    // 화면 크기에 따른 설정 업데이트
     updateSlideSettings();
-    
-    // 초기 버튼 상태 설정
+    moveSlide();
     updateSlideButtons();
     
-    const wrapper = document.querySelector('.ad-banner-wrapper');
-    if (!wrapper) {
-        return;
-    }
+    // 터치 이벤트 처리 (모바일)
+    let touchStartX = 0;
+    let touchEndX = 0;
     
-    // 배너 순서 랜덤 섞기
-    shuffleBanners();
-    
-    // 초기 위치 설정
-    currentSlide = 0;
-    moveSlide();
-    
-    // 자동 슬라이드 시작
-    startAutoSlide();
-    
-    // 터치 스와이프 지원 (모바일)
     const container = document.querySelector('.ad-banner-container');
-    if (container) {
-        // 마우스 호버 시 자동 슬라이드 정지 (PC만)
-        if (!isMobile()) {
-            container.addEventListener('mouseenter', stopAutoSlide);
-            container.addEventListener('mouseleave', startAutoSlide);
-        }
+    if (!container) return;
+    
+    container.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
         
-        let startX = 0;
-        let endX = 0;
-        
-        container.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            stopAutoSlide(); // 터치 시작 시 자동 슬라이드 정지
-        });
-        
-        container.addEventListener('touchend', (e) => {
-            endX = e.changedTouches[0].clientX;
-            handleSwipe();
-            // 터치 종료 2초 후 자동 슬라이드 재시작
-            setTimeout(startAutoSlide, 2000);
-        });
-        
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = startX - endX;
-            
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    slideAds('next');
-                } else {
-                    slideAds('prev');
-                }
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentSlide < maxSlide) {
+                slideAds('next');
+            } else if (diff < 0 && currentSlide > 0) {
+                slideAds('prev');
             }
         }
     }
 }
 
-// 로그인 필요한 페이지 목록
-const protectedPages = [
-    '/realtime-status/realtime-status.html',
-    '/admin/',
-    '/advertise/',
-    '/dashboard.html'
-];
-
-// 현재 페이지가 보호된 페이지인지 확인
+// 보호된 페이지 확인
 function isProtectedPage() {
+    const protectedPaths = [
+        '/admin/',
+        '/advertise/',
+        '/community/html/write.html',
+        '/community/html/edit.html'
+    ];
+    
     const currentPath = window.location.pathname;
-    return protectedPages.some(page => currentPath.includes(page));
+    return protectedPaths.some(path => currentPath.includes(path));
 }
 
-// 현재 페이지에 따라 메뉴 활성화
+// 활성 메뉴 설정
 function setActiveMenu() {
     const currentPath = window.location.pathname;
     const menuLinks = document.querySelectorAll('nav a');
     
     menuLinks.forEach(link => {
-        // href 속성 가져오기
         const href = link.getAttribute('href');
         
-        // 현재 경로와 일치하는지 확인
         if (href && currentPath.includes(href) && href !== '#' && href !== '/') {
             link.classList.add('active');
         } else if (href === '/' && (currentPath === '/' || currentPath === '/index.html')) {
-            // 홈페이지인 경우
             link.classList.add('active');
         } else {
             link.classList.remove('active');
@@ -246,9 +155,15 @@ onAuthStateChanged(auth, async (user) => {
             showAdminMenu();
         }
         
-        // 기업회원 여부 확인
+        // 기업회원 여부 확인 (business_users)
         const isBusinessUser = await checkBusinessUserStatus(user.uid);
         if (isBusinessUser) {
+            showAdvertiseMenu();
+        }
+        
+        // 파트너회원 여부 확인 (partner_users)
+        const isPartnerUser = await checkPartnerUserStatus(user.uid);
+        if (isPartnerUser) {
             showAdvertiseMenu();
         }
     } else {
@@ -257,9 +172,7 @@ onAuthStateChanged(auth, async (user) => {
         
         // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
         if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
-            // 먼저 페이지 이동 후 알림 표시
             window.location.href = '/auth/login.html';
-            // 페이지 이동 후에는 아래 코드가 실행되지 않으므로 세션스토리지에 메시지 저장
             sessionStorage.setItem('loginRequired', 'true');
         }
     }
@@ -294,9 +207,19 @@ async function checkBusinessUserStatus(uid) {
     }
 }
 
+// 파트너회원 상태 확인
+async function checkPartnerUserStatus(uid) {
+    try {
+        const partnerDoc = await getDoc(doc(db, 'partner_users', uid));
+        return partnerDoc.exists();
+    } catch (error) {
+        console.error('파트너회원 확인 오류:', error);
+        return false;
+    }
+}
+
 // 관리자 메뉴 표시
 function showAdminMenu() {
-    // 모든 .admin-menu 찾기
     const adminMenus = document.querySelectorAll('.admin-menu');
     
     adminMenus.forEach(menu => {
@@ -306,7 +229,6 @@ function showAdminMenu() {
 
 // 광고관리 메뉴 표시
 function showAdvertiseMenu() {
-    // 모든 .advertise-menu 찾기
     const advertiseMenus = document.querySelectorAll('.advertise-menu');
     
     advertiseMenus.forEach(menu => {
@@ -335,7 +257,6 @@ window.handleLogout = async function() {
     if (confirm('로그아웃 하시겠습니까?')) {
         try {
             await auth.signOut();
-            // 로그아웃 후 바로 로그인 페이지로 이동
             window.location.href = '/auth/login.html';
         } catch (error) {
             console.error('로그아웃 오류:', error);
@@ -391,7 +312,6 @@ function initializeHamburgerMenu() {
         
         // 슬라이더 설정 업데이트
         updateSlideSettings();
-        // 현재 슬라이드 위치 재조정
         currentSlide = Math.min(currentSlide, maxSlide);
         moveSlide();
         updateSlideButtons();
@@ -411,10 +331,10 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initializeHamburgerMenu();
         initializeSlider();
-        setActiveMenu(); // 활성 메뉴 설정
+        setActiveMenu();
     });
 } else {
     initializeHamburgerMenu();
     initializeSlider();
-    setActiveMenu(); // 활성 메뉴 설정
+    setActiveMenu();
 }

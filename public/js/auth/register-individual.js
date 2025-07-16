@@ -1,6 +1,9 @@
+// 파일 경로: public/js/auth/register-individual.js
+// 파일 이름: register-individual.js
+
 import { auth, db } from '../firebase-config.js';
-import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { createUserWithEmailAndPassword, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // 드롭다운 초기화
 function initDropdowns() {
@@ -22,6 +25,11 @@ function initDropdowns() {
         option.addEventListener('click', function() {
             const value = this.dataset.value;
             const text = this.textContent;
+            
+            // 모든 옵션에서 selected 클래스 제거
+            emailDropdownOptions.forEach(opt => opt.classList.remove('selected'));
+            // 현재 선택한 옵션에 selected 클래스 추가
+            this.classList.add('selected');
             
             emailDropdownSelected.querySelector('.selected-text').textContent = text;
             
@@ -60,18 +68,24 @@ function initDropdowns() {
 // 이메일 업데이트
 function updateEmail() {
     const emailId = document.getElementById('emailId').value;
-    const selectedDomain = document.querySelector('#emailDropdownOptions .dropdown-option.selected')?.dataset.value || '';
+    const selectedOption = document.querySelector('#emailDropdownOptions .dropdown-option.selected');
     const directDomain = document.getElementById('emailDomainDirect').value;
     
     let domain = '';
-    if (selectedDomain === 'direct') {
-        domain = directDomain;
-    } else if (selectedDomain) {
-        domain = selectedDomain;
+    
+    if (selectedOption) {
+        const selectedDomain = selectedOption.dataset.value;
+        if (selectedDomain === 'direct') {
+            domain = directDomain;
+        } else if (selectedDomain) {
+            domain = selectedDomain;
+        }
     }
     
     if (emailId && domain) {
         document.getElementById('email').value = `${emailId}@${domain}`;
+    } else if (emailId) {
+        document.getElementById('email').value = emailId;
     }
 }
 
@@ -143,8 +157,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             displayName: nickname
         });
         
-        // Firestore에 여성회원 정보 저장 (컬렉션명 변경: individual_users -> female_users)
-        await setDoc(doc(db, 'female_users', user.uid), {
+        // Firestore에 여성회원 정보 저장
+        await setDoc(doc(db, 'individual_users', user.uid), {
             uid: user.uid,
             email: email,
             nickname: nickname,
@@ -152,17 +166,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             birthdate: birthdate,
             phone: phone,
             gender: 'female',
-            userType: 'female',
+            userType: 'individual',
             marketingAgree: terms3,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         });
         
-        // 이메일 인증 발송
-        await sendEmailVerification(user);
-        
         // 성공 시 리다이렉트
-        alert('회원가입이 완료되었습니다. 이메일 인증을 완료해주세요.');
+        alert('회원가입이 완료되었습니다.');
         window.location.href = '/realtime-status/realtime-status.html';
         
     } catch (error) {
