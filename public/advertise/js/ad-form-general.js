@@ -51,6 +51,17 @@ window.removePreviewImage = function(index) {
     
     // 텍스트 업데이트
     window.updateUploadText();
+    
+    // input 파일 목록도 업데이트
+    const adImagesInput = document.getElementById('adImages1');
+    if (adImagesInput) {
+        // DataTransfer를 사용하여 새로운 FileList 생성
+        const dataTransfer = new DataTransfer();
+        window.selectedFiles.forEach(file => {
+            dataTransfer.items.add(file);
+        });
+        adImagesInput.files = dataTransfer.files;
+    }
 };
 
 // 일반 광고 폼 초기화
