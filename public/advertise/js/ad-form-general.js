@@ -1,4 +1,5 @@
 // 파일 경로: /advertise/js/ad-form-general.js
+// 파일이름: ad-form-general.js
 
 import { db, storage } from '/js/firebase-config.js';
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';

@@ -1,63 +1,41 @@
 // 파일경로: /advertise/js/ad-complete-popup.js
 // 파일이름: ad-complete-popup.js
 
-// 팝업 HTML 템플릿
-const popupTemplate = `
-<div class="popup-overlay" id="adCompletePopup">
-    <div class="popup-container">
-        <h2 class="popup-title">광고 접행비 안내</h2>
-        <p class="popup-subtitle">광고 신청을 완료하시려면 광고비를 아래 계좌로 입금해주시기 바랍니다.</p>
-        
-        <div class="account-info">
-            <h3>[입금 계좌정보]</h3>
-            <p><strong>예금주 :</strong> 배철웅(신대헬라 다이어리)</p>
-            <p><strong>은행명 :</strong> 카카오 뱅크</p>
-            <p><strong>계좌번호 :</strong> 3333-345-184801</p>
-        </div>
-        
-        <div class="notice-list">
-            <p>&lt;신대헬라 다이어리 광고 진행 절차&gt;</p>
-            <ol>
-                <li>광고 신청서 작성 후, 광고비 입금확인 및 검수</li>
-                <li>콘텐츠, 업종, 이미지 등이 당사 운영정책에 적합한지 내부적으로 검토합니다.</li>
-                <li>입금 및 검수 통과일로부터 1~2일 이내 배너가 게재됩니다.</li>
-                <li>배너가 실제로 게재된 날짜를 기준으로 선택한 광고 기간이 적용됩니다.</li>
-                <li>광고 내용이 운영정책에 맞지 않아 승인이 거절되는 경우, 입금하신 광고비는 전액 환불해드립니다.</li>
-            </ol>
-        </div>
-        
-        <button type="button" class="popup-confirm-btn" onclick="closeAdCompletePopup()">확인</button>
-    </div>
-</div>
-`;
-
 // 팝업 열기 함수
 window.showAdCompletePopup = function() {
-    // 팝업이 이미 로드되어 있는지 확인
-    let popup = document.getElementById('adCompletePopup');
-    
-    if (!popup) {
-        // 팝업 CSS 로드
-        if (!document.querySelector('link[href="/advertise/css/ad-complete-popup.css"]')) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = '/advertise/css/ad-complete-popup.css';
-            document.head.appendChild(link);
-        }
-        
-        // 팝업 HTML을 body에 추가
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = popupTemplate;
-        document.body.appendChild(tempDiv.firstElementChild);
-        
-        popup = document.getElementById('adCompletePopup');
-    }
-    
-    // 팝업 표시
-    if (popup) {
-        popup.classList.add('show');
-        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
-    }
+    // 팝업 HTML 파일 로드
+    fetch('/advertise/html/ad-complete-popup.html')
+        .then(response => response.text())
+        .then(html => {
+            // 팝업이 이미 로드되어 있는지 확인
+            let popup = document.getElementById('adCompletePopup');
+            
+            if (!popup) {
+                // 팝업 CSS 로드
+                if (!document.querySelector('link[href="/advertise/css/ad-complete-popup.css"]')) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = '/advertise/css/ad-complete-popup.css';
+                    document.head.appendChild(link);
+                }
+                
+                // 팝업 HTML을 body에 추가
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                document.body.appendChild(tempDiv.firstElementChild);
+                
+                popup = document.getElementById('adCompletePopup');
+            }
+            
+            // 팝업 표시
+            if (popup) {
+                popup.classList.add('show');
+                document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+            }
+        })
+        .catch(error => {
+            console.error('팝업 로드 오류:', error);
+        });
 };
 
 // 팝업 닫기 함수
