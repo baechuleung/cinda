@@ -132,7 +132,8 @@
     margin-top: 1rem;
 }
 
-#uploadAreaWrapper {
+#uploadAreaWrapper,
+#thumbnailUploadWrapper {
     transition: all 0.3s ease;
 }
 
@@ -214,6 +215,175 @@
     justify-content: center;
 }
 
+.upload-option {
+    margin-bottom: 1rem;
+}
+
+/* 커스텀 체크박스 */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* 체크박스는 라벨 역할을 하지만 마진 제거 */
+.custom-checkbox {
+    margin-bottom: 0 !important;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-box {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-right: 0.75rem;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+.custom-checkbox input[type="checkbox"]:checked ~ .checkbox-box {
+    background: #F66;
+}
+
+.custom-checkbox input[type="checkbox"]:checked ~ .checkbox-box::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.checkbox-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 24px;
+    vertical-align: middle;
+}
+
+/* 커스텀 날짜 선택기 */
+.custom-date-picker {
+    position: relative;
+}
+
+.date-display {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: white !important;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.calendar-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 280px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    z-index: 9999;
+    display: none;
+}
+
+.calendar-dropdown.show {
+    display: block;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cal-prev-btn,
+.cal-next-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    color: #666;
+}
+
+.cal-prev-btn:hover,
+.cal-next-btn:hover {
+    color: #FF6666;
+}
+
+.cal-month-year {
+    font-weight: 600;
+    color: #333;
+}
+
+.cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 0.5rem;
+}
+
+.cal-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+}
+
+.cal-date {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.cal-date:hover:not(.disabled) {
+    background: #f5f5f5;
+}
+
+.cal-date.selected {
+    background: #FF6666;
+    color: white;
+}
+
+.cal-date.disabled {
+    color: #ddd;
+    cursor: not-allowed;
+}
+
 /* 커스텀 기간 선택 */
 .custom-duration-select {
     display: flex;
@@ -246,13 +416,6 @@
 /* 결제 정보 섹션 */
 .payment-section {
     margin-top: 24px;
-}
-
-.payment-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: #353535;
-    margin-bottom: 1.5rem;
 }
 
 .payment-box {
@@ -349,6 +512,55 @@
     background: #FF5555;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 102, 102, 0.3);
+}
+
+/* 로딩 오버레이 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #FF6666;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.loading-subtext {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    margin-top: 10px;
 }
 
 /* 반응형 디자인 */

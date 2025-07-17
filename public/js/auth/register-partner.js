@@ -76,7 +76,7 @@ function initDropdowns() {
             const text = this.textContent;
             
             categoryDropdownSelected.querySelector('.selected-text').textContent = text;
-            document.getElementById('businessCategory').value = value;
+            document.getElementById('partnerCategory').value = value;
             
             categoryDropdownMenu.style.display = 'none';
             categoryDropdownSelected.classList.remove('active');
@@ -147,7 +147,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const confirmPassword = document.getElementById('confirmPassword').value;
     const companyName = document.getElementById('companyName').value;
     const businessNumber = document.getElementById('businessNumber').value;
-    const businessCategory = document.getElementById('businessCategory').value;
+    const partnerCategory = document.getElementById('partnerCategory').value;
     const managerName = document.getElementById('managerName').value;
     const birthdate = document.getElementById('birthdate').value;
     const phone = document.getElementById('phone').value;
@@ -185,7 +185,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         return;
     }
     
-    if (!businessCategory) {
+    if (!partnerCategory) {
         errorMessage.textContent = '업종을 선택해주세요.';
         return;
     }
@@ -211,7 +211,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             email: email,
             companyName: companyName,
             businessNumber: businessNumber,
-            businessCategory: businessCategory,
+            partnerCategory: partnerCategory,
             managerName: managerName,
             birthdate: birthdate,
             phone: phone,

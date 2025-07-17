@@ -24,26 +24,47 @@
                         <input type="text" id="businessName1" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="contactName1">담당자명</label>
-                        <input type="text" id="contactName1" readonly>
+                        <label for="businessType1">업종</label>
+                        <input type="text" id="businessType1" readonly>
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="contactName1">담당자명</label>
+                        <input type="text" id="contactName1" readonly>
+                    </div>
+                    <div class="form-group">
                         <label for="contactPhone1">연락처</label>
                         <input type="tel" id="contactPhone1" readonly>
                     </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="contactEmail1">이메일</label>
                         <input type="email" id="contactEmail1" readonly>
                     </div>
+                    <div class="form-group">
+                        <label for="businessAddress1">업체 주소 <span class="required">*</span></label>
+                        <input type="text" id="businessAddress1" placeholder="업체 주소를 입력하세요" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="kakaoContact1">카카오톡 ID</label>
+                        <input type="text" id="kakaoContact1" placeholder="카카오톡 ID 혹은 채널 URL을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="businessWebsite1">홈페이지 주소 <span class="required">*</span></label>
+                        <input type="url" id="businessWebsite1" placeholder="https://example.com" required>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="targetUrl1">연결 URL <span class="required">*</span></label>
-                    <input type="url" id="targetUrl1" placeholder="https://example.com" required>
-                    <div class="helper-text">광고 클릭 시 이동할 웹사이트 주소</div>
+                    <label for="businessHours1">영업시간 <span class="required">*</span></label>
+                    <textarea id="businessHours1" rows="3" placeholder="예: 평일 09:00 ~ 18:00, 주말 10:00 ~ 17:00, 일요일 휴무" required></textarea>
                 </div>
             </div>
         </div>
@@ -56,12 +77,36 @@
             </div>
             <div class="form-box-content">
                 <div class="form-group">
-                    <label for="adContent1">광고 내용 <span class="required">*</span></label>
-                    <textarea id="adContent1" rows="4" placeholder="광고에 표시될 내용을 입력해주세요" required></textarea>
+                    <label>업체 대표 이미지 업로드 <span class="required">*</span></label>
+                    <div class="image-upload-section">
+                        <div id="thumbnailUploadWrapper">
+                            <div class="upload-area">
+                                <button type="button" class="upload-btn" onclick="document.getElementById('thumbnailImage').click()">
+                                    파일선택
+                                </button>
+                                <span class="upload-text" id="thumbnailText">선택된 파일 없음</span>
+                                <input type="file" id="thumbnailImage" accept="image/*" style="display: none;">
+                            </div>
+                            
+                            <div class="upload-info">
+                                배너 이미지 권장 사이즈 280px X 170px, 최대 5MB
+                            </div>
+                            
+                            <div id="thumbnailPreview" class="image-preview"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label>광고 이미지 업로드</label>
+                    <label>상세페이지 이미지 업로드</label>
+                    
+                    <div class="upload-option">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="imageCreationRequest1" name="imageCreationRequest">
+                            <span class="checkbox-box"></span>
+                            <span class="checkbox-text">상세페이지 디자인 의뢰비용 +50,000원</span>
+                        </label>
+                    </div>
                     
                     <div class="image-upload-section">
                         <div id="uploadAreaWrapper">
@@ -69,17 +114,22 @@
                                 <button type="button" class="upload-btn" onclick="document.getElementById('adImages1').click()">
                                     파일선택
                                 </button>
-                                <span class="upload-text">이미지를 선택하세요</span>
+                                <span class="upload-text">선택된 파일 없음</span>
                                 <input type="file" id="adImages1" accept="image/*" multiple style="display: none;">
                             </div>
                             
                             <div class="upload-info">
-                                광고 이미지 권장 사이즈 1200px X 750px, 최대 5MB (최대 5장)
+                                상세 페이지 이미지 권장 사이즈 2000px X 690px, 최대 5MB
                             </div>
                             
                             <div id="adImagesPreview" class="image-preview"></div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="detailContent1">상세 내용 <span class="required">*</span></label>
+                    <textarea id="detailContent1" rows="6" placeholder="광고 상세 내용을 입력해주세요. 업체소개, 근무환경, 특별한 혜택 등을 자세히 작성해주세요." required></textarea>
                 </div>
             </div>
         </div>
@@ -95,7 +145,28 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="startDate1">광고 시작일 <span class="required">*</span></label>
-                            <input type="date" id="startDate1" required>
+                            <div class="custom-date-picker">
+                                <input type="text" id="startDate1Display" class="date-display" placeholder="날짜를 선택하세요" readonly style="cursor: pointer;">
+                                <input type="hidden" id="startDate1" required>
+                                <div class="calendar-icon">📅</div>
+                                <div class="calendar-dropdown" id="calendarDropdown">
+                                    <div class="calendar-header">
+                                        <button type="button" class="cal-prev-btn">◀</button>
+                                        <span class="cal-month-year"></span>
+                                        <button type="button" class="cal-next-btn">▶</button>
+                                    </div>
+                                    <div class="cal-weekdays">
+                                        <div>일</div>
+                                        <div>월</div>
+                                        <div>화</div>
+                                        <div>수</div>
+                                        <div>목</div>
+                                        <div>금</div>
+                                        <div>토</div>
+                                    </div>
+                                    <div class="cal-dates"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="duration1">광고 기간 <span class="required">*</span></label>
@@ -114,7 +185,6 @@
         
         <!-- 결제 정보 -->
         <div class="payment-section">
-            <h3 class="payment-title">결제 정보</h3>
             <div class="payment-box">
                 <div class="selected-product-name" id="selectedProductName">-</div>
                 <div class="amount-breakdown">
@@ -125,6 +195,10 @@
                     <div class="amount-row">
                         <span class="amount-label">광고 기간</span>
                         <span class="amount-value" id="adDuration1">-</span>
+                    </div>
+                    <div class="amount-row" id="imageCreationFeeRow" style="display: none;">
+                        <span class="amount-label">이미지 제작비</span>
+                        <span class="amount-value">50,000원</span>
                     </div>
                     <div class="amount-row total">
                         <span class="amount-label">총 결제 금액 (VAT 포함)</span>
@@ -141,6 +215,13 @@
         </div>
     </div>
     
-    <script src="/advertise/js/ad-form-general.js"></script>
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">광고 신청 처리중...</div>
+            <div class="loading-subtext">잠시만 기다려주세요</div>
+        </div>
+    </div>
 </body>
 </html>
