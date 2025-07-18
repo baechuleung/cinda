@@ -209,6 +209,18 @@
     cursor: not-allowed;
 }
 
+/* 이미 추천한 버튼 스타일 */
+.inquiry-like-btn.liked {
+    background: #ff6b6b;
+    color: white;
+    border-color: #ff6b6b;
+}
+
+.inquiry-like-btn.liked:hover {
+    background: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
 /* 사용자 닉네임 스타일 */
 .user-nickname {
     font-size: 13px;

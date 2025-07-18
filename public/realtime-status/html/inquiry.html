@@ -43,9 +43,10 @@
                 <span class="business-name"></span>
                 <span class="badge">문의가능</span>
             </div>
-            <div class="inquiry-item-info">
-                <span class="nickname"></span>
-                <span class="contact"></span>
+            <div class="inquiry-item-actions">
+                <button class="inquiry-phone-btn">📞</button>
+                <button class="inquiry-like-btn">❤️ <span class="like-count">0</span></button>
+                <span class="user-nickname"></span>
             </div>
         </div>
     </template>
@@ -56,10 +57,28 @@
             <div class="mobile-action-container">
                 <div class="inquiry-header">
                     <h3>문의 가능 업체</h3>
+                    <span class="location-tag"></span>
                     <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
                 </div>
                 <div class="inquiry-list-container">
                     <!-- 문의 아이템들이 여기에 추가됨 -->
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 모바일 빈 문의 템플릿 -->
+    <template id="mobile-inquiry-empty-template">
+        <div class="mobile-action-area inquiry-empty">
+            <div class="mobile-action-container">
+                <div class="inquiry-header">
+                    <h3>문의하기</h3>
+                    <span class="location-tag"></span>
+                    <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
+                </div>
+                <div class="inquiry-empty-content">
+                    <p class="empty-message">현재 문의 가능한 업체가 없습니다.</p>
+                    <p class="empty-sub-message">실시간 현황판 광고를 신청한 업체의 연락처가 여기에 표시됩니다.</p>
                 </div>
             </div>
         </div>
@@ -70,10 +89,26 @@
         <div class="right-content">
             <div class="inquiry-header">
                 <h3>문의 가능 업체</h3>
+                <span class="location-tag"></span>
                 <button class="close-btn" onclick="closeDesktopPopup()">×</button>
             </div>
             <div class="inquiry-list-container">
                 <!-- 문의 아이템들이 여기에 추가됨 -->
+            </div>
+        </div>
+    </template>
+    
+    <!-- PC 빈 문의 템플릿 -->
+    <template id="desktop-inquiry-empty-template">
+        <div class="right-content">
+            <div class="inquiry-header">
+                <h3>문의하기</h3>
+                <span class="location-tag"></span>
+                <button class="close-btn" onclick="closeDesktopPopup()">×</button>
+            </div>
+            <div class="inquiry-empty-content">
+                <p class="empty-message">현재 문의 가능한 업체가 없습니다.</p>
+                <p class="empty-sub-message">실시간 현황판 광고를 신청한 업체의 연락처가 여기에 표시됩니다.</p>
             </div>
         </div>
     </template>

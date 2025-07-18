@@ -6,6 +6,33 @@ import { collection, query, where, getDocs, doc, getDoc, updateDoc, increment } 
 // 전역 변수로 각 카드의 광고 데이터 저장
 const cardInquiryData = new Map();
 
+// 추천한 업체 ID를 로컬 스토리지에 저장
+const LIKED_STORES_KEY = 'cinda_liked_stores';
+
+// 추천한 업체 목록 가져오기
+function getLikedStores() {
+    try {
+        const liked = localStorage.getItem(LIKED_STORES_KEY);
+        return liked ? JSON.parse(liked) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+// 추천한 업체 추가
+function addLikedStore(userId) {
+    const liked = getLikedStores();
+    if (!liked.includes(userId)) {
+        liked.push(userId);
+        localStorage.setItem(LIKED_STORES_KEY, JSON.stringify(liked));
+    }
+}
+
+// 이미 추천했는지 확인
+function hasLiked(userId) {
+    return getLikedStores().includes(userId);
+}
+
 // 문의 팝업 기능 초기화
 export async function initializeInquiryPopup() {
     console.log('문의 팝업 초기화 시작');
@@ -262,6 +289,11 @@ async function handleLikeClick(e) {
     const userId = this.dataset.userid;
     const button = this;
     
+    // 이미 추천한 경우
+    if (hasLiked(userId)) {
+        return;
+    }
+    
     try {
         // 버튼 비활성화
         button.disabled = true;
@@ -276,19 +308,21 @@ async function handleLikeClick(e) {
         const currentCount = parseInt(button.textContent.match(/\d+/)[0] || 0);
         button.innerHTML = `❤️ ${currentCount + 1}`;
         
+        // 추천 목록에 추가
+        addLikedStore(userId);
+        
+        // 버튼 스타일 변경
+        button.classList.add('liked');
+        
         // 클릭 효과
         button.style.transform = 'scale(1.2)';
         setTimeout(() => {
             button.style.transform = 'scale(1)';
         }, 200);
         
-        alert('추천되었습니다!');
-        
     } catch (error) {
         console.error('좋아요 처리 오류:', error);
-        alert('추천 처리 중 오류가 발생했습니다.');
-    } finally {
-        // 버튼 다시 활성화
+        // 오류 발생 시 버튼 다시 활성화
         button.disabled = false;
     }
 }
@@ -405,3 +439,5 @@ window.closeDesktopPopup = function() {
         el.classList.remove('active');
     });
 }
+
+// CSS 스타일은 별도의 realtime-inquiry.css 파일에 추가해야 함
