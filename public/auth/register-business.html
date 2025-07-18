@@ -30,42 +30,35 @@
                                 </svg>
                             </div>
                             <div class="dropdown-menu" id="emailDropdownMenu" style="display: none;">
-                                <div class="dropdown-search">
-                                    <input type="text" id="emailDropdownSearch" class="dropdown-search-input" placeholder="이메일 검색">
-                                </div>
                                 <div class="dropdown-options" id="emailDropdownOptions">
                                     <div class="dropdown-option" data-value="">도메인 선택</div>
                                     <div class="dropdown-option" data-value="naver.com">naver.com</div>
                                     <div class="dropdown-option" data-value="gmail.com">gmail.com</div>
                                     <div class="dropdown-option" data-value="daum.net">daum.net</div>
                                     <div class="dropdown-option" data-value="hanmail.net">hanmail.net</div>
-                                    <div class="dropdown-option special" data-value="direct">직접입력</div>
+                                    <div class="dropdown-option" data-value="direct">직접 입력</div>
                                 </div>
                             </div>
                         </div>
-                        <input type="text" id="emailDomainDirect" placeholder="직접입력" style="display:none;" onchange="updateEmailField()">
+                        <input type="hidden" id="email" name="email" required>
                     </div>
-                    <input type="hidden" id="email" name="email" required>
-                    <div class="helper-text">* 비밀번호 분실 시, 임시비밀번호를 받을 수 있는 이메일을 입력해주세요.</div>
                 </div>
 
                 <!-- 비밀번호 -->
                 <div class="form-group">
-                    <label for="password">비밀번호 <span class="required">*</span></label>
+                    <label for="password">비밀번호</label>
                     <div class="password-input">
-                        <input type="password" id="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
+                        <input type="password" id="password" placeholder="영문, 숫자, 특수문자가 모두 들어간 8~20자" autocomplete="new-password" required>
                         <span class="show-password" onclick="togglePassword()">
-                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <circle cx="12" cy="12" r="3" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="eye-icon" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                                <path d="M10 3C6.5 3 3.44 5.11 1.88 8C3.44 10.89 6.5 13 10 13C13.5 13 16.56 10.89 18.12 8C16.56 5.11 13.5 3 10 3Z" stroke="#999" stroke-width="1.5"/>
+                                <circle cx="10" cy="8" r="2.5" stroke="#999" stroke-width="1.5"/>
                             </svg>
-                            <svg class="eye-off-icon" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <line x1="1" y1="1" x2="23" y2="23" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg class="eye-off-icon" style="display: none;" width="20" height="16" viewBox="0 0 20 16" fill="none">
+                                <path d="M3 3L17 13M8.77778 5.5C8.24671 5.96643 7.91111 6.63998 7.91111 7.4C7.91111 8.95051 9.17503 10.2 10.7333 10.2C11.5087 10.2 12.1949 9.86873 12.6667 9.34444M10.6901 4.60496C13.8302 4.78239 16.4818 6.48177 18.3467 8.8C16.5378 11.0576 14.0162 12.6949 11.1067 12.9462M5.28889 5.34222C3.01333 6.53511 1.17333 8.3897 0 10.6C1.80889 12.9185 4.33067 14.6 7.22667 14.8" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </span>
                     </div>
-                    <div class="helper-text">영문, 숫자, 특수문자가 모두 들어간 8~20자</div>
                 </div>
 
                 <!-- 비밀번호 확인 -->
@@ -112,35 +105,35 @@
                     <label for="storeSelect">가게 선택 <span class="required">*</span></label>
                     <div class="custom-dropdown">
                         <div class="dropdown-selected" id="dropdownSelected">
-                            <span class="selected-text">가게를 선택하세요</span>
+                            <span class="selected-text">가게를 선택해주세요</span>
                             <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
                                 <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </div>
                         <div class="dropdown-menu" id="dropdownMenu" style="display: none;">
                             <div class="dropdown-search">
-                                <input type="text" id="dropdownSearch" class="dropdown-search-input" placeholder="가게명, 지역으로 검색">
+                                <input type="text" id="dropdownSearch" class="dropdown-search-input" placeholder="가게명으로 검색">
                             </div>
                             <div class="dropdown-options" id="dropdownOptions">
-                                <div class="dropdown-option" data-value="">가게를 선택하세요</div>
-                                <div class="dropdown-option special" data-value="none">해당 가게 없음</div>
+                                <div class="dropdown-option" data-value="">가게를 선택해주세요</div>
+                                <div class="dropdown-option" data-value="none">우리 가게가 없어요</div>
                                 <!-- 가게 목록이 여기에 동적으로 추가됩니다 -->
                             </div>
                         </div>
                     </div>
                     <input type="hidden" id="storeSelect" name="storeSelect" required>
-                    <div class="helper-text">가게를 검색하거나 '해당 가게 없음'을 선택하세요</div>
                 </div>
-                
-                <div class="form-group store-name-group" style="display: none;">
+
+                <!-- 가게명 직접 입력 (선택시 표시) -->
+                <div class="form-group" id="storeNameGroup" style="display: none;">
                     <label for="storeName">가게명 <span class="required">*</span></label>
-                    <input type="text" id="storeName" placeholder="예: 달토 강남점">
-                    <div class="helper-text">정확한 가게명을 입력해주세요</div>
+                    <input type="text" id="storeName" placeholder="가게명을 입력해주세요">
                 </div>
-                
+
+                <!-- 업종 선택 -->
                 <div class="form-group">
-                    <label for="businessType">업종 선택<span class="required">*</span></label>
-                    <div class="custom-dropdown" id="businessTypeDropdown">
+                    <label for="businessType">업종 선택 <span class="required">*</span></label>
+                    <div class="custom-dropdown">
                         <div class="dropdown-selected" id="businessDropdownSelected">
                             <span class="selected-text">업종을 선택해주세요</span>
                             <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
@@ -238,55 +231,23 @@
             frame.src = '';
         }
 
-        // 모달 외부 클릭 시 닫기
-        window.onclick = function(event) {
-            const modal = document.getElementById('termsModal');
-            if (event.target == modal) {
-                closeTermsModal();
-            }
-        }
-
         function toggleAllCheckboxes() {
             const allAgree = document.getElementById('allAgree');
             const checkboxes = document.querySelectorAll('.term-checkbox');
-            
             checkboxes.forEach(checkbox => {
                 checkbox.checked = allAgree.checked;
             });
         }
 
-        function updateEmailField() {
-            const emailId = document.getElementById('emailId').value;
-            const selectedText = document.querySelector('#emailDropdownSelected .selected-text').textContent;
-            const directInput = document.getElementById('emailDomainDirect');
-            const emailField = document.getElementById('email');
-            
-            if (selectedText === '직접입력' && directInput.value) {
-                emailField.value = emailId + '@' + directInput.value;
-            } else if (selectedText !== '도메인 선택' && selectedText !== '직접입력') {
-                emailField.value = emailId + '@' + selectedText;
-            }
-        }
-
-        // 이메일 입력 시 실시간 업데이트
+        // 개별 체크박스 상태 변경시 전체동의 체크박스 업데이트
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('emailId').addEventListener('input', updateEmailField);
-            
-            // 직접입력 필드에서 엔터나 포커스 아웃 시 드롭다운으로 돌아가기
-            const directInput = document.getElementById('emailDomainDirect');
-            directInput.addEventListener('blur', function() {
-                if (this.value) {
-                    updateEmailField();
-                }
-            });
-            
             const termCheckboxes = document.querySelectorAll('.term-checkbox');
-            const allAgree = document.getElementById('allAgree');
+            const allAgreeCheckbox = document.getElementById('allAgree');
             
             termCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const allChecked = Array.from(termCheckboxes).every(cb => cb.checked);
-                    allAgree.checked = allChecked;
+                    allAgreeCheckbox.checked = allChecked;
                 });
             });
         });

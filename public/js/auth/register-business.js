@@ -45,17 +45,15 @@ function updateDropdownOptions(stores) {
             const option = document.createElement('div');
             option.className = 'dropdown-option';
             option.dataset.value = store.code;
-            option.dataset.businessType = store.businessType;
             option.textContent = store.displayName;
             dropdownOptions.appendChild(option);
         });
     }
 }
 
+// 업종 드롭다운 옵션 업데이트
 function updateBusinessTypeOptions(types) {
     const dropdownOptions = document.getElementById('businessDropdownOptions');
-    if (!dropdownOptions) return;
-    
     dropdownOptions.innerHTML = '';
     
     // 기본 옵션 추가
@@ -71,57 +69,63 @@ function updateBusinessTypeOptions(types) {
         noResultsOption.textContent = '검색 결과가 없습니다';
         dropdownOptions.appendChild(noResultsOption);
     } else {
-        // 업종 이름으로 한글 정렬 (ㄱㄴㄷ 순서)
-        const sortedTypes = [...types].sort((a, b) => {
-            return a.name.localeCompare(b.name, 'ko-KR', { 
-                numeric: true,  // 숫자를 올바르게 정렬
-                sensitivity: 'base'  // 대소문자 구분 안함
-            });
-        });
-        
-        sortedTypes.forEach(type => {
+        types.forEach(type => {
             const option = document.createElement('div');
             option.className = 'dropdown-option';
-            option.dataset.value = type.name;  // 한글명을 값으로 사용
+            option.dataset.value = type.name;
             option.textContent = type.name;
             dropdownOptions.appendChild(option);
         });
     }
 }
 
-// 드롭다운 닫기 함수들
-function closeDropdown() {
-    const dropdownSelected = document.getElementById('dropdownSelected');
-    const dropdownMenu = document.getElementById('dropdownMenu');
+// 이메일 드롭다운 옵션 업데이트
+function updateEmailDropdownOptions() {
+    const dropdownOptions = document.getElementById('emailDropdownOptions');
+    dropdownOptions.innerHTML = '';
     
-    dropdownSelected.classList.remove('active');
-    dropdownMenu.style.display = 'none';
+    // 기본 옵션
+    const defaultOption = document.createElement('div');
+    defaultOption.className = 'dropdown-option';
+    defaultOption.dataset.value = '';
+    defaultOption.textContent = '도메인 선택';
+    dropdownOptions.appendChild(defaultOption);
+    
+    // 도메인 목록
+    emailDomains.forEach(domain => {
+        const option = document.createElement('div');
+        option.className = 'dropdown-option';
+        option.dataset.value = domain.value;
+        option.textContent = domain.text;
+        dropdownOptions.appendChild(option);
+    });
+    
+    // 직접 입력 옵션
+    const directOption = document.createElement('div');
+    directOption.className = 'dropdown-option';
+    directOption.dataset.value = 'direct';
+    directOption.textContent = '직접 입력';
+    dropdownOptions.appendChild(directOption);
 }
 
-function closeBusinessDropdown() {
-    const dropdownSelected = document.getElementById('businessDropdownSelected');
-    const dropdownMenu = document.getElementById('businessDropdownMenu');
+// 이메일 조합 함수
+function updateEmail() {
+    const emailId = document.getElementById('emailId').value;
+    const selectedOption = document.querySelector('#emailDropdownSelected .selected-text');
+    const emailDomainDirect = document.getElementById('emailDomainDirect');
     
-    dropdownSelected.classList.remove('active');
-    dropdownMenu.style.display = 'none';
-}
-
-function closeEmailDropdown() {
-    const dropdownSelected = document.getElementById('emailDropdownSelected');
-    const dropdownMenu = document.getElementById('emailDropdownMenu');
+    let domain = '';
+    if (selectedOption && selectedOption.textContent !== '도메인 선택') {
+        if (selectedOption.textContent === '직접 입력' && emailDomainDirect) {
+            domain = emailDomainDirect.value;
+        } else {
+            domain = selectedOption.textContent;
+        }
+    }
     
-    dropdownSelected.classList.remove('active');
-    dropdownMenu.style.display = 'none';
+    const fullEmail = domain ? `${emailId}@${domain}` : emailId;
+    document.getElementById('email').value = fullEmail;
 }
-
-// 페이지 로드 시 가게 목록 가져오기
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadBusinessTypes();
-    await loadStoreList();
-    setupDropdown();
-    setupBusinessTypeDropdown();
-    setupEmailDropdown();
-});
 
 // 업종 데이터 로드
 async function loadBusinessTypes() {
@@ -189,16 +193,15 @@ async function loadStoreList() {
         }
     } catch (error) {
         console.error('가게 목록 로드 오류:', error);
-        console.error('오류 상세:', error.message);
     }
 }
 
-// 커스텀 드롭다운 설정
+// 가게 드롭다운 설정
 function setupDropdown() {
     const dropdownSelected = document.getElementById('dropdownSelected');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const dropdownSearch = document.getElementById('dropdownSearch');
-    const selectedText = document.querySelector('.selected-text');
+    const selectedText = dropdownSelected.querySelector('.selected-text');
     const storeSelectInput = document.getElementById('storeSelect');
     
     // 드롭다운 토글
@@ -221,11 +224,11 @@ function setupDropdown() {
             filteredStores = [...allStores];
         } else {
             filteredStores = allStores.filter(store => 
-                store.displayName.toLowerCase().includes(searchTerm) ||
                 store.storeName.toLowerCase().includes(searchTerm) ||
                 store.region1.toLowerCase().includes(searchTerm) ||
                 store.region2.toLowerCase().includes(searchTerm) ||
-                store.businessType.toLowerCase().includes(searchTerm)
+                store.businessType.toLowerCase().includes(searchTerm) ||
+                store.code.toLowerCase().includes(searchTerm)
             );
         }
         
@@ -309,37 +312,11 @@ function setupBusinessTypeDropdown() {
     });
 }
 
-// 이메일 드롭다운 옵션 업데이트
-function updateEmailDropdownOptions(domains = emailDomains) {
-    const dropdownOptions = document.getElementById('emailDropdownOptions');
-    if (!dropdownOptions) return;
-    
-    dropdownOptions.innerHTML = '';
-    
-    // 직접 입력 옵션
-    const directOption = document.createElement('div');
-    directOption.className = 'dropdown-option';
-    directOption.dataset.value = 'direct';
-    directOption.textContent = '직접 입력';
-    dropdownOptions.appendChild(directOption);
-    
-    // 도메인 옵션들
-    domains.forEach(domain => {
-        const option = document.createElement('div');
-        option.className = 'dropdown-option';
-        option.dataset.value = domain.value;
-        option.textContent = domain.text;
-        dropdownOptions.appendChild(option);
-    });
-}
-
 // 이메일 드롭다운 설정
 function setupEmailDropdown() {
     const dropdownSelected = document.getElementById('emailDropdownSelected');
     const dropdownMenu = document.getElementById('emailDropdownMenu');
-    const dropdownSearch = document.getElementById('emailDropdownSearch');
     const selectedText = dropdownSelected.querySelector('.selected-text');
-    const emailDomainDirect = document.getElementById('emailDomainDirect');
     
     // 드롭다운 토글
     dropdownSelected.addEventListener('click', function(e) {
@@ -353,25 +330,6 @@ function setupEmailDropdown() {
         }
     });
     
-    // 검색 기능
-    dropdownSearch.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase().trim();
-        
-        if (!searchTerm) {
-            updateEmailDropdownOptions(emailDomains);
-        } else {
-            const filteredDomains = emailDomains.filter(domain => 
-                domain.text.toLowerCase().includes(searchTerm)
-            );
-            updateEmailDropdownOptions(filteredDomains);
-        }
-    });
-    
-    // 검색창 클릭 시 이벤트 전파 방지
-    dropdownSearch.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-    
     // 옵션 선택 이벤트 위임
     document.getElementById('emailDropdownOptions').addEventListener('click', function(e) {
         const option = e.target.closest('.dropdown-option');
@@ -381,40 +339,39 @@ function setupEmailDropdown() {
             
             selectedText.textContent = text;
             
+            // 직접 입력 선택 시
+            const emailDomainContainer = document.querySelector('.email-domain-dropdown');
+            const directInputContainer = document.getElementById('emailDomainDirectContainer');
+            
             if (value === 'direct') {
-                emailDomainDirect.style.display = 'block';
-                dropdownSelected.parentElement.style.display = 'none';
+                // 직접 입력 필드 표시
+                if (!directInputContainer) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = 'emailDomainDirect';
+                    input.placeholder = '도메인 입력';
+                    input.className = 'form-control';
+                    input.addEventListener('input', updateEmail);
+                    
+                    const container = document.createElement('div');
+                    container.id = 'emailDomainDirectContainer';
+                    container.appendChild(input);
+                    
+                    emailDomainContainer.parentNode.insertBefore(container, emailDomainContainer.nextSibling);
+                    emailDomainContainer.style.display = 'none';
+                }
             } else {
-                emailDomainDirect.style.display = 'none';
-                dropdownSelected.parentElement.style.display = 'flex';
+                // 도메인 선택 시
+                if (directInputContainer) {
+                    directInputContainer.remove();
+                }
+                emailDomainContainer.style.display = 'block';
             }
             
-            closeEmailDropdown();
             updateEmail();
+            closeEmailDropdown();
         }
     });
-}
-
-// 이메일 업데이트
-function updateEmail() {
-    const emailId = document.getElementById('emailId').value;
-    const selectedDomain = document.querySelector('#emailDropdownSelected .selected-text').textContent;
-    const directDomain = document.getElementById('emailDomainDirect').value;
-    const emailInput = document.getElementById('email');
-    
-    if (emailId) {
-        if (selectedDomain === '직접 입력') {
-            if (directDomain) {
-                emailInput.value = `${emailId}@${directDomain}`;
-            } else {
-                emailInput.value = emailId;
-            }
-        } else if (selectedDomain !== '선택하세요') {
-            emailInput.value = `${emailId}@${selectedDomain}`;
-        } else {
-            emailInput.value = emailId;
-        }
-    }
 }
 
 // 드롭다운 열기 함수들
@@ -456,14 +413,9 @@ function openBusinessDropdown() {
 function openEmailDropdown() {
     const dropdownSelected = document.getElementById('emailDropdownSelected');
     const dropdownMenu = document.getElementById('emailDropdownMenu');
-    const dropdownSearch = document.getElementById('emailDropdownSearch');
     
     dropdownSelected.classList.add('active');
     dropdownMenu.style.display = 'block';
-    
-    // 검색창 초기화 및 포커스
-    dropdownSearch.value = '';
-    dropdownSearch.focus();
     
     // 전체 옵션 표시
     updateEmailDropdownOptions();
@@ -471,16 +423,18 @@ function openEmailDropdown() {
 
 // 가게 선택 처리
 function handleStoreSelection(value) {
-    const storeNameGroup = document.querySelector('.store-name-group');
+    const storeNameGroup = document.getElementById('storeNameGroup');
     const storeNameInput = document.getElementById('storeName');
-    const businessTypeDropdown = document.getElementById('businessTypeDropdown');
+    const businessTypeDropdown = document.getElementById('businessDropdownSelected');
     const businessTypeInput = document.getElementById('businessType');
     const businessSelectedText = document.querySelector('#businessDropdownSelected .selected-text');
     
     if (value === 'none') {
-        // '해당 가게 없음' 선택 시
-        storeNameGroup.style.display = 'block';
-        storeNameInput.required = true;
+        // '우리 가게가 없어요' 선택 시
+        if (storeNameGroup) {
+            storeNameGroup.style.display = 'block';
+            storeNameInput.required = true;
+        }
         businessTypeDropdown.style.pointerEvents = 'auto';
         businessTypeDropdown.style.opacity = '1';
         businessTypeInput.value = '';
@@ -488,9 +442,11 @@ function handleStoreSelection(value) {
         selectedStoreData = null;
     } else if (value) {
         // 특정 가게 선택 시
-        storeNameGroup.style.display = 'none';
-        storeNameInput.required = false;
-        storeNameInput.value = '';
+        if (storeNameGroup) {
+            storeNameGroup.style.display = 'none';
+            storeNameInput.required = false;
+            storeNameInput.value = '';
+        }
         
         // 선택된 가게 정보 찾기
         selectedStoreData = allStores.find(store => store.code === value);
@@ -505,14 +461,41 @@ function handleStoreSelection(value) {
         }
     } else {
         // 선택 안함
-        storeNameGroup.style.display = 'none';
-        storeNameInput.required = false;
+        if (storeNameGroup) {
+            storeNameGroup.style.display = 'none';
+            storeNameInput.required = false;
+        }
         businessTypeDropdown.style.pointerEvents = 'auto';
         businessTypeDropdown.style.opacity = '1';
         businessTypeInput.value = '';
         businessSelectedText.textContent = '업종을 선택해주세요';
         selectedStoreData = null;
     }
+}
+
+// 드롭다운 닫기 함수들
+function closeDropdown() {
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
+}
+
+function closeBusinessDropdown() {
+    const dropdownSelected = document.getElementById('businessDropdownSelected');
+    const dropdownMenu = document.getElementById('businessDropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
+}
+
+function closeEmailDropdown() {
+    const dropdownSelected = document.getElementById('emailDropdownSelected');
+    const dropdownMenu = document.getElementById('emailDropdownMenu');
+    
+    dropdownSelected.classList.remove('active');
+    dropdownMenu.style.display = 'none';
 }
 
 // 폼 제출 처리
@@ -530,6 +513,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const storeSelect = document.getElementById('storeSelect').value;
     const businessType = document.getElementById('businessType').value;
     
+    // 레퍼럴 코드 자동 생성
+    const referralCode = phone.replace(/-/g, '').replace(/^010/, '');
+    
     const errorMessage = document.getElementById('error-message');
     
     // 가게명 결정
@@ -543,11 +529,11 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             errorMessage.textContent = '가게명을 입력해주세요.';
             return;
         }
-    } else if (selectedStoreData) {
+    } else if (storeSelect && selectedStoreData) {
         // 선택한 가게 정보 사용
         storeName = selectedStoreData.storeName;
         storeCode = selectedStoreData.code;
-    } else {
+    } else if (!storeSelect) {
         errorMessage.textContent = '가게를 선택해주세요.';
         return;
     }
@@ -607,6 +593,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             name: name,
             birthdate: birthdate,
             phone: phone,
+            referralCode: referralCode,
             businessType: businessType,
             storeName: storeName,
             userType: 'business',
@@ -644,13 +631,21 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     }
 });
 
-// 이메일 입력 필드 이벤트 리스너
-document.getElementById('emailId').addEventListener('input', updateEmail);
-document.getElementById('emailDomainDirect').addEventListener('input', updateEmail);
-
-// 전역 클릭 이벤트로 드롭다운 닫기
-document.addEventListener('click', function() {
-    closeDropdown();
-    closeBusinessDropdown();
-    closeEmailDropdown();
+// 페이지 로드 시 가게 목록 가져오기
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadBusinessTypes();
+    await loadStoreList();
+    setupDropdown();
+    setupBusinessTypeDropdown();
+    setupEmailDropdown();
+    
+    // 이메일 입력 필드 이벤트 리스너
+    document.getElementById('emailId').addEventListener('input', updateEmail);
+    
+    // 전역 클릭 이벤트로 드롭다운 닫기
+    document.addEventListener('click', function() {
+        closeDropdown();
+        closeBusinessDropdown();
+        closeEmailDropdown();
+    });
 });
