@@ -1,4 +1,4 @@
-// 파일 경로: /advertise/js/ad-form-job.js
+// 파일 경로: /public/advertise/js/ad-form-job.js
 // 파일이름: ad-form-job.js
 
 import { auth, db, storage } from '/js/firebase-config.js';
@@ -564,7 +564,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 welfareList = Array.from(welfareBtns).map(btn => btn.getAttribute('data-value'));
             }
             
-            // 기본 폼 데이터 준비
+            // 기본 폼 데이터 준비 - storeCode와 userNickname 추가
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
@@ -587,6 +587,8 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 monthlyAmount: adPrice,
                 totalAmount: Math.round(((adPrice * (parseInt(document.getElementById('duration2')?.value) || 0)) + (document.getElementById('imageCreationRequest')?.checked ? 50000 : 0)) * 1.1),
                 status: 'pending',
+                storeCode: userData?.storeCode || null,  // storeCode 추가
+                userNickname: userData?.nickname || '',  // userNickname 추가
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             };

@@ -179,8 +179,32 @@
     font-weight: 500;
 }
 
+/* 빈 문의 상태 */
+.inquiry-empty-content {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-message {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.empty-sub-message {
+    font-size: 13px;
+    color: #999;
+    line-height: 1.5;
+}
+
 /* 모바일 액션 영역 스타일 */
 .mobile-action-area.inquiry-list {
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 0;
+}
+
+.mobile-action-area.inquiry-empty {
     background: #f8f9fa;
     border-top: 1px solid #e0e0e0;
     margin-top: 0;
