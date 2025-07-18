@@ -102,6 +102,14 @@
     margin: 0;
 }
 
+.location-tag {
+    font-size: 12px;
+    color: #666;
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
 .close-btn {
     background: none;
     border: none;
@@ -134,7 +142,6 @@
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 0.75rem;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
@@ -164,19 +171,51 @@
     border-radius: 4px;
 }
 
-.inquiry-item-info {
+/* 수정된 부분: inquiry-item-info를 inquiry-item-actions로 변경 */
+.inquiry-item-actions {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+/* 전화 버튼과 좋아요 버튼 스타일 */
+.inquiry-phone-btn, 
+.inquiry-like-btn {
+    padding: 6px 12px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.inquiry-phone-btn:hover {
+    background: #f5f5f5;
+    border-color: #5368FF;
+}
+
+.inquiry-like-btn:hover {
+    background: #ffe0e0;
+    border-color: #ff6b6b;
+}
+
+.inquiry-like-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 사용자 닉네임 스타일 */
+.user-nickname {
     font-size: 13px;
-}
-
-.nickname {
     color: #666;
-}
-
-.contact {
-    color: #5368FF;
-    font-weight: 500;
+    min-width: 80px;
+    text-align: right;
+    margin-left: 0.5rem;
 }
 
 /* 빈 문의 상태 */
@@ -232,6 +271,21 @@
     
     .inquiry-item {
         padding: 0.75rem;
+    }
+    
+    .inquiry-item-actions {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .user-nickname {
+        width: 100%;
+        text-align: left;
+        margin-left: 0;
+        margin-top: 0.5rem;
+        order: 3;
     }
 }
 

@@ -1,7 +1,7 @@
 // 파일 경로: /public/realtime-status/js/realtime-inquiry-popup.js
 
 import { db } from '/js/firebase-config.js';
-import { collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // 전역 변수로 각 카드의 광고 데이터 저장
 const cardInquiryData = new Map();
@@ -95,13 +95,18 @@ function openMobileInquiry(card, location, button, ads) {
                 <div class="inquiry-list-container">
                     ${ads.map((ad, index) => `
                         <div class="inquiry-item" data-index="${index}">
-                            <div class="inquiry-item-header">
+                            <div class="inquiry-item-left">
                                 <span class="business-name">${ad.businessName}</span>
                                 <span class="badge">문의가능</span>
                             </div>
-                            <div class="inquiry-item-info">
-                                <span class="nickname">${ad.userNickname}</span>
-                                <span class="contact">${ad.socialContact?.kakao || ad.contactPhone || '연락처 없음'}</span>
+                            <div class="inquiry-item-right">
+                                <button class="inquiry-phone-btn" data-phone="${ad.contactPhone || ''}" data-business="${ad.businessName}" data-nickname="${ad.userNickname}">
+                                    📞
+                                </button>
+                                <button class="inquiry-like-btn" data-userid="${ad.userId}">
+                                    ❤️ ${ad.recommendationOrder || 0}
+                                </button>
+                                <span class="user-nickname">${ad.userNickname}</span>
                             </div>
                         </div>
                     `).join('')}
@@ -128,13 +133,16 @@ function openMobileInquiry(card, location, button, ads) {
     // 선택된 카드 바로 다음에 삽입
     card.parentNode.insertBefore(area, card.nextSibling);
     
-    // 각 아이템에 클릭 이벤트 추가 (문의 가능한 업체가 있는 경우)
+    // 각 버튼에 이벤트 추가 (문의 가능한 업체가 있는 경우)
     if (ads.length > 0) {
-        area.querySelectorAll('.inquiry-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const index = parseInt(item.dataset.index);
-                handleInquiryItemClick(ads[index]);
-            });
+        // 전화 버튼 이벤트
+        area.querySelectorAll('.inquiry-phone-btn').forEach(btn => {
+            btn.addEventListener('click', handlePhoneClick);
+        });
+        
+        // 좋아요 버튼 이벤트
+        area.querySelectorAll('.inquiry-like-btn').forEach(btn => {
+            btn.addEventListener('click', handleLikeClick);
         });
     }
 }
@@ -173,13 +181,18 @@ function openDesktopInquiry(card, location, button, ads) {
                 <div class="inquiry-list-container">
                     ${ads.map((ad, index) => `
                         <div class="inquiry-item" data-index="${index}">
-                            <div class="inquiry-item-header">
+                            <div class="inquiry-item-left">
                                 <span class="business-name">${ad.businessName}</span>
                                 <span class="badge">문의가능</span>
                             </div>
-                            <div class="inquiry-item-info">
-                                <span class="nickname">${ad.userNickname}</span>
-                                <span class="contact">${ad.socialContact?.kakao || ad.contactPhone || '연락처 없음'}</span>
+                            <div class="inquiry-item-right">
+                                <button class="inquiry-phone-btn" data-phone="${ad.contactPhone || ''}" data-business="${ad.businessName}" data-nickname="${ad.userNickname}">
+                                    📞
+                                </button>
+                                <button class="inquiry-like-btn" data-userid="${ad.userId}">
+                                    ❤️ ${ad.recommendationOrder || 0}
+                                </button>
+                                <span class="user-nickname">${ad.userNickname}</span>
                             </div>
                         </div>
                     `).join('')}
@@ -205,14 +218,78 @@ function openDesktopInquiry(card, location, button, ads) {
     
     rightSection.style.display = 'flex';
     
-    // 각 아이템에 클릭 이벤트 추가 (문의 가능한 업체가 있는 경우)
+    // 각 버튼에 이벤트 추가 (문의 가능한 업체가 있는 경우)
     if (ads.length > 0) {
-        rightSection.querySelectorAll('.inquiry-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const index = parseInt(item.dataset.index);
-                handleInquiryItemClick(ads[index]);
-            });
+        // 전화 버튼 이벤트
+        rightSection.querySelectorAll('.inquiry-phone-btn').forEach(btn => {
+            btn.addEventListener('click', handlePhoneClick);
         });
+        
+        // 좋아요 버튼 이벤트
+        rightSection.querySelectorAll('.inquiry-like-btn').forEach(btn => {
+            btn.addEventListener('click', handleLikeClick);
+        });
+    }
+}
+
+// 전화 버튼 클릭 처리
+function handlePhoneClick(e) {
+    e.stopPropagation();
+    
+    const phone = this.dataset.phone;
+    const businessName = this.dataset.business;
+    const nickname = this.dataset.nickname;
+    
+    if (!phone) {
+        alert('등록된 전화번호가 없습니다.');
+        return;
+    }
+    
+    const contactInfo = `${businessName}\n담당자: ${nickname}\n전화번호: ${phone}`;
+    
+    // 모바일에서는 전화 연결 옵션 제공
+    if (window.innerWidth <= 768 && window.confirm(contactInfo + '\n\n전화로 연결하시겠습니까?')) {
+        window.location.href = `tel:${phone}`;
+    } else {
+        alert(contactInfo);
+    }
+}
+
+// 좋아요 버튼 클릭 처리
+async function handleLikeClick(e) {
+    e.stopPropagation();
+    
+    const userId = this.dataset.userid;
+    const button = this;
+    
+    try {
+        // 버튼 비활성화
+        button.disabled = true;
+        
+        // business_users 문서의 recommendationOrder 값 증가
+        const userRef = doc(db, 'business_users', userId);
+        await updateDoc(userRef, {
+            recommendationOrder: increment(1)
+        });
+        
+        // 현재 숫자 업데이트
+        const currentCount = parseInt(button.textContent.match(/\d+/)[0] || 0);
+        button.innerHTML = `❤️ ${currentCount + 1}`;
+        
+        // 클릭 효과
+        button.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 200);
+        
+        alert('추천되었습니다!');
+        
+    } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+        alert('추천 처리 중 오류가 발생했습니다.');
+    } finally {
+        // 버튼 다시 활성화
+        button.disabled = false;
     }
 }
 
@@ -274,7 +351,7 @@ async function loadInquiryData(storeCode) {
                         pendingAds.push({
                             id: adDoc.id,
                             ...adData,
-                            recommendationOrder: userData.recommendationOrder || null,
+                            recommendationOrder: userData.recommendationOrder || 0,
                             userNickname: adData.userNickname || userData.nickname || adData.contactName || '미등록',
                             businessName: adData.businessName || userData.storeName || ''
                         });
@@ -285,7 +362,7 @@ async function loadInquiryData(storeCode) {
                     pendingAds.push({
                         id: adDoc.id,
                         ...adData,
-                        recommendationOrder: null,
+                        recommendationOrder: 0,
                         userNickname: adData.userNickname || adData.contactName || '미등록',
                         businessName: adData.businessName || ''
                     });
@@ -295,12 +372,9 @@ async function loadInquiryData(storeCode) {
         
         console.log('매칭된 광고 수:', pendingAds.length);
         
-        // 3. 추천순으로 정렬 (null은 마지막으로)
+        // 3. 추천순으로 정렬 (높은 순서대로)
         pendingAds.sort((a, b) => {
-            if (a.recommendationOrder === null && b.recommendationOrder === null) return 0;
-            if (a.recommendationOrder === null) return 1;
-            if (b.recommendationOrder === null) return -1;
-            return a.recommendationOrder - b.recommendationOrder;
+            return b.recommendationOrder - a.recommendationOrder;
         });
         
         return pendingAds;
@@ -309,29 +383,6 @@ async function loadInquiryData(storeCode) {
         console.error('문의 데이터 로드 오류:', error);
         console.error('오류 상세:', error.code, error.message);
         return [];
-    }
-}
-
-// 문의 아이템 클릭 처리
-function handleInquiryItemClick(ad) {
-    // 연락처 정보 팝업 표시
-    const kakaoContact = ad.socialContact?.kakao || '';
-    const phoneContact = ad.contactPhone || '';
-    
-    let contactInfo = `${ad.businessName}\n담당자: ${ad.userNickname}\n\n`;
-    
-    if (kakaoContact) {
-        contactInfo += `카카오톡: ${kakaoContact}\n`;
-    }
-    if (phoneContact) {
-        contactInfo += `전화번호: ${phoneContact}\n`;
-    }
-    
-    // 모바일에서는 전화번호 클릭 시 전화 연결 옵션 제공
-    if (phoneContact && window.confirm(contactInfo + '\n\n전화로 연결하시겠습니까?')) {
-        window.location.href = `tel:${phoneContact}`;
-    } else {
-        alert(contactInfo);
     }
 }
 
