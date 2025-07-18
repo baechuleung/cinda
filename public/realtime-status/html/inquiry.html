@@ -1,3 +1,4 @@
+<!-- 파일 경로: /public/realtime-status/html/inquiry.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,7 +10,7 @@
     <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/realtime-status/css/inquiry.css">
+    <link rel="stylesheet" href="/realtime-status/css/realtime-inquiry.css">
     
     <!-- 전역 설정 스크립트 -->
     <script src="../js/config.js"></script>
@@ -18,53 +19,67 @@
     <!-- 메인 헤더 포함 -->
     <div id="header-container"></div>
     
-    <div class="inquiry-container">
-        <div class="inquiry-form">
-            <h2>문의하기</h2>
-            <p class="subtitle">날짜(강남)에 대한 문의사항을 작성해주세요.</p>
-            
-            <form id="inquiryForm">
-                <div class="form-group">
-                    <label for="inquiryType">문의 유형</label>
-                    <select id="inquiryType" required>
-                        <option value="">선택해주세요</option>
-                        <option value="reservation">예약 문의</option>
-                        <option value="service">서비스 문의</option>
-                        <option value="price">가격 문의</option>
-                        <option value="other">기타 문의</option>
-                    </select>
+    <!-- 문의 배너 템플릿 (숨김 처리, JS에서 복사하여 사용) -->
+    <template id="inquiry-banner-template">
+        <div class="inquiry-banner">
+            <div class="banner-content">
+                <div class="banner-header">
+                    <span class="banner-badge">문의</span>
+                    <span class="banner-business"></span>
                 </div>
-                
-                <div class="form-group">
-                    <label for="name">이름</label>
-                    <input type="text" id="name" placeholder="이름을 입력해주세요" required>
+                <div class="banner-info">
+                    <span class="banner-nickname"></span>
+                    <span class="banner-separator">|</span>
+                    <span class="banner-contact"></span>
                 </div>
-                
-                <div class="form-group">
-                    <label for="phone">연락처</label>
-                    <input type="tel" id="phone" placeholder="010-0000-0000" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="title">제목</label>
-                    <input type="text" id="title" placeholder="문의 제목을 입력해주세요" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="content">문의 내용</label>
-                    <textarea id="content" rows="6" placeholder="문의하실 내용을 상세히 작성해주세요" required></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button type="button" class="cancel-btn" onclick="history.back()">취소</button>
-                    <button type="submit" class="submit-btn">문의하기</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </template>
+    
+    <!-- 문의 목록 아이템 템플릿 -->
+    <template id="inquiry-item-template">
+        <div class="inquiry-item">
+            <div class="inquiry-item-header">
+                <span class="business-name"></span>
+                <span class="badge">문의가능</span>
+            </div>
+            <div class="inquiry-item-info">
+                <span class="nickname"></span>
+                <span class="contact"></span>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 모바일 문의 목록 템플릿 -->
+    <template id="mobile-inquiry-list-template">
+        <div class="mobile-action-area inquiry-list">
+            <div class="mobile-action-container">
+                <div class="inquiry-header">
+                    <h3>문의 가능 업체</h3>
+                    <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
+                </div>
+                <div class="inquiry-list-container">
+                    <!-- 문의 아이템들이 여기에 추가됨 -->
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- PC 문의 목록 템플릿 -->
+    <template id="desktop-inquiry-list-template">
+        <div class="right-content">
+            <div class="inquiry-header">
+                <h3>문의 가능 업체</h3>
+                <button class="close-btn" onclick="closeDesktopPopup()">×</button>
+            </div>
+            <div class="inquiry-list-container">
+                <!-- 문의 아이템들이 여기에 추가됨 -->
+            </div>
+        </div>
+    </template>
 
     <script type="module" src="/js/firebase-config.js"></script>
-    <script type="module" src="/realtime-status/js/inquiry.js"></script>
+    <script type="module" src="/realtime-status/js/realtime-inquiry-popup.js"></script>
     <script>
         // 메인 헤더 로드
         fetch('../header.html')

@@ -1,60 +1,239 @@
-// 문의 팝업 기능
-export function initializeInquiryPopup() {
-    const inquiryButtons = document.querySelectorAll('.action-btn.inquiry');
-    inquiryButtons.forEach(btn => {
-        btn.addEventListener('click', openInquiryPopup);
-    });
-}
+// 파일 경로: /public/realtime-status/js/realtime-inquiry-popup.js
 
-function openInquiryPopup(e) {
-    e.preventDefault();
+import { db } from '/js/firebase-config.js';
+import { collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// 문의 배너 기능 초기화
+export async function initializeInquiryPopup() {
+    // 모든 status-card를 가져와서 각각에 대해 배너 로드
+    const statusCards = document.querySelectorAll('.status-card');
     
-    const card = this.closest('.status-card');
-    const location = card.querySelector('.location').textContent;
-    
-    // 모바일/PC 분기
-    if (window.innerWidth <= 768) {
-        openMobileInquiry(card, location, this);
-    } else {
-        openDesktopInquiry(card, location, this);
+    for (const card of statusCards) {
+        // 카드에서 storeCode 추출 (data-store-code 속성 필요)
+        const storeCode = card.dataset.storeCode;
+        
+        if (storeCode) {
+            await loadInquiryBanners(card, storeCode);
+        }
     }
 }
 
-// 모바일 문의
-function openMobileInquiry(card, location, button) {
-    // 이미 활성화된 버튼 클릭시 닫기
-    if (button.classList.contains('active')) {
-        closeAllMobilePopups();
+// 특정 storeCode에 대한 문의 배너 로드
+async function loadInquiryBanners(card, storeCode) {
+    try {
+        // 1. ad_requests_job에서 조건에 맞는 광고 조회
+        const adsQuery = query(
+            collection(db, 'ad_requests_job'),
+            where('adType', '==', 'realtime'),
+            where('status', '==', 'pending')
+        );
+        
+        const adsSnapshot = await getDocs(adsQuery);
+        const pendingAds = [];
+        
+        // 2. 각 광고에 대해 storeCode 확인 및 사용자 정보 가져오기
+        for (const adDoc of adsSnapshot.docs) {
+            const adData = adDoc.data();
+            
+            // 광고의 workRegion1과 workRegion2를 기반으로 storeCode 매칭
+            // 또는 직접 storeCode 필드가 있는 경우 확인
+            if (adData.storeCode === storeCode || 
+                (adData.workRegion1 && adData.workRegion2 && 
+                 `${adData.workRegion1}_${adData.workRegion2}` === storeCode)) {
+                
+                // business_users에서 추천순 정보 가져오기
+                const userDoc = await getDoc(doc(db, 'business_users', adData.userId));
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    pendingAds.push({
+                        id: adDoc.id,
+                        ...adData,
+                        recommendationOrder: userData.recommendationOrder || null,
+                        userNickname: userData.nickname || adData.contactName || '미등록',
+                        businessName: adData.businessName || userData.storeName || ''
+                    });
+                }
+            }
+        }
+        
+        // 3. 추천순으로 정렬 (null은 마지막으로)
+        pendingAds.sort((a, b) => {
+            if (a.recommendationOrder === null && b.recommendationOrder === null) return 0;
+            if (a.recommendationOrder === null) return 1;
+            if (b.recommendationOrder === null) return -1;
+            return a.recommendationOrder - b.recommendationOrder;
+        });
+        
+        // 4. 배너 생성 및 카드에 추가
+        if (pendingAds.length > 0) {
+            createInquiryBanners(card, pendingAds);
+        }
+        
+    } catch (error) {
+        console.error('문의 배너 로드 오류:', error);
+    }
+}
+
+// 문의 배너 생성
+function createInquiryBanners(card, ads) {
+    // 기존 문의하기 버튼 찾기
+    const inquiryBtn = card.querySelector('.action-btn.inquiry');
+    if (!inquiryBtn) return;
+    
+    // 기존 배너 영역이 있으면 제거
+    const existingBannerArea = card.querySelector('.inquiry-banner-area');
+    if (existingBannerArea) {
+        existingBannerArea.remove();
+    }
+    
+    // 배너 영역 생성
+    const bannerArea = document.createElement('div');
+    bannerArea.className = 'inquiry-banner-area';
+    
+    // 템플릿 가져오기
+    const bannerTemplate = document.getElementById('inquiry-banner-template');
+    if (!bannerTemplate) {
+        console.error('inquiry-banner-template을 찾을 수 없습니다.');
         return;
     }
     
+    // 각 광고에 대한 배너 생성 (최대 3개까지만 표시)
+    const maxBanners = 3;
+    ads.slice(0, maxBanners).forEach((ad, index) => {
+        // 템플릿 복제
+        const banner = bannerTemplate.content.cloneNode(true);
+        
+        // 카카오톡 연락처 우선 표시
+        const kakaoContact = ad.socialContact?.kakao || '';
+        const phoneContact = ad.contactPhone || '';
+        const displayContact = kakaoContact || phoneContact || '연락처 없음';
+        
+        // 데이터 채우기
+        banner.querySelector('.banner-business').textContent = ad.businessName;
+        banner.querySelector('.banner-nickname').textContent = ad.userNickname;
+        banner.querySelector('.banner-contact').textContent = displayContact;
+        
+        // 배너 요소 가져오기
+        const bannerElement = banner.querySelector('.inquiry-banner');
+        
+        // 클릭 이벤트 추가
+        bannerElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleInquiryBannerClick(ad);
+        });
+        
+        bannerArea.appendChild(bannerElement);
+    });
+    
+    // 더 많은 문의가 있는 경우 표시
+    if (ads.length > maxBanners) {
+        const moreIndicator = document.createElement('div');
+        moreIndicator.className = 'more-inquiries';
+        moreIndicator.textContent = `+${ads.length - maxBanners}개 더보기`;
+        moreIndicator.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showAllInquiries(card, ads);
+        });
+        bannerArea.appendChild(moreIndicator);
+    }
+    
+    // card-actions 영역 바로 위에 배너 영역 삽입
+    const cardActions = card.querySelector('.card-actions');
+    if (cardActions) {
+        card.insertBefore(bannerArea, cardActions);
+    } else {
+        card.appendChild(bannerArea);
+    }
+    
+    // 기존 문의하기 버튼 숨기기
+    inquiryBtn.style.display = 'none';
+}
+
+// 문의 배너 클릭 처리
+function handleInquiryBannerClick(ad) {
+    // 연락처 정보 팝업 표시
+    const kakaoContact = ad.socialContact?.kakao || '';
+    const phoneContact = ad.contactPhone || '';
+    
+    let contactInfo = `${ad.businessName}\n담당자: ${ad.userNickname}\n\n`;
+    
+    if (kakaoContact) {
+        contactInfo += `카카오톡: ${kakaoContact}\n`;
+    }
+    if (phoneContact) {
+        contactInfo += `전화번호: ${phoneContact}\n`;
+    }
+    
+    // 모바일에서는 전화번호 클릭 시 전화 연결 옵션 제공
+    if (phoneContact && window.confirm(contactInfo + '\n\n전화로 연결하시겠습니까?')) {
+        window.location.href = `tel:${phoneContact}`;
+    } else {
+        alert(contactInfo);
+    }
+}
+
+// 모든 문의 보기
+function showAllInquiries(card, ads) {
+    // 모바일/PC 분기
+    if (window.innerWidth <= 768) {
+        showMobileAllInquiries(card, ads);
+    } else {
+        showDesktopAllInquiries(card, ads);
+    }
+}
+
+// 모바일 전체 문의 보기
+function showMobileAllInquiries(card, ads) {
     // 기존 열린 팝업 닫기
     closeAllMobilePopups();
     
     // 활성화
     card.classList.add('active');
-    button.classList.add('active');
     
-    // 문의 영역 생성
-    const inquiryArea = createMobileInquiryArea(location);
+    // 템플릿 가져오기
+    const listTemplate = document.getElementById('mobile-inquiry-list-template');
+    const itemTemplate = document.getElementById('inquiry-item-template');
     
-    // 선택된 카드 바로 다음에 삽입
-    card.parentNode.insertBefore(inquiryArea, card.nextSibling);
-    
-    // 이벤트 연결
-    setupInquiryEvents(inquiryArea);
-}
-
-// PC 문의
-function openDesktopInquiry(card, location, button) {
-    const rightSection = document.querySelector('.right-section');
-    const mainContainer = document.querySelector('.main-container');
-    
-    // 이미 활성화된 버튼 클릭시 닫기
-    if (button.classList.contains('active')) {
-        closeDesktopPopup();
+    if (!listTemplate || !itemTemplate) {
+        console.error('문의 목록 템플릿을 찾을 수 없습니다.');
         return;
     }
+    
+    // 템플릿 복제
+    const area = listTemplate.content.cloneNode(true);
+    const container = area.querySelector('.inquiry-list-container');
+    
+    // 각 광고에 대한 아이템 생성
+    ads.forEach((ad, index) => {
+        const item = itemTemplate.content.cloneNode(true);
+        
+        // 데이터 채우기
+        item.querySelector('.business-name').textContent = ad.businessName;
+        item.querySelector('.nickname').textContent = ad.userNickname;
+        item.querySelector('.contact').textContent = ad.socialContact?.kakao || ad.contactPhone || '연락처 없음';
+        
+        // 아이템 요소 가져오기
+        const itemElement = item.querySelector('.inquiry-item');
+        itemElement.dataset.adId = ad.id;
+        
+        // 클릭 이벤트 추가
+        itemElement.addEventListener('click', () => {
+            handleInquiryBannerClick(ad);
+        });
+        
+        container.appendChild(itemElement);
+    });
+    
+    // 선택된 카드 바로 다음에 삽입
+    const areaElement = area.querySelector('.mobile-action-area');
+    card.parentNode.insertBefore(areaElement, card.nextSibling);
+}
+
+// PC 전체 문의 보기
+function showDesktopAllInquiries(card, ads) {
+    const rightSection = document.querySelector('.right-section');
+    const mainContainer = document.querySelector('.main-container');
     
     // 기존 활성화 제거
     document.querySelectorAll('.status-card, .action-btn').forEach(el => {
@@ -63,101 +242,50 @@ function openDesktopInquiry(card, location, button) {
     
     // 활성화
     card.classList.add('active');
-    button.classList.add('active');
     mainContainer.classList.add('right-active');
     
-    // 문의 내용 넣기 - 모바일과 동일한 HTML 사용
-    rightSection.innerHTML = createInquiryHTML(location);
-    rightSection.style.display = 'flex';
+    // 템플릿 가져오기
+    const listTemplate = document.getElementById('desktop-inquiry-list-template');
+    const itemTemplate = document.getElementById('inquiry-item-template');
     
-    // 이벤트 연결
-    setupInquiryEvents(rightSection);
-}
-
-// 모바일 문의 영역 생성
-function createMobileInquiryArea(location) {
-    const area = document.createElement('div');
-    area.className = 'mobile-action-area';
-    area.innerHTML = createInquiryHTML(location);
-    return area;
-}
-
-// 문의 HTML 생성
-function createInquiryHTML(location) {
-    return `
-        <div class="mobile-action-container">
-            <div class="inquiry-header">
-                <h3>문의하기</h3>
-                <span class="location-tag">${location}</span>
-            </div>
-            
-            <div class="inquiry-form-container">
-                <form class="right-inquiry-form">
-                    <div class="form-group">
-                        <label>문의 유형</label>
-                        <select name="type" required>
-                            <option value="">선택해주세요</option>
-                            <option value="reservation">예약 문의</option>
-                            <option value="service">서비스 문의</option>
-                            <option value="price">가격 문의</option>
-                            <option value="other">기타 문의</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>이름</label>
-                        <input type="text" name="name" placeholder="이름을 입력해주세요" required>
-                    </div>
-                    <div class="form-group">
-                        <label>연락처</label>
-                        <input type="tel" name="phone" placeholder="010-0000-0000" required>
-                    </div>
-                    <div class="form-group">
-                        <label>문의 내용</label>
-                        <textarea name="content" rows="4" placeholder="문의하실 내용을 입력해주세요" required></textarea>
-                    </div>
-                    <button type="submit" class="submit-inquiry-btn">문의하기</button>
-                </form>
-            </div>
-        </div>
-    `;
-}
-
-// 문의 이벤트 설정
-function setupInquiryEvents(container) {
-    const form = container.querySelector('.right-inquiry-form');
-    if (form) {
-        form.addEventListener('submit', handleInquirySubmit);
+    if (!listTemplate || !itemTemplate) {
+        console.error('문의 목록 템플릿을 찾을 수 없습니다.');
+        return;
     }
-}
-
-// 문의 제출 처리
-function handleInquirySubmit(e) {
-    e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const location = e.target.closest('.mobile-action-area, .right-section')
-                           .querySelector('.location-tag').textContent;
+    // 템플릿 복제
+    const content = listTemplate.content.cloneNode(true);
+    const container = content.querySelector('.inquiry-list-container');
     
-    const inquiryData = {
-        location: location,
-        type: formData.get('type'),
-        name: formData.get('name'),
-        phone: formData.get('phone'),
-        content: formData.get('content'),
-        timestamp: new Date()
-    };
+    // 각 광고에 대한 아이템 생성
+    ads.forEach((ad, index) => {
+        const item = itemTemplate.content.cloneNode(true);
+        
+        // 데이터 채우기
+        item.querySelector('.business-name').textContent = ad.businessName;
+        item.querySelector('.nickname').textContent = ad.userNickname;
+        item.querySelector('.contact').textContent = ad.socialContact?.kakao || ad.contactPhone || '연락처 없음';
+        
+        // 아이템 요소 가져오기
+        const itemElement = item.querySelector('.inquiry-item');
+        itemElement.dataset.adId = ad.id;
+        
+        // 클릭 이벤트 추가
+        itemElement.addEventListener('click', () => {
+            handleInquiryBannerClick(ad);
+        });
+        
+        container.appendChild(itemElement);
+    });
     
-    console.log('문의 제출:', inquiryData);
-    
-    // TODO: 서버로 전송
-    alert('문의가 접수되었습니다.');
-    
-    // 폼 초기화
-    e.target.reset();
+    // 우측 섹션에 내용 넣기
+    rightSection.innerHTML = '';
+    rightSection.appendChild(content);
+    rightSection.style.display = 'flex';
 }
 
 // 모든 모바일 팝업 닫기
-function closeAllMobilePopups() {
+window.closeAllMobilePopups = function() {
     document.querySelectorAll('.mobile-action-area').forEach(area => area.remove());
     document.querySelectorAll('.status-card, .action-btn').forEach(el => {
         el.classList.remove('active');
@@ -165,7 +293,7 @@ function closeAllMobilePopups() {
 }
 
 // PC 팝업 닫기
-function closeDesktopPopup() {
+window.closeDesktopPopup = function() {
     const rightSection = document.querySelector('.right-section');
     const mainContainer = document.querySelector('.main-container');
     

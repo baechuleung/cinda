@@ -598,6 +598,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             storeName: storeName,
             userType: 'business',
             marketingAgreed: document.getElementById('terms3').checked,
+            recommendationOrder: null, 
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         };
