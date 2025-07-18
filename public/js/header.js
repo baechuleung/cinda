@@ -1,37 +1,27 @@
-// 파일 경로: public/js/header.js
-// 파일 이름: header.js
+// Firebase 모듈 임포트
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
-// Firebase imports
-import { auth, db } from '/js/firebase-config.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-// 광고 슬라이드 관련 변수
+// 슬라이더 설정
 let currentSlide = 0;
-let slidesPerView = 4;
-let gap = 16;
 let maxSlide = 0;
+let slidesToShow = 3;
 
-// 슬라이드 설정 업데이트
+// 화면 크기에 따른 슬라이드 설정
 function updateSlideSettings() {
     const width = window.innerWidth;
     
-    if (width > 1440) {
-        slidesPerView = 4;
-        gap = 16;
-    } else if (width > 1024) {
-        slidesPerView = 3;
-        gap = 14;
-    } else if (width > 768) {
-        slidesPerView = 2;
-        gap = 12;
+    if (width <= 768) {
+        slidesToShow = 1;
+    } else if (width <= 1024) {
+        slidesToShow = 2;
     } else {
-        slidesPerView = 1;
-        gap = 0;
+        slidesToShow = 3;
     }
     
-    const banners = document.querySelectorAll('.ad-banner');
-    maxSlide = Math.max(0, banners.length - slidesPerView);
+    const totalSlides = document.querySelectorAll('.ad-banner').length;
+    maxSlide = Math.max(0, totalSlides - slidesToShow);
 }
 
 // 슬라이드 이동
@@ -39,15 +29,9 @@ function moveSlide() {
     const wrapper = document.querySelector('.ad-banner-wrapper');
     if (!wrapper) return;
     
-    if (window.innerWidth <= 768) {
-        wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-    } else {
-        const container = document.querySelector('.ad-banner-container');
-        const containerWidth = container ? container.offsetWidth : 0;
-        const slideWidth = (containerWidth - gap * (slidesPerView - 1)) / slidesPerView;
-        const offset = currentSlide * (slideWidth + gap);
-        wrapper.style.transform = `translateX(-${offset}px)`;
-    }
+    const slideWidth = 100 / slidesToShow;
+    const translateX = -currentSlide * slideWidth;
+    wrapper.style.transform = `translateX(${translateX}%)`;
 }
 
 // 슬라이드 버튼 업데이트
@@ -143,32 +127,75 @@ function setActiveMenu() {
     });
 }
 
+// 로컬 스토리지에서 사용자 타입 가져오기
+function getUserTypeFromLocalStorage() {
+    const userType = localStorage.getItem('userType');
+    const lastLoginTime = localStorage.getItem('lastLoginTime');
+    
+    // 24시간 이내의 로그인 정보만 사용
+    if (userType && lastLoginTime) {
+        const timeDiff = Date.now() - parseInt(lastLoginTime);
+        if (timeDiff < 24 * 60 * 60 * 1000) { // 24시간
+            return userType;
+        }
+    }
+    return null;
+}
+
+// 로컬 스토리지에 사용자 타입 저장
+function saveUserTypeToLocalStorage(userType) {
+    localStorage.setItem('userType', userType);
+    localStorage.setItem('lastLoginTime', Date.now().toString());
+}
+
+// 사용자 타입에 따른 메뉴 즉시 표시
+function showMenusByUserType(userType) {
+    if (userType === 'admin') {
+        showAdminMenu();
+    } else if (userType === 'business' || userType === 'partner') {
+        showAdvertiseMenu();
+    }
+}
+
 // 사용자 인증 상태 확인 및 메뉴 표시
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         // 로그인한 경우 로그아웃 메뉴 표시
         showLogoutMenu();
         
-        // 관리자 여부 확인
-        const isAdmin = await checkAdminStatus(user.uid);
+        // 로컬 스토리지에서 사용자 타입 확인하여 즉시 메뉴 표시
+        const cachedUserType = getUserTypeFromLocalStorage();
+        if (cachedUserType) {
+            showMenusByUserType(cachedUserType);
+        }
+        
+        // 백그라운드에서 실제 사용자 타입 확인 (병렬 처리)
+        const checkPromises = [
+            checkAdminStatus(user.uid),
+            checkBusinessUserStatus(user.uid),
+            checkPartnerUserStatus(user.uid)
+        ];
+        
+        const [isAdmin, isBusinessUser, isPartnerUser] = await Promise.all(checkPromises);
+        
+        // 실제 사용자 타입 확인 후 메뉴 업데이트 및 캐시 저장
         if (isAdmin) {
             showAdminMenu();
-        }
-        
-        // 기업회원 여부 확인 (business_users)
-        const isBusinessUser = await checkBusinessUserStatus(user.uid);
-        if (isBusinessUser) {
+            saveUserTypeToLocalStorage('admin');
+        } else if (isBusinessUser) {
             showAdvertiseMenu();
-        }
-        
-        // 파트너회원 여부 확인 (partner_users)
-        const isPartnerUser = await checkPartnerUserStatus(user.uid);
-        if (isPartnerUser) {
+            saveUserTypeToLocalStorage('business');
+        } else if (isPartnerUser) {
             showAdvertiseMenu();
+            saveUserTypeToLocalStorage('partner');
+        } else {
+            saveUserTypeToLocalStorage('individual');
         }
     } else {
         // 로그인하지 않은 경우
         hideLogoutMenu();
+        localStorage.removeItem('userType');
+        localStorage.removeItem('lastLoginTime');
         
         // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
         if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
@@ -257,6 +284,9 @@ window.handleLogout = async function() {
     if (confirm('로그아웃 하시겠습니까?')) {
         try {
             await auth.signOut();
+            // 로컬 스토리지 정리
+            localStorage.removeItem('userType');
+            localStorage.removeItem('lastLoginTime');
             window.location.href = '/auth/login.html';
         } catch (error) {
             console.error('로그아웃 오류:', error);
