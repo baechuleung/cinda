@@ -1,10 +1,10 @@
-// 파일경로: /advertise/js/ad-complete-popup.js
-// 파일이름: ad-complete-popup.js
+// 파일경로: /advertise/js/ad-completed-popup.js
+// 파일이름: ad-completed-popup.js
 
 // 팝업 열기 함수
 window.showAdCompletePopup = function() {
     // 팝업 HTML 파일 로드
-    fetch('/advertise/html/ad-complete-popup.html')
+    fetch('/advertise/html/ad-completed-popup.html')
         .then(response => response.text())
         .then(html => {
             // 팝업이 이미 로드되어 있는지 확인
@@ -12,10 +12,10 @@ window.showAdCompletePopup = function() {
             
             if (!popup) {
                 // 팝업 CSS 로드
-                if (!document.querySelector('link[href="/advertise/css/ad-complete-popup.css"]')) {
+                if (!document.querySelector('link[href="/advertise/css/ad-completed-popup.css"]')) {
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
-                    link.href = '/advertise/css/ad-complete-popup.css';
+                    link.href = '/advertise/css/ad-completed-popup.css';
                     document.head.appendChild(link);
                 }
                 

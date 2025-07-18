@@ -1,4 +1,5 @@
-// 파일 경로: /public/advertise/js/ad-form-job.js
+// 파일 경로: /advertise/js/ad-form-job.js
+// 파일이름: ad-form-job.js
 
 import { auth, db, storage } from '/js/firebase-config.js';
 import { collection, addDoc, serverTimestamp, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
@@ -133,6 +134,22 @@ window.removePreviewImage = function(index) {
     }
 };
 
+// 로딩 표시 함수
+function showLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('show');
+    }
+}
+
+// 로딩 숨김 함수
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('show');
+    }
+}
+
 // 채용관 광고 폼 초기화
 export async function initJobAdForm(userData, selectedAdType, adPrice) {
     // 선택한 광고 제목 표시
@@ -252,17 +269,7 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
         console.error('지역 데이터 로드 오류:', error);
     }
     
-    // 최소 날짜 설정
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-    const startDateInput = document.getElementById('startDate2');
-    if (startDateInput) {
-        startDateInput.setAttribute('min', tomorrowStr);
-        startDateInput.value = tomorrowStr;
-    }
+    // 커스텀 날짜 선택기 초기화 - 제거됨
     
     // 첫 번째 근무시간 시간 옵션 초기화
     const startHour = document.querySelector('.start-hour');
@@ -308,9 +315,6 @@ export async function initJobAdForm(userData, selectedAdType, adPrice) {
             this.classList.toggle('active');
         });
     });
-    
-    // 커스텀 날짜 선택기 초기화
-    initCustomDatePicker();
     
     // 광고 기간 버튼 초기화
     initDurationButtons(adPrice);
@@ -508,6 +512,9 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
         }
         
         try {
+            // 로딩 표시
+            showLoading();
+            
             // business_users 컬렉션에서 현재 사용자 정보 가져오기
             const userDoc = await getDoc(doc(db, 'business_users', currentUser.uid));
             const userData = userDoc.exists() ? userDoc.data() : null;
@@ -548,6 +555,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 
                 if (workTimes.length === 0) {
                     alert('최소 하나의 근무 시간을 입력해주세요.');
+                    hideLoading();
                     return;
                 }
                 
@@ -560,8 +568,6 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
-                userNickname: userData?.nickname || '',
-                storeCode: userData?.storeCode || '',
                 adType: selectedAdType?.type || '',
                 adCategory: 'job',
                 adName: selectedAdType?.name || '',
@@ -576,10 +582,10 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 salary: salary,
                 workTimes: workTimes,
                 welfare: welfareList,
-                startDate: document.getElementById('startDate2')?.value || '',
+                startDate: null, // 관리자가 나중에 설정
                 duration: parseInt(document.getElementById('duration2')?.value) || 0,
                 monthlyAmount: adPrice,
-                totalAmount: adPrice * (parseInt(document.getElementById('duration2')?.value) || 0),
+                totalAmount: Math.round(((adPrice * (parseInt(document.getElementById('duration2')?.value) || 0)) + (document.getElementById('imageCreationRequest')?.checked ? 50000 : 0)) * 1.1),
                 status: 'pending',
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
@@ -596,6 +602,7 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 // 이미지가 없고 제작 의뢰도 선택하지 않은 경우
                 if ((!detailImages || detailImages.length === 0) && !imageCreationRequest) {
                     alert('상세 이미지를 업로드하거나 이미지 제작 의뢰를 선택해주세요.');
+                    hideLoading();
                     return;
                 }
                 
@@ -604,7 +611,6 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
                 
                 if (imageCreationRequest) {
                     formData.imageCreationFee = 50000;
-                    formData.totalAmount = formData.totalAmount + 50000; // 제작비 추가
                 }
             }
             
@@ -632,144 +638,27 @@ export async function submitJobAdForm(currentUser, selectedAdType, adPrice) {
             // 최종적으로 한 번에 DB에 저장
             const docRef = await addDoc(collection(db, 'ad_requests_job'), formData);
             
-            alert('광고 신청이 완료되었습니다.\n검토 후 연락드리겠습니다.');
-            window.location.href = '/advertise/html/ad-list.html';
+            // 로딩 숨김
+            hideLoading();
+            
+            // 팝업 JS 동적 로드 및 표시
+            if (!window.showAdCompletePopup) {
+                const script = document.createElement('script');
+                script.src = '/advertise/js/ad-completed-popup.js';
+                script.onload = () => {
+                    window.showAdCompletePopup();
+                };
+                document.body.appendChild(script);
+            } else {
+                window.showAdCompletePopup();
+            }
             
         } catch (error) {
             console.error('광고 신청 오류:', error);
             alert('광고 신청 중 오류가 발생했습니다.');
-        }
-    });
-}
-
-// 커스텀 날짜 선택기 함수
-function initCustomDatePicker() {
-    const dateDisplay = document.getElementById('startDate2Display');
-    const calendarDropdown = document.getElementById('calendarDropdown');
-    const hiddenDateInput = document.getElementById('startDate2');
-    
-    if (!dateDisplay || !calendarDropdown) return;
-    
-    let currentDate = new Date();
-    let selectedDate = null;
-    
-    // 날짜 표시 클릭 시 캘린더 토글 및 위치 조정
-    dateDisplay.addEventListener('click', function(e) {
-        e.stopPropagation();
-        calendarDropdown.classList.toggle('show');
-        
-        // 화면 위치에 따라 캘린더 위치 조정
-        const rect = dateDisplay.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-        
-        if (spaceBelow < 350 && spaceAbove > 350) {
-            // 아래 공간이 부족하면 위로 표시
-            calendarDropdown.style.bottom = '100%';
-            calendarDropdown.style.top = 'auto';
-            calendarDropdown.style.marginBottom = '0.5rem';
-            calendarDropdown.style.marginTop = '0';
-        } else {
-            // 기본: 아래로 표시
-            calendarDropdown.style.top = '100%';
-            calendarDropdown.style.bottom = 'auto';
-            calendarDropdown.style.marginTop = '0.5rem';
-            calendarDropdown.style.marginBottom = '0';
-        }
-        
-        renderCalendar();
-    });
-    
-    // 캘린더 렌더링
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        
-        // 월 표시
-        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-        const monthYearElement = document.querySelector('.cal-month-year');
-        if (monthYearElement) {
-            monthYearElement.textContent = `${year}년 ${monthNames[month]}`;
-        }
-        
-        // 날짜 그리기
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const calDates = document.querySelector('.cal-dates');
-        if (!calDates) return;
-        
-        calDates.innerHTML = '';
-        
-        // 빈 칸
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            calDates.appendChild(emptyDiv);
-        }
-        
-        // 날짜
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day);
-            const dateDiv = document.createElement('div');
-            dateDiv.className = 'cal-date';
-            
-            if (date <= today) {
-                dateDiv.classList.add('disabled');
-            }
-            
-            if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-                dateDiv.classList.add('selected');
-            }
-            
-            dateDiv.setAttribute('data-date', `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
-            dateDiv.textContent = day;
-            
-            if (!dateDiv.classList.contains('disabled')) {
-                dateDiv.addEventListener('click', selectDate);
-            }
-            
-            calDates.appendChild(dateDiv);
-        }
-    }
-    
-    // 날짜 선택
-    function selectDate(e) {
-        const dateStr = e.target.getAttribute('data-date');
-        selectedDate = new Date(dateStr);
-        
-        // 표시 업데이트
-        const [year, month, day] = dateStr.split('-');
-        dateDisplay.value = `${year}년 ${parseInt(month)}월 ${parseInt(day)}일`;
-        hiddenDateInput.value = dateStr;
-        
-        // 캘린더 닫기
-        calendarDropdown.classList.remove('show');
-    }
-    
-    // 이전/다음 달 버튼
-    const prevBtn = document.querySelector('.cal-prev-btn');
-    const nextBtn = document.querySelector('.cal-next-btn');
-    
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        });
-    }
-    
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        });
-    }
-    
-    // 외부 클릭 시 캘린더 닫기
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.custom-date-picker')) {
-            calendarDropdown.classList.remove('show');
+        } finally {
+            // 로딩 숨김
+            hideLoading();
         }
     });
 }

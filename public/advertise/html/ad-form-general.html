@@ -1,3 +1,6 @@
+<!-- 파일경로: /advertise/html/ad-form-general.html -->
+<!-- 파일이름: ad-form-general.html -->
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -142,42 +145,15 @@
             </div>
             <div class="form-box-content">
                 <form id="generalAdvertiseForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="startDate1">광고 시작일 <span class="required">*</span></label>
-                            <div class="custom-date-picker">
-                                <input type="text" id="startDate1Display" class="date-display" placeholder="날짜를 선택하세요" readonly style="cursor: pointer;">
-                                <input type="hidden" id="startDate1" required>
-                                <div class="calendar-icon">📅</div>
-                                <div class="calendar-dropdown" id="calendarDropdown">
-                                    <div class="calendar-header">
-                                        <button type="button" class="cal-prev-btn">◀</button>
-                                        <span class="cal-month-year"></span>
-                                        <button type="button" class="cal-next-btn">▶</button>
-                                    </div>
-                                    <div class="cal-weekdays">
-                                        <div>일</div>
-                                        <div>월</div>
-                                        <div>화</div>
-                                        <div>수</div>
-                                        <div>목</div>
-                                        <div>금</div>
-                                        <div>토</div>
-                                    </div>
-                                    <div class="cal-dates"></div>
-                                </div>
-                            </div>
+                    <div class="form-group">
+                        <label for="duration1">광고 기간 <span class="required">*</span></label>
+                        <div class="custom-duration-select">
+                            <button type="button" class="duration-btn" data-value="1">1개월</button>
+                            <button type="button" class="duration-btn" data-value="3">3개월</button>
+                            <button type="button" class="duration-btn" data-value="6">6개월</button>
+                            <button type="button" class="duration-btn" data-value="12">12개월</button>
                         </div>
-                        <div class="form-group">
-                            <label for="duration1">광고 기간 <span class="required">*</span></label>
-                            <div class="custom-duration-select">
-                                <button type="button" class="duration-btn" data-value="1">1개월</button>
-                                <button type="button" class="duration-btn" data-value="3">3개월</button>
-                                <button type="button" class="duration-btn" data-value="6">6개월</button>
-                                <button type="button" class="duration-btn" data-value="12">12개월</button>
-                            </div>
-                            <input type="hidden" id="duration1" required>
-                        </div>
+                        <input type="hidden" id="duration1" required>
                     </div>
                 </form>
             </div>

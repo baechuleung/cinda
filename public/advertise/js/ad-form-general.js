@@ -165,16 +165,7 @@ export function initGeneralAdForm(userData, selectedAdType, adPrice) {
         if (contactEmail1 && userData.email) contactEmail1.value = userData.email;
     }
     
-    // 오늘 날짜를 기본값으로 설정
-    const startDate1 = document.getElementById('startDate1');
-    if (startDate1) {
-        const today = new Date().toISOString().split('T')[0];
-        startDate1.value = today;
-        startDate1.min = today;
-    }
-    
-    // 커스텀 날짜 선택기 초기화
-    initCustomDatePicker();
+    // 커스텀 날짜 선택기 초기화 - 제거됨
     
     // 기간 선택 버튼 이벤트
     const durationBtns = document.querySelectorAll('.duration-btn');
@@ -403,8 +394,6 @@ export function submitGeneralAdForm(currentUser, selectedAdType, adPrice) {
             const formData = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
-                userNickname: userData?.nickname || '',
-                storeCode: userData?.storeCode || '',
                 adType: selectedAdType?.type || '',
                 adCategory: 'general',
                 adName: selectedAdType?.name || '',
@@ -420,7 +409,7 @@ export function submitGeneralAdForm(currentUser, selectedAdType, adPrice) {
                 businessHours: document.getElementById('businessHours1')?.value.trim() || '',
                 detailContent: document.getElementById('detailContent1')?.value.trim() || '',
                 imageCreationRequest: document.getElementById('imageCreationRequest1')?.checked || false,
-                startDate: document.getElementById('startDate1')?.value || '',
+                startDate: null, // 관리자가 나중에 설정
                 duration: parseInt(duration) || 0,
                 monthlyAmount: adPrice,
                 totalAmount: Math.round(((adPrice * (parseInt(duration) || 0)) + (document.getElementById('imageCreationRequest1')?.checked ? 50000 : 0)) * 1.1),
