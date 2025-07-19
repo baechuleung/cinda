@@ -1,85 +1,79 @@
-<!-- 광고 배너 섹션 -->
-<div class="ad-banner-wrapper-container">
-    <div class="ad-banner-section">
-        <button class="slide-btn prev" onclick="slideAds('prev')">‹</button>
-        <div class="ad-banner-container">
-            <div class="ad-banner-wrapper" id="adBannerWrapper">
-                <!-- 기본 배너 슬롯들 -->
-                <div class="ad-banner" data-slot="1" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_1">advertising_banner_1</div>
-                </div>
-                <div class="ad-banner" data-slot="2" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_2">advertising_banner_2</div>
-                </div>
-                <div class="ad-banner" data-slot="3" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_3">advertising_banner_3</div>
-                </div>
-                <div class="ad-banner" data-slot="4" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_4">advertising_banner_4</div>
-                </div>
-                <div class="ad-banner" data-slot="5" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_5">advertising_banner_5</div>
-                </div>
-                <div class="ad-banner" data-slot="6" data-ad-id="">
-                    <div class="ad-content" id="advertising_banner_6">advertising_banner_6</div>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신다</title>
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">
+                <img src="/img/logo.png" alt="CINDA" class="logo" id="headerLogo">
+            </a>
+            
+            <!-- 햄버거 메뉴 버튼 -->
+            <button class="hamburger-menu" id="hamburgerMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <!-- 메뉴 리스트 -->
+            <ul id="navMenu">
+                <li><a href="/realtime-status/html/realtime-status.html">실시간 현황판</a></li>
+                <li><a href="/community/html/list.html">신다수다방</a></li>
+                <li><a href="#">채용정보</a></li>
+                <li><a href="#">제휴서비스</a></li>
+                <li><a href="#">내 정보</a></li>
+                <li class="advertise-menu" style="display: none;"><a href="/advertise/html/ad-add.html">광고관리</a></li>
+                <li class="admin-menu" style="display: none;"><a href="/admin/realtime-status/html/list.html">관리자</a></li>
+                <li class="logout-menu" style="display: none;"><a href="#" onclick="handleLogout()">로그아웃</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- 광고 배너 영역 (header 밖으로 분리) -->
+    <div class="ad-banner-wrapper-container">
+        <div class="ad-banner-section">
+            <button class="slide-btn prev" onclick="slideAds('prev')">‹</button>
+            <div class="ad-banner-container">
+                <div class="ad-banner-wrapper">
+                    <div class="ad-banner">advertising_banner_1</div>
+                    <div class="ad-banner">advertising_banner_2</div>
+                    <div class="ad-banner">advertising_banner_3</div>
+                    <div class="ad-banner">advertising_banner_4</div>
+                    <div class="ad-banner">advertising_banner_5</div>
+                    <div class="ad-banner">advertising_banner_6</div>
                 </div>
             </div>
+            <button class="slide-btn next" onclick="slideAds('next')">›</button>
         </div>
-        <button class="slide-btn next" onclick="slideAds('next')">›</button>
     </div>
-</div>
-
-<!-- 메인 헤더 -->
-<header>
-    <nav>
-        <a href="/">
-            <img src="/img/logo.png" alt="신다" class="logo" id="headerLogo">
-        </a>
+    
+    <script>
+        // 즉시 실행되는 인라인 스크립트로 로고 설정
+        (function() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('headerLogo').src = '/img/m_logo.png';
+            }
+        })();
         
-        <ul id="navMenu">
-            <li><a href="/realtime-status/html/realtime-status.html">실시간 현황판</a></li>
-            <li><a href="/recruit/html/recruit-list.html">채용관</a></li>
-            <li><a href="/community/html/list.html">신다 수다방</a></li>
-            <li class="admin-menu" style="display: none;">
-                <a href="/admin/html/dashboard.html">관리자</a>
-            </li>
-            <li class="advertise-menu" style="display: none;">
-                <a href="/advertise/html/ad-list.html">광고관리</a>
-            </li>
-            <li class="logout-menu" style="display: none;">
-                <a href="#" onclick="handleLogout(); return false;">로그아웃</a>
-            </li>
-        </ul>
+        // 절대 경로로 스크립트 동적 로드
+        const origin = window.location.origin;
         
-        <!-- 햄버거 메뉴 버튼 -->
-        <button class="hamburger-menu" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </nav>
-</header>
-
-<script>
-    // 즉시 실행되는 인라인 스크립트로 로고 설정
-    (function() {
-        if (window.innerWidth <= 768) {
-            document.getElementById('headerLogo').src = '/img/m_logo.png';
-        }
-    })();
-    
-    // 절대 경로로 스크립트 동적 로드
-    const origin = window.location.origin;
-    
-    // Firebase config 로드
-    const firebaseScript = document.createElement('script');
-    firebaseScript.type = 'module';
-    firebaseScript.src = origin + '/js/firebase-config.js';
-    document.body.appendChild(firebaseScript);
-    
-    // Header.js 로드 (광고 슬라이드 기능 포함)
-    const headerScript = document.createElement('script');
-    headerScript.type = 'module';
-    headerScript.src = origin + '/js/header.js';
-    document.body.appendChild(headerScript);
-</script>
+        // Firebase config 로드
+        const firebaseScript = document.createElement('script');
+        firebaseScript.type = 'module';
+        firebaseScript.src = origin + '/js/firebase-config.js';
+        document.body.appendChild(firebaseScript);
+        
+        // Header.js 로드 (광고 슬라이드 기능 포함)
+        const headerScript = document.createElement('script');
+        headerScript.type = 'module';
+        headerScript.src = origin + '/js/header.js';
+        document.body.appendChild(headerScript);
+    </script>
+</body>
+</html>
