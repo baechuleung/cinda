@@ -1,283 +1,160 @@
+/* 모바일 전용 실시간 현황 헤더 */
+
 /* 헤더 래퍼 */
 .status-header-wrapper {
-    max-width: 1400px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0 1rem;
+    width: 100%;
+    max-width: 430px;
     margin: 0 auto;
-    padding: 0 2rem;
 }
 
-/* 실시간 현황판 헤더 */
+/* 상태 헤더 */
 .status-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0; /* 모든 패딩 제거 */
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 0;
 }
 
+/* 헤더 좌측 */
 .header-left {
+    width: 100%;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 8px;
 }
 
 .status-header h1 {
-    font-size: 20px;
-    color: #333;
+    font-size: 18px;
     font-weight: 600;
     margin: 0;
 }
 
 .date-time {
-    font-size: 14px;
+    font-size: 12px;
     color: #666;
-    padding: 0.25rem 0.75rem;
     background: #f5f5f5;
+    padding: 0.2rem 0.5rem;
     border-radius: 4px;
 }
 
-/* 헤더 오른쪽 */
+/* 헤더 우측 */
 .header-right {
+    width: 100%;
     display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* location-inputs를 header-right로 이동 */
-.location-inputs {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-}
-
-.location-select,
-.location-input {
-    width: 160px;
-    height: 44px;
-    padding: 0 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 14px;
-    background: white;
-    color: #999; /* PC에서도 텍스트 색상 #999 */
-}
-
-.location-select {
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 2.5rem;
-}
-
-.location-select:focus,
-.location-input:focus {
-    outline: none;
-    border-color: #5368ff;
-}
-
-.location-input::placeholder {
-    color: #999; /* placeholder 색상 #999 */
-}
-
-.location-search-btn {
-    height: 44px;
-    padding: 0 2rem;
-    background: #FF6666;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    white-space: nowrap;
-}
-
-.location-search-btn:hover {
-    background: #FF5555;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
 }
 
 /* 필터 토글 컨테이너 */
 .filter-toggle-container {
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 4px;
+    width: 100%;
 }
 
-.filter-toggle {
-    position: relative;
+/* 필터 버튼들 */
+.filter-buttons {
     display: flex;
-    background: white;
-    border-radius: 6px;
-    height: 36px;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
 }
 
-.filter-toggle input[type="radio"] {
+.filter-buttons::-webkit-scrollbar {
     display: none;
 }
 
-.filter-toggle label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-    font-size: 14px;
-    color: #666;
-    cursor: pointer;
-    z-index: 2;
-    transition: color 0.3s ease;
-    white-space: nowrap;
+.filter-btn {
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 0 1rem;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 18px;
+    font-size: 13px;
     font-weight: 500;
+    color: #666;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.filter-toggle input[type="radio"]:checked + label {
+.filter-btn:active {
+    transform: scale(0.95);
+}
+
+.filter-btn.active {
+    background: #FF6666;
     color: white;
+    border-color: #FF6666;
 }
 
-/* 전체가 선택되었을 때만 색상 다르게 */
-.filter-toggle input[id="filter-all"]:checked + label {
+/* 위치 검색 영역 */
+.location-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.location-select,
+.location-input {
+    width: 100%;
+    height: 44px;
+    font-size: 16px;
+    padding: 0 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
     color: #333;
 }
 
-/* 슬라이더 */
-.toggle-slider {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    height: 32px;
-    background: #F8F8F8;
-    border-radius: 5px;
-    transition: transform 0.3s ease, width 0.3s ease, background-color 0.3s ease;
-    z-index: 1;
+/* 지역 선택 배치 */
+#region1Search {
+    grid-column: 1;
+    grid-row: 1;
 }
 
-/* 슬라이더 위치 및 색상 */
-.filter-toggle input[id="filter-all"]:checked ~ .toggle-slider {
-    width: calc(25% - 2px);
-    transform: translateX(0);
-    background: #F8F8F8;
+#region2Search {
+    grid-column: 2;
+    grid-row: 1;
 }
 
-.filter-toggle input[id="filter-available"]:checked ~ .toggle-slider {
-    width: calc(25% - 2px);
-    transform: translateX(calc(100% + 2px));
-    background: #00C33A;
+#businessTypeSearch {
+    grid-column: 1;
+    grid-row: 2;
 }
 
-.filter-toggle input[id="filter-normal"]:checked ~ .toggle-slider {
-    width: calc(25% - 2px);
-    transform: translateX(calc(200% + 4px));
-    background: #FFB938;
+#storeNameSearch {
+    grid-column: 2;
+    grid-row: 2;
 }
 
-.filter-toggle input[id="filter-busy"]:checked ~ .toggle-slider {
-    width: calc(25% - 2px);
-    transform: translateX(calc(300% + 6px));
-    background: #FF4141;
+/* 검색 버튼 */
+.location-search-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 44px;
+    margin-top: 0.5rem;
+    background: #FF6666;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.location-search-btn:active {
+    background: #e55555;
 }
 
 /* 구분선 */
-.header-divider {
+.divider {
+    width: 100%;
     height: 1px;
     background: #FF666680;
-    margin: 1rem 0; /* 위아래 동일한 여백 */
-}
-
-/* 반응형 */
-@media (max-width: 1024px) {
-    .status-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-    }
-    
-    .header-right {
-        width: 100%;
-        flex-wrap: wrap;
-    }
-}
-
-/* 모바일 전용 스타일 */
-@media (max-width: 768px) {    
-    .status-header-wrapper {
-        padding: 0 1rem;
-    }
-    
-    .status-header {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 0; /* 모든 패딩 제거 */
-    }
-    
-    .header-left {
-        width: 100%;
-        justify-content: flex-start;
-        gap: 8px;
-    }
-    
-    .status-header h1 {
-        font-size: 16px;
-    }
-    
-    .date-time {
-        font-size: 12px;
-        padding: 0.2rem 0.5rem;
-    }
-    
-    .header-right {
-        flex-direction: column; /* 세로 정렬 */
-        align-items: stretch;
-        gap: 0.5rem;
-        width: 100%;
-    }
-    
-    .filter-toggle-container {
-        width: 100%; /* 필터는 전체 너비 */
-    }
-    
-    /* 모바일에서 location-inputs */
-    .location-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-        width: 100%;
-    }
-    
-    .location-select,
-    .location-input {
-        width: 100%;
-        height: 48px;
-        color: #999; /* 텍스트 색상 #999 */
-    }
-    
-    /* 지역1과 지역2를 첫 줄에 배치 */
-    #region1Search {
-        grid-column: 1;
-        grid-row: 1;
-    }
-    
-    #region2Search {
-        grid-column: 2;
-        grid-row: 1;
-    }
-    
-    /* 업종과 매장명을 둘째 줄에 배치 */
-    #businessTypeSearch {
-        grid-column: 1;
-        grid-row: 2;
-    }
-    
-    #storeNameSearch {
-        grid-column: 2;
-        grid-row: 2;
-    }
-    
-    .location-search-btn {
-        grid-column: 1 / -1; /* 전체 너비 사용 */
-        width: 100%;
-        height: 48px;
-        margin-top: 0.5rem;
-    }
+    margin: 1rem 0;
 }
