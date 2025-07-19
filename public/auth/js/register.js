@@ -1,4 +1,4 @@
-import { auth } from '../firebase-config.js';
+import { auth } from '../../js/firebase-config.js';
 import { createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 document.getElementById('registerForm').addEventListener('submit', async (e) => {

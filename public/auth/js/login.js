@@ -1,4 +1,4 @@
-import { auth } from '../firebase-config.js';
+import { auth } from '../../js/firebase-config.js';
 import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 // 페이지 로드 시 로그인 필요 메시지 확인

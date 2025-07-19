@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>업소회원 회원가입</title>
+    <title>파트너 가입</title>
     
     <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
-    <script type="module" src="../../js/seo-manager.js"></script>
+    <script type="module" src="/js/seo-manager.js"></script>
     
-    <link rel="stylesheet" href="../../css/common.css">
-    <link rel="stylesheet" href="../../css/auth/register-business.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/auth/css/register-partner.css">
 </head>
 <body>
     <div class="register-container">
         <div class="register-form">
-            <h2>업소회원 회원가입</h2>
+            <h2>파트너 가입</h2>
             <form id="registerForm">
                 <!-- 이메일 -->
                 <div class="form-group">
@@ -30,35 +30,42 @@
                                 </svg>
                             </div>
                             <div class="dropdown-menu" id="emailDropdownMenu" style="display: none;">
+                                <div class="dropdown-search">
+                                    <input type="text" id="emailDropdownSearch" class="dropdown-search-input" placeholder="이메일 검색">
+                                </div>
                                 <div class="dropdown-options" id="emailDropdownOptions">
                                     <div class="dropdown-option" data-value="">도메인 선택</div>
                                     <div class="dropdown-option" data-value="naver.com">naver.com</div>
                                     <div class="dropdown-option" data-value="gmail.com">gmail.com</div>
                                     <div class="dropdown-option" data-value="daum.net">daum.net</div>
                                     <div class="dropdown-option" data-value="hanmail.net">hanmail.net</div>
+                                    <div class="dropdown-option" data-value="nate.com">nate.com</div>
                                     <div class="dropdown-option" data-value="direct">직접 입력</div>
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="email" name="email" required>
+                        <input type="text" id="emailDomainDirect" placeholder="도메인 입력" style="display: none;">
                     </div>
+                    <input type="hidden" id="email" name="email" required>
                 </div>
 
                 <!-- 비밀번호 -->
                 <div class="form-group">
-                    <label for="password">비밀번호</label>
+                    <label for="password">비밀번호 <span class="required">*</span></label>
                     <div class="password-input">
-                        <input type="password" id="password" placeholder="영문, 숫자, 특수문자가 모두 들어간 8~20자" autocomplete="new-password" required>
+                        <input type="password" id="password" placeholder="영문, 숫자, 특수문자가 들어간 8~20자" autocomplete="new-password" required>
                         <span class="show-password" onclick="togglePassword()">
-                            <svg class="eye-icon" width="20" height="16" viewBox="0 0 20 16" fill="none">
-                                <path d="M10 3C6.5 3 3.44 5.11 1.88 8C3.44 10.89 6.5 13 10 13C13.5 13 16.56 10.89 18.12 8C16.56 5.11 13.5 3 10 3Z" stroke="#999" stroke-width="1.5"/>
-                                <circle cx="10" cy="8" r="2.5" stroke="#999" stroke-width="1.5"/>
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" stroke="#999" stroke-width="1.5"/>
+                                <path d="M2.08325 10C3.33325 5.83333 6.41659 3.33333 9.99992 3.33333C13.5833 3.33333 16.6666 5.83333 17.9166 10C16.6666 14.1667 13.5833 16.6667 9.99992 16.6667C6.41659 16.6667 3.33325 14.1667 2.08325 10Z" stroke="#999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <svg class="eye-off-icon" style="display: none;" width="20" height="16" viewBox="0 0 20 16" fill="none">
-                                <path d="M3 3L17 13M8.77778 5.5C8.24671 5.96643 7.91111 6.63998 7.91111 7.4C7.91111 8.95051 9.17503 10.2 10.7333 10.2C11.5087 10.2 12.1949 9.86873 12.6667 9.34444M10.6901 4.60496C13.8302 4.78239 16.4818 6.48177 18.3467 8.8C16.5378 11.0576 14.0162 12.6949 11.1067 12.9462M5.28889 5.34222C3.01333 6.53511 1.17333 8.3897 0 10.6C1.80889 12.9185 4.33067 14.6 7.22667 14.8" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
+                            <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" style="display: none;">
+                                <path d="M15.0002 15.8333L5.00016 4.16666" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M11.9168 11.6083C11.6026 12.1051 11.1501 12.5004 10.6118 12.7477C10.0736 12.9951 9.47183 13.0834 8.88023 12.9946C8.28863 12.9057 7.73201 12.6436 7.27562 12.2369C6.81923 11.8302 6.48239 11.2949 6.30496 10.6901" stroke="#999" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </span>
                     </div>
+                    <div class="helper-text">영문, 숫자, 특수문자가 모두 들어간 8~20자</div>
                 </div>
 
                 <!-- 비밀번호 확인 -->
@@ -67,19 +74,53 @@
                     <input type="password" id="confirmPassword" placeholder="비밀번호 확인을 위해 한번 더 입력해 주세요" autocomplete="new-password" required>
                 </div>
 
-                <!-- 커뮤니티 전용 닉네임 -->
+                <!-- 업체명 -->
                 <div class="form-group">
-                    <label for="nickname">커뮤니티 전용 닉네임 <span class="required">*</span></label>
-                    <input type="text" id="nickname" placeholder="커뮤니티에서 사용할 닉네임을 적어주세요" required>
+                    <label for="companyName">업체명 <span class="required">*</span></label>
+                    <input type="text" id="companyName" placeholder="제휴업체명을 입력해주세요" required>
                 </div>
 
-                <!-- 이름 -->
+                <!-- 사업자등록번호 -->
+                <div class="form-group">
+                    <label for="businessNumber">사업자등록번호 <span class="required">*</span></label>
+                    <input type="text" id="businessNumber" placeholder="사업자등록번호 10자리 입력" maxlength="10" required>
+                    <div class="helper-text">'-' 없이 숫자만 입력해주세요</div>
+                </div>
+
+                <!-- 업종 선택 -->
+                <div class="form-group">
+                    <label for="partnerCategory">업종 선택 <span class="required">*</span></label>
+                    <div class="custom-dropdown">
+                        <div class="dropdown-selected" id="categoryDropdownSelected">
+                            <span class="selected-text">업종을 선택해주세요</span>
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="dropdown-menu" id="categoryDropdownMenu" style="display: none;">
+                            <div class="dropdown-options" id="categoryDropdownOptions">
+                                <div class="dropdown-option" data-value="">업종을 선택해주세요</div>
+                                <div class="dropdown-option" data-value="음식점">음식점</div>
+                                <div class="dropdown-option" data-value="카페">카페</div>
+                                <div class="dropdown-option" data-value="미용/뷰티">미용/뷰티</div>
+                                <div class="dropdown-option" data-value="운동/헬스">운동/헬스</div>
+                                <div class="dropdown-option" data-value="교육/학원">교육/학원</div>
+                                <div class="dropdown-option" data-value="쇼핑/소매">쇼핑/소매</div>
+                                <div class="dropdown-option" data-value="서비스업">서비스업</div>
+                                <div class="dropdown-option" data-value="기타">기타</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="partnerCategory" name="partnerCategory" required>
+                </div>
+
+                <!-- 담당자명 -->
                 <div class="form-group">
                     <div class="label-with-status">
-                        <label for="name">이름</label>
+                        <label for="managerName">담당자명</label>
                         <span class="checkbox-status">✓ 인증완료</span>
                     </div>
-                    <input type="text" id="name" value="홍길동" disabled>
+                    <input type="text" id="managerName" value="홍길동" disabled>
                 </div>
 
                 <!-- 생년월일 -->
@@ -98,58 +139,6 @@
                         <span class="checkbox-status">✓ 인증완료</span>
                     </div>
                     <input type="tel" id="phone" value="010-1234-5678" disabled>
-                </div>
-
-                <!-- 가게 선택 -->
-                <div class="form-group">
-                    <label for="storeSelect">가게 선택 <span class="required">*</span></label>
-                    <div class="custom-dropdown">
-                        <div class="dropdown-selected" id="dropdownSelected">
-                            <span class="selected-text">가게를 선택해주세요</span>
-                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        <div class="dropdown-menu" id="dropdownMenu" style="display: none;">
-                            <div class="dropdown-search">
-                                <input type="text" id="dropdownSearch" class="dropdown-search-input" placeholder="가게명으로 검색">
-                            </div>
-                            <div class="dropdown-options" id="dropdownOptions">
-                                <div class="dropdown-option" data-value="">가게를 선택해주세요</div>
-                                <div class="dropdown-option" data-value="none">우리 가게가 없어요</div>
-                                <!-- 가게 목록이 여기에 동적으로 추가됩니다 -->
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="storeSelect" name="storeSelect" required>
-                </div>
-
-                <!-- 가게명 직접 입력 (선택시 표시) -->
-                <div class="form-group" id="storeNameGroup" style="display: none;">
-                    <label for="storeName">가게명 <span class="required">*</span></label>
-                    <input type="text" id="storeName" placeholder="가게명을 입력해주세요">
-                </div>
-
-                <!-- 업종 선택 -->
-                <div class="form-group">
-                    <label for="businessType">업종 선택 <span class="required">*</span></label>
-                    <div class="custom-dropdown">
-                        <div class="dropdown-selected" id="businessDropdownSelected">
-                            <span class="selected-text">업종을 선택해주세요</span>
-                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
-                                <path d="M1 1.5L6 6.5L11 1.5" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        <div class="dropdown-menu" id="businessDropdownMenu" style="display: none;">
-                            <div class="dropdown-search">
-                                <input type="text" id="businessDropdownSearch" class="dropdown-search-input" placeholder="업종으로 검색">
-                            </div>
-                            <div class="dropdown-options" id="businessDropdownOptions">
-                                <!-- 업종 목록이 여기에 동적으로 추가됩니다 -->
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="businessType" name="businessType" required>
                 </div>
 
                 <!-- 전체동의 -->
@@ -174,8 +163,15 @@
                     </div>
                     <div class="term-item">
                         <div class="term-left">
-                            <input type="checkbox" id="terms3" class="term-checkbox">
-                            <label for="terms3">마케팅 정보 이용 및 수신동의 <span class="optional">(선택)</span></label>
+                            <input type="checkbox" id="terms3" class="term-checkbox" required>
+                            <label for="terms3">제휴업체 약관 동의 <span class="required">*</span></label>
+                        </div>
+                        <button type="button" class="view-btn" onclick="showTermsPopup('partner-agreement')">전문보기</button>
+                    </div>
+                    <div class="term-item">
+                        <div class="term-left">
+                            <input type="checkbox" id="terms4" class="term-checkbox">
+                            <label for="terms4">마케팅 정보 이용 및 수신동의 <span class="optional">(선택)</span></label>
                         </div>
                         <button type="button" class="view-btn" onclick="showTermsPopup('marketing-agreement')">전문보기</button>
                     </div>
@@ -195,8 +191,8 @@
         </div>
     </div>
 
-    <script type="module" src="../../js/firebase-config.js"></script>
-    <script type="module" src="../../js/auth/register-business.js"></script>
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="/auth/js/register-partner.js"></script>
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
@@ -220,7 +216,7 @@
         function showTermsPopup(termsType) {
             const modal = document.getElementById('termsModal');
             const frame = document.getElementById('termsFrame');
-            frame.src = `../../terms/${termsType}.html`;
+            frame.src = `/terms/${termsType}.html`;
             modal.style.display = 'block';
         }
 
@@ -239,18 +235,13 @@
             });
         }
 
-        // 개별 체크박스 상태 변경시 전체동의 체크박스 업데이트
-        document.addEventListener('DOMContentLoaded', function() {
-            const termCheckboxes = document.querySelectorAll('.term-checkbox');
-            const allAgreeCheckbox = document.getElementById('allAgree');
-            
-            termCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const allChecked = Array.from(termCheckboxes).every(cb => cb.checked);
-                    allAgreeCheckbox.checked = allChecked;
-                });
-            });
-        });
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('termsModal');
+            if (event.target === modal) {
+                closeTermsModal();
+            }
+        }
     </script>
 </body>
 </html>
