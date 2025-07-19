@@ -9,9 +9,16 @@
 <body>
     <header>
         <nav>
-            <a href="/">
+            <a href="/" id="logoLink">
                 <img src="/img/logo.png" alt="CINDA" class="logo" id="headerLogo">
             </a>
+            
+            <!-- 뒤로가기 버튼 (기본적으로 숨김) -->
+            <button class="back-button" id="backButton" style="display: none;" onclick="goBack()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
             
             <!-- 햄버거 메뉴 버튼 -->
             <button class="hamburger-menu" id="hamburgerMenu">
@@ -46,6 +53,10 @@
                     <div class="ad-banner">advertising_banner_4</div>
                     <div class="ad-banner">advertising_banner_5</div>
                     <div class="ad-banner">advertising_banner_6</div>
+                    <div class="ad-banner">advertising_banner_7</div>
+                    <div class="ad-banner">advertising_banner_8</div>
+                    <div class="ad-banner">advertising_banner_9</div>
+                    <div class="ad-banner">advertising_banner_10</div>
                 </div>
             </div>
             <button class="slide-btn next" onclick="slideAds('next')">›</button>

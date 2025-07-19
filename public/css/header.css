@@ -1,67 +1,64 @@
+/* 파일 경로: public/css/header.css */
+/* 파일 이름: header.css */
+
 /* 초기 로딩 시 깜빡임 방지 */
 #header-container {
     background-color: transparent;
 }
 
+/* 광고 배너 전체 컨테이너 */
+.ad-banner-wrapper-container {
+    background: transparent;
+    max-width: 470px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 470px 이하에서 반응형 처리 */
+@media (max-width: 470px) {
+    .ad-banner-wrapper-container {
+        max-width: 100%;
+    }
+    
+    .ad-banner-section {
+        padding: 0.5rem 0.5rem;
+    }
+}
+
 /* 광고 배너 섹션 */
 .ad-banner-section {
     position: relative;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
     background: transparent;
+    box-sizing: border-box;
 }
 
-/* 슬라이드 버튼 */
+/* 슬라이드 버튼 - 숨김 */
 .slide-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #e0e0e0;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
 }
 
-.slide-btn:hover {
-    background: #f5f5f5;
-}
-
-.slide-btn.prev {
-    left: 1rem;
-}
-
-.slide-btn.next {
-    right: 1rem;
-}
-
-/* 광고 배너 컨테이너 */
+/* 광고 배너 컨테이너 - 뷰포트 */
 .ad-banner-container {
     overflow: hidden;
     width: 100%;
+    position: relative;
+    box-sizing: border-box;
 }
 
-/* PC용 스타일 */
+/* 광고 배너 wrapper - 모든 배너를 포함 */
 .ad-banner-wrapper {
     display: flex;
-    gap: 1rem;
     transition: transform 0.3s ease;
+    will-change: transform;
 }
 
+/* 개별 광고 배너 */
 .ad-banner {
-    flex: 0 0 calc(25% - 0.75rem);
-    height: 80px;
+    flex: 0 0 auto;
+    width: 100%;
+    height: 120px;
     background: #f5f5f5;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -70,42 +67,69 @@
     justify-content: center;
     color: #999;
     font-size: 14px;
+    box-sizing: border-box;
+    padding: 1rem;
 }
 
+/* 헤더 */
 header {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    height: 90px;
+    height: 70px;
     display: flex;
     align-items: center;
 }
 
-/* 광고 배너 컨테이너 - 별도 영역 */
-.ad-banner-wrapper-container {
-    background: transparent;
-}
-
+/* 네비게이션 */
 nav {
-    max-width: 1440px;
+    max-width: 470px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 15px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     height: 100%;
-    gap: 3rem;
+}
+
+/* 로고 링크 */
+#logoLink {
+    display: inline-block;
+    padding: 0;
+    text-decoration: none;
 }
 
 /* 로고 */
 .logo {
-    height: 30px;
+    height: 25px;
     width: auto;
 }
 
-/* 햄버거 메뉴 버튼 - 기본적으로 숨김 */
+/* 뒤로가기 버튼 */
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -8px;
+}
+
+.back-button:hover {
+    background-color: #f5f5f5;
+    border-radius: 50%;
+}
+
+.back-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* 햄버거 메뉴 버튼 */
 .hamburger-menu {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: space-around;
     width: 30px;
@@ -116,7 +140,6 @@ nav {
     padding: 0;
     z-index: 1001;
     margin-left: auto;
-    margin-right: 0;
 }
 
 .hamburger-menu span {
@@ -140,38 +163,63 @@ nav {
     transform: rotate(-45deg);
 }
 
+/* 메뉴 리스트 */
 nav ul {
-    list-style: none;
-    margin: 0;
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: #fff;
+    flex-direction: column;
+    gap: 0;
     padding: 0;
-    display: flex;
-    gap: 2rem;
-    margin-left: auto;
+    margin: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    list-style: none;
+}
+
+/* 메뉴 활성화 시 */
+nav ul.active {
+    left: 0;
 }
 
 nav li {
+    width: 100%;
+    border-bottom: 1px solid #e0e0e0;
     margin: 0;
 }
 
-nav a {
+nav li a {
+    display: block;
+    padding: 1rem 1.5rem;
+    font-size: 16px;
     text-decoration: none;
     color: #666;
     font-weight: 500;
-    padding: 0.5rem 1rem 0.5rem 0;
     transition: color 0.3s ease;
 }
 
-nav a:hover {
+nav li a:hover {
+    background-color: #f5f5f5;
     color: #FF6666;
 }
 
 /* 현재 페이지 활성화 스타일 */
-nav a.active {
+nav li a.active {
+    background-color: #FFF5F5;
     color: #FF6666;
     font-weight: 600;
 }
 
 /* 관리자 메뉴 특별 스타일 */
+.admin-menu {
+    background-color: transparent;
+}
+
 .admin-menu a {
     color: #666;
     font-weight: 500;
@@ -182,6 +230,10 @@ nav a.active {
 }
 
 /* 광고관리 메뉴 특별 스타일 */
+.advertise-menu {
+    background-color: transparent;
+}
+
 .advertise-menu a {
     color: #666;
     font-weight: 500;
@@ -192,6 +244,12 @@ nav a.active {
 }
 
 /* 로그아웃 메뉴 스타일 */
+.logout-menu {
+    background-color: #f5f5f5;
+    border-top: 2px solid #e0e0e0;
+    margin-top: 1rem;
+}
+
 .logout-menu a {
     color: #666;
     font-weight: 500;
@@ -199,126 +257,4 @@ nav a.active {
 
 .logout-menu a:hover {
     color: #333;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    .ad-banner-section {
-        padding: 0.5rem 0; /* 상하 패딩만 */
-        overflow: hidden;
-    }
-    
-    .slide-btn {
-        display: none;
-    }
-    
-    .ad-banner-container {
-        overflow: hidden;
-        width: calc(100% - 2rem); /* 좌우 마진 */
-        margin: 0 1rem;
-    }
-    
-    .ad-banner-wrapper {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 0; /* gap 제거 */
-        transition: transform 0.3s ease;
-    }
-    
-    .ad-banner {
-        flex: 0 0 100%; /* 컨테이너의 100% */
-        min-width: 100%;
-        height: 120px;
-        margin-right: 1rem; /* 배너 사이 간격 */
-        font-size: 14px;
-    }
-    
-    .ad-banner:last-child {
-        margin-right: 0;
-    }
-    
-    header {
-        height: 70px;
-        position: relative;
-    }
-    
-    #header-container {
-        min-height: 70px;
-    }
-    
-    nav {
-        padding: 0 15px;
-        justify-content: space-between;
-    }
-    
-    .logo {
-        height: 25px;
-        margin-left: -15px;
-    }
-    
-    /* 햄버거 메뉴 표시 */
-    .hamburger-menu {
-        display: flex;
-        margin-right: 0;
-    }
-    
-    /* 메뉴 리스트 모바일 스타일 */
-    nav ul {
-        position: fixed;
-        top: 70px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 70px);
-        background-color: #fff;
-        flex-direction: column;
-        gap: 0;
-        padding: 0;
-        margin: 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: left 0.3s ease;
-        z-index: 1000;
-        overflow-y: auto;
-    }
-    
-    /* 메뉴 활성화 시 */
-    nav ul.active {
-        left: 0;
-    }
-    
-    nav li {
-        width: 100%;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    
-    nav a {
-        display: block;
-        padding: 1rem 1.5rem;
-        font-size: 16px;
-    }
-    
-    nav a:hover {
-        background-color: #f5f5f5;
-    }
-    
-    /* 현재 페이지 활성화 스타일 - 모바일 */
-    nav a.active {
-        background-color: #FFF5F5;
-    }
-    
-    /* 관리자 메뉴 모바일 스타일 */
-    .admin-menu {
-        background-color: transparent;
-    }
-    
-    /* 광고관리 메뉴 모바일 스타일 */
-    .advertise-menu {
-        background-color: transparent;
-    }
-    
-    /* 로그아웃 메뉴 모바일 스타일 */
-    .logout-menu {
-        background-color: #f5f5f5;
-        border-top: 2px solid #e0e0e0;
-        margin-top: 1rem;
-    }
 }
