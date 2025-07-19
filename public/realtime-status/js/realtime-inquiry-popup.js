@@ -1,41 +1,39 @@
 // 파일 경로: /public/realtime-status/js/realtime-inquiry-popup.js
 
 import { db } from '/js/firebase-config.js';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { collection, query, where, getDocs, doc, getDoc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 // 전역 변수로 각 카드의 광고 데이터 저장
 const cardInquiryData = new Map();
 
-// 추천한 업체 ID를 로컬 스토리지에 저장
-const LIKED_STORES_KEY = 'cinda_liked_stores';
+// Firebase Auth 인스턴스
+const auth = getAuth();
 
-// 추천한 업체 목록 가져오기
-function getLikedStores() {
+// 현재 로그인한 사용자 ID 가져오기
+function getCurrentUserId() {
+    return auth.currentUser?.uid || null;
+}
+
+// 사용자가 특정 업체에 좋아요 했는지 확인
+async function checkUserLike(businessUserId, currentUserId) {
     try {
-        const liked = localStorage.getItem(LIKED_STORES_KEY);
-        return liked ? JSON.parse(liked) : [];
-    } catch (e) {
-        return [];
+        const likeDoc = await getDoc(
+            doc(db, 'business_users', businessUserId, 'likes', currentUserId)
+        );
+        return likeDoc.exists();
+    } catch (error) {
+        console.error('좋아요 확인 오류:', error);
+        return false;
     }
-}
-
-// 추천한 업체 추가
-function addLikedStore(userId) {
-    const liked = getLikedStores();
-    if (!liked.includes(userId)) {
-        liked.push(userId);
-        localStorage.setItem(LIKED_STORES_KEY, JSON.stringify(liked));
-    }
-}
-
-// 이미 추천했는지 확인
-function hasLiked(userId) {
-    return getLikedStores().includes(userId);
 }
 
 // 문의 팝업 기능 초기화
 export async function initializeInquiryPopup() {
     console.log('문의 팝업 초기화 시작');
+    
+    // inquiry.html의 템플릿 로드
+    await loadInquiryTemplates();
     
     // 1. 먼저 모든 status-card에 대해 광고 데이터 로드
     const statusCards = document.querySelectorAll('.status-card');
@@ -73,6 +71,26 @@ export async function initializeInquiryPopup() {
     });
 }
 
+// inquiry.html에서 템플릿 로드
+async function loadInquiryTemplates() {
+    try {
+        const response = await fetch('/realtime-status/html/inquiry.html');
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        
+        // 템플릿들을 현재 문서에 추가
+        const templates = doc.querySelectorAll('template');
+        templates.forEach(template => {
+            if (!document.getElementById(template.id)) {
+                document.body.appendChild(template.cloneNode(true));
+            }
+        });
+    } catch (error) {
+        console.error('템플릿 로드 오류:', error);
+    }
+}
+
 // 문의 팝업 열기
 function openInquiryPopup(e) {
     e.preventDefault();
@@ -91,7 +109,7 @@ function openInquiryPopup(e) {
 }
 
 // 모바일 문의 팝업
-function openMobileInquiry(card, location, button, ads) {
+async function openMobileInquiry(card, location, button, ads) {
     // 이미 활성화된 버튼 클릭시 닫기
     if (button.classList.contains('active')) {
         closeAllMobilePopups();
@@ -106,55 +124,52 @@ function openMobileInquiry(card, location, button, ads) {
     button.classList.add('active');
     
     // 문의 영역 생성
-    const area = document.createElement('div');
-    area.className = 'mobile-action-area inquiry-list';
+    let area;
     
     if (ads.length > 0) {
-        // 문의 가능한 업체가 있는 경우
-        area.innerHTML = `
-            <div class="mobile-action-container">
-                <div class="inquiry-header">
-                    <h3>문의 가능 업체</h3>
-                    <span class="location-tag">${location}</span>
-                    <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
-                </div>
-                
-                <div class="inquiry-list-container">
-                    ${ads.map((ad, index) => `
-                        <div class="inquiry-item" data-index="${index}">
-                            <div class="inquiry-item-left">
-                                <span class="business-name">${ad.businessName}</span>
-                                <span class="badge">문의가능</span>
-                            </div>
-                            <div class="inquiry-item-right">
-                                <button class="inquiry-phone-btn" data-phone="${ad.contactPhone || ''}" data-business="${ad.businessName}" data-nickname="${ad.userNickname}">
-                                    📞
-                                </button>
-                                <button class="inquiry-like-btn" data-userid="${ad.userId}">
-                                    ❤️ ${ad.recommendationOrder || 0}
-                                </button>
-                                <span class="user-nickname">${ad.userNickname}</span>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+        // 문의 가능한 업체가 있는 경우 - 템플릿 사용
+        const template = document.getElementById('mobile-inquiry-list-template');
+        area = template.content.cloneNode(true).querySelector('.mobile-action-area');
+        
+        // location 설정
+        area.querySelector('.location-tag').textContent = location;
+        
+        // 문의 아이템 추가
+        const container = area.querySelector('.inquiry-list-container');
+        const itemTemplate = document.getElementById('inquiry-item-template');
+        
+        for (const ad of ads) {
+            const item = itemTemplate.content.cloneNode(true).querySelector('.inquiry-item');
+            
+            // 데이터 설정
+            item.querySelector('.business-name').textContent = ad.userNickname;
+            
+            const phoneBtn = item.querySelector('.inquiry-phone-btn');
+            phoneBtn.dataset.phone = ad.contactPhone || '';
+            phoneBtn.dataset.nickname = ad.userNickname;
+            
+            const likeBtn = item.querySelector('.inquiry-like-btn');
+            likeBtn.dataset.userid = ad.userId;
+            likeBtn.querySelector('.like-count').textContent = ad.likeCount || 0;
+            
+            // 현재 사용자가 이미 좋아요했는지 확인
+            const currentUserId = getCurrentUserId();
+            if (currentUserId) {
+                const hasLiked = await checkUserLike(ad.userId, currentUserId);
+                if (hasLiked) {
+                    likeBtn.classList.add('liked');
+                }
+            }
+            
+            container.appendChild(item);
+        }
     } else {
-        // 문의 가능한 업체가 없는 경우
-        area.innerHTML = `
-            <div class="mobile-action-container">
-                <div class="inquiry-header">
-                    <h3>문의하기</h3>
-                    <span class="location-tag">${location}</span>
-                    <button class="close-btn" onclick="closeAllMobilePopups()">×</button>
-                </div>
-                <div class="inquiry-empty-content">
-                    <p class="empty-message">현재 문의 가능한 업체가 없습니다.</p>
-                    <p class="empty-sub-message">실시간 현황판 광고를 신청한 업체의 연락처가 여기에 표시됩니다.</p>
-                </div>
-            </div>
-        `;
+        // 문의 가능한 업체가 없는 경우 - 템플릿 사용
+        const template = document.getElementById('mobile-inquiry-empty-template');
+        area = template.content.cloneNode(true).querySelector('.mobile-action-area');
+        
+        // location 설정
+        area.querySelector('.location-tag').textContent = location;
     }
     
     // 선택된 카드 바로 다음에 삽입
@@ -175,7 +190,7 @@ function openMobileInquiry(card, location, button, ads) {
 }
 
 // PC 문의 팝업
-function openDesktopInquiry(card, location, button, ads) {
+async function openDesktopInquiry(card, location, button, ads) {
     const rightSection = document.querySelector('.right-section');
     const mainContainer = document.querySelector('.main-container');
     
@@ -195,54 +210,58 @@ function openDesktopInquiry(card, location, button, ads) {
     button.classList.add('active');
     mainContainer.classList.add('right-active');
     
+    // 기존 내용 제거
+    rightSection.innerHTML = '';
+    
+    let content;
+    
     if (ads.length > 0) {
-        // 문의 가능한 업체가 있는 경우
-        rightSection.innerHTML = `
-            <div class="right-content">
-                <div class="inquiry-header">
-                    <h3>문의 가능 업체</h3>
-                    <span class="location-tag">${location}</span>
-                    <button class="close-btn" onclick="closeDesktopPopup()">×</button>
-                </div>
-                
-                <div class="inquiry-list-container">
-                    ${ads.map((ad, index) => `
-                        <div class="inquiry-item" data-index="${index}">
-                            <div class="inquiry-item-left">
-                                <span class="business-name">${ad.businessName}</span>
-                                <span class="badge">문의가능</span>
-                            </div>
-                            <div class="inquiry-item-right">
-                                <button class="inquiry-phone-btn" data-phone="${ad.contactPhone || ''}" data-business="${ad.businessName}" data-nickname="${ad.userNickname}">
-                                    📞
-                                </button>
-                                <button class="inquiry-like-btn" data-userid="${ad.userId}">
-                                    ❤️ ${ad.recommendationOrder || 0}
-                                </button>
-                                <span class="user-nickname">${ad.userNickname}</span>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+        // 문의 가능한 업체가 있는 경우 - 템플릿 사용
+        const template = document.getElementById('desktop-inquiry-list-template');
+        content = template.content.cloneNode(true);
+        
+        // location 설정
+        content.querySelector('.location-tag').textContent = location;
+        
+        // 문의 아이템 추가
+        const container = content.querySelector('.inquiry-list-container');
+        const itemTemplate = document.getElementById('inquiry-item-template');
+        
+        for (const ad of ads) {
+            const item = itemTemplate.content.cloneNode(true).querySelector('.inquiry-item');
+            
+            // 데이터 설정
+            item.querySelector('.business-name').textContent = ad.userNickname;
+            
+            const phoneBtn = item.querySelector('.inquiry-phone-btn');
+            phoneBtn.dataset.phone = ad.contactPhone || '';
+            phoneBtn.dataset.nickname = ad.userNickname;
+            
+            const likeBtn = item.querySelector('.inquiry-like-btn');
+            likeBtn.dataset.userid = ad.userId;
+            likeBtn.querySelector('.like-count').textContent = ad.likeCount || 0;
+            
+            // 현재 사용자가 이미 좋아요했는지 확인
+            const currentUserId = getCurrentUserId();
+            if (currentUserId) {
+                const hasLiked = await checkUserLike(ad.userId, currentUserId);
+                if (hasLiked) {
+                    likeBtn.classList.add('liked');
+                }
+            }
+            
+            container.appendChild(item);
+        }
     } else {
-        // 문의 가능한 업체가 없는 경우
-        rightSection.innerHTML = `
-            <div class="right-content">
-                <div class="inquiry-header">
-                    <h3>문의하기</h3>
-                    <span class="location-tag">${location}</span>
-                    <button class="close-btn" onclick="closeDesktopPopup()">×</button>
-                </div>
-                <div class="inquiry-empty-content">
-                    <p class="empty-message">현재 문의 가능한 업체가 없습니다.</p>
-                    <p class="empty-sub-message">실시간 현황판 광고를 신청한 업체의 연락처가 여기에 표시됩니다.</p>
-                </div>
-            </div>
-        `;
+        // 문의 가능한 업체가 없는 경우 - 템플릿 사용
+        const template = document.getElementById('desktop-inquiry-empty-template');
+        content = template.content.cloneNode(true);
+        
+        // location 설정
+        content.querySelector('.location-tag').textContent = location;
     }
     
+    rightSection.appendChild(content);
     rightSection.style.display = 'flex';
     
     // 각 버튼에 이벤트 추가 (문의 가능한 업체가 있는 경우)
@@ -264,7 +283,6 @@ function handlePhoneClick(e) {
     e.stopPropagation();
     
     const phone = this.dataset.phone;
-    const businessName = this.dataset.business;
     const nickname = this.dataset.nickname;
     
     if (!phone) {
@@ -272,7 +290,7 @@ function handlePhoneClick(e) {
         return;
     }
     
-    const contactInfo = `${businessName}\n담당자: ${nickname}\n전화번호: ${phone}`;
+    const contactInfo = `담당자: ${nickname}\n전화번호: ${phone}`;
     
     // 모바일에서는 전화 연결 옵션 제공
     if (window.innerWidth <= 768 && window.confirm(contactInfo + '\n\n전화로 연결하시겠습니까?')) {
@@ -286,11 +304,16 @@ function handlePhoneClick(e) {
 async function handleLikeClick(e) {
     e.stopPropagation();
     
-    const userId = this.dataset.userid;
+    const businessUserId = this.dataset.userid;
     const button = this;
+    const likeCountElement = button.querySelector('.like-count');
+    const currentUserId = getCurrentUserId();
     
-    // 이미 추천한 경우
-    if (hasLiked(userId)) {
+    console.log('좋아요 클릭 - 현재 사용자 ID:', currentUserId);
+    console.log('좋아요 대상 business user ID:', businessUserId);
+    
+    if (!currentUserId) {
+        alert('로그인이 필요한 기능입니다.');
         return;
     }
     
@@ -298,21 +321,35 @@ async function handleLikeClick(e) {
         // 버튼 비활성화
         button.disabled = true;
         
-        // business_users 문서의 recommendationOrder 값 증가
-        const userRef = doc(db, 'business_users', userId);
-        await updateDoc(userRef, {
-            recommendationOrder: increment(1)
-        });
+        // 좋아요 상태 확인
+        const likeRef = doc(db, 'business_users', businessUserId, 'likes', currentUserId);
+        const likeDoc = await getDoc(likeRef);
+        const isLiked = likeDoc.exists();
         
-        // 현재 숫자 업데이트
-        const currentCount = parseInt(button.textContent.match(/\d+/)[0] || 0);
-        button.innerHTML = `❤️ ${currentCount + 1}`;
-        
-        // 추천 목록에 추가
-        addLikedStore(userId);
-        
-        // 버튼 스타일 변경
-        button.classList.add('liked');
+        if (isLiked) {
+            // 좋아요 취소
+            await deleteDoc(likeRef);
+            
+            // 현재 숫자 감소
+            const currentCount = parseInt(likeCountElement.textContent || 0);
+            likeCountElement.textContent = Math.max(0, currentCount - 1);
+            
+            // 버튼 스타일 제거
+            button.classList.remove('liked');
+        } else {
+            // 좋아요 추가
+            await setDoc(likeRef, {
+                userId: currentUserId,
+                likedAt: new Date()
+            });
+            
+            // 현재 숫자 증가
+            const currentCount = parseInt(likeCountElement.textContent || 0);
+            likeCountElement.textContent = currentCount + 1;
+            
+            // 버튼 스타일 변경
+            button.classList.add('liked');
+        }
         
         // 클릭 효과
         button.style.transform = 'scale(1.2)';
@@ -320,8 +357,12 @@ async function handleLikeClick(e) {
             button.style.transform = 'scale(1)';
         }, 200);
         
+        // 버튼 다시 활성화
+        button.disabled = false;
+        
     } catch (error) {
         console.error('좋아요 처리 오류:', error);
+        alert('좋아요 처리 중 오류가 발생했습니다.');
         // 오류 발생 시 버튼 다시 활성화
         button.disabled = false;
     }
@@ -343,72 +384,41 @@ async function loadInquiryData(storeCode) {
         
         console.log('전체 realtime 광고 수:', adsSnapshot.size);
         
-        // 2. 각 광고에 대해 storeCode 확인 및 사용자 정보 가져오기
+        // 2. 각 광고에 대해 storeCode 배열 확인
         for (const adDoc of adsSnapshot.docs) {
             const adData = adDoc.data();
-            console.log('광고 데이터:', adData);
             
-            // status가 pending 또는 active인 경우만 처리
-            if (adData.status !== 'pending' && adData.status !== 'active') {
-                continue;
-            }
-            
-            // 광고의 storeCode가 일치하는지 확인
-            let isMatch = false;
-            
-            if (adData.storeCode === storeCode) {
-                isMatch = true;
-                console.log('storeCode 일치:', adData.storeCode);
-            } else {
-                // business_users에서 storeCode 확인
-                try {
-                    const userDoc = await getDoc(doc(db, 'business_users', adData.userId));
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        if (userData.storeCode === storeCode) {
-                            isMatch = true;
-                            console.log('사용자 storeCode 일치:', userData.storeCode);
-                        }
-                    }
-                } catch (userError) {
-                    console.error('사용자 정보 조회 오류:', userError);
-                }
-            }
-            
-            if (isMatch) {
-                // business_users에서 추천순 정보 가져오기
-                try {
-                    const userDoc = await getDoc(doc(db, 'business_users', adData.userId));
-                    
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        pendingAds.push({
-                            id: adDoc.id,
-                            ...adData,
-                            recommendationOrder: userData.recommendationOrder || 0,
-                            userNickname: adData.userNickname || userData.nickname || adData.contactName || '미등록',
-                            businessName: adData.businessName || userData.storeName || ''
-                        });
-                    }
-                } catch (userError) {
-                    // 사용자 정보를 가져올 수 없는 경우에도 광고 데이터는 사용
-                    console.log('사용자 정보 없이 광고 데이터 사용');
-                    pendingAds.push({
-                        id: adDoc.id,
-                        ...adData,
-                        recommendationOrder: 0,
-                        userNickname: adData.userNickname || adData.contactName || '미등록',
-                        businessName: adData.businessName || ''
-                    });
-                }
+            // storeCode가 배열에 포함되어 있는지 확인
+            if (adData.storeCode && adData.storeCode.includes(storeCode)) {
+                const businessUserId = adData.userId;
+                
+                // 3. likes 서브컬렉션에서 좋아요 수 가져오기
+                const likesSnapshot = await getDocs(
+                    collection(db, 'business_users', businessUserId, 'likes')
+                );
+                const likeCount = likesSnapshot.size;
+                
+                pendingAds.push({
+                    ...adData,
+                    userId: businessUserId,
+                    userNickname: adData.userNickname || '담당자',
+                    contactPhone: adData.contactPhone || '',
+                    likeCount: likeCount
+                });
+                
+                console.log('매칭된 광고:', {
+                    userNickname: adData.userNickname,
+                    storeCode: storeCode,
+                    likeCount: likeCount
+                });
             }
         }
         
-        console.log('매칭된 광고 수:', pendingAds.length);
+        console.log(`storeCode ${storeCode}에 대한 광고 수:`, pendingAds.length);
         
-        // 3. 추천순으로 정렬 (높은 순서대로)
+        // 4. 좋아요 수로 정렬 (높은 순서대로)
         pendingAds.sort((a, b) => {
-            return b.recommendationOrder - a.recommendationOrder;
+            return b.likeCount - a.likeCount;
         });
         
         return pendingAds;
@@ -439,5 +449,3 @@ window.closeDesktopPopup = function() {
         el.classList.remove('active');
     });
 }
-
-// CSS 스타일은 별도의 realtime-inquiry.css 파일에 추가해야 함

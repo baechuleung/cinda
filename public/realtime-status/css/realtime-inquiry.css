@@ -135,7 +135,7 @@
     overflow-y: auto;
 }
 
-/* 문의 아이템 */
+/* 문의 아이템 - 한 줄로 표시 */
 .inquiry-item {
     background: white;
     border: 1px solid #e0e0e0;
@@ -143,6 +143,9 @@
     padding: 1rem;
     margin-bottom: 0.75rem;
     transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .inquiry-item:hover {
@@ -150,33 +153,19 @@
     box-shadow: 0 2px 8px rgba(83, 104, 255, 0.1);
 }
 
-.inquiry-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
 .business-name {
     font-size: 14px;
     font-weight: 600;
     color: #333;
+    flex: 1;
+    margin-right: 1rem;
 }
 
-.badge {
-    background: #E7F5FF;
-    color: #1C7ED6;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
-/* 수정된 부분: inquiry-item-info를 inquiry-item-actions로 변경 */
+/* 액션 버튼들 */
 .inquiry-item-actions {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    justify-content: flex-end;
 }
 
 /* 전화 버튼과 좋아요 버튼 스타일 */
@@ -219,15 +208,6 @@
 .inquiry-like-btn.liked:hover {
     background: #ff6b6b;
     border-color: #ff6b6b;
-}
-
-/* 사용자 닉네임 스타일 */
-.user-nickname {
-    font-size: 13px;
-    color: #666;
-    min-width: 80px;
-    text-align: right;
-    margin-left: 0.5rem;
 }
 
 /* 빈 문의 상태 */
@@ -283,21 +263,6 @@
     
     .inquiry-item {
         padding: 0.75rem;
-    }
-    
-    .inquiry-item-actions {
-        flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-    
-    .user-nickname {
-        width: 100%;
-        text-align: left;
-        margin-left: 0;
-        margin-top: 0.5rem;
-        order: 3;
     }
 }
 
