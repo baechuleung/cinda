@@ -1,194 +1,68 @@
-// 파일 경로: public/js/header.js
-// 파일 이름: header.js
+// header.js - 헤더 관련 스크립트
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { collection, query, where, getDocs, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
-// Firebase imports
-import { auth, db } from '/js/firebase-config.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-// 광고 슬라이드 관련 변수
+// DOM 요소 캐싱
 let currentSlide = 0;
-let slidesPerView = 4;
-let gap = 16;
-let maxSlide = 0;
+let adBannerWrapper = null;
+let slideTimer = null;
 
-// 슬라이드 설정 업데이트
-function updateSlideSettings() {
-    const width = window.innerWidth;
+// DOM 로드 완료 시 실행
+document.addEventListener('DOMContentLoaded', function() {
+    adBannerWrapper = document.getElementById('adBannerWrapper');
     
-    if (width > 1440) {
-        slidesPerView = 4;
-        gap = 16;
-    } else if (width > 1024) {
-        slidesPerView = 3;
-        gap = 14;
-    } else if (width > 768) {
-        slidesPerView = 2;
-        gap = 12;
-    } else {
-        slidesPerView = 1;
-        gap = 0;
-    }
+    // 사용자 상태 확인 및 메뉴 표시
+    checkAuthState();
     
-    const banners = document.querySelectorAll('.ad-banner');
-    maxSlide = Math.max(0, banners.length - slidesPerView);
-}
-
-// 슬라이드 이동
-function moveSlide() {
-    const wrapper = document.querySelector('.ad-banner-wrapper');
-    if (!wrapper) return;
+    // 현재 페이지 활성화
+    setActiveNavItem();
     
+    // 광고 배너 로드
+    loadAdvertisements();
+    
+    // 모바일 자동 슬라이드 시작
     if (window.innerWidth <= 768) {
-        wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-    } else {
-        const container = document.querySelector('.ad-banner-container');
-        const containerWidth = container ? container.offsetWidth : 0;
-        const slideWidth = (containerWidth - gap * (slidesPerView - 1)) / slidesPerView;
-        const offset = currentSlide * (slideWidth + gap);
-        wrapper.style.transform = `translateX(-${offset}px)`;
+        startAutoSlide();
     }
-}
+});
 
-// 슬라이드 버튼 업데이트
-function updateSlideButtons() {
-    const prevBtn = document.querySelector('.slide-btn.prev');
-    const nextBtn = document.querySelector('.slide-btn.next');
-    
-    if (!prevBtn || !nextBtn) return;
-    
-    prevBtn.style.opacity = currentSlide === 0 ? '0.5' : '1';
-    prevBtn.style.pointerEvents = currentSlide === 0 ? 'none' : 'auto';
-    
-    nextBtn.style.opacity = currentSlide >= maxSlide ? '0.5' : '1';
-    nextBtn.style.pointerEvents = currentSlide >= maxSlide ? 'none' : 'auto';
-}
-
-// 광고 슬라이드 함수
-window.slideAds = function(direction) {
-    if (direction === 'prev' && currentSlide > 0) {
-        currentSlide--;
-    } else if (direction === 'next' && currentSlide < maxSlide) {
-        currentSlide++;
-    }
-    
-    moveSlide();
-    updateSlideButtons();
-};
-
-// 슬라이더 초기화
-function initializeSlider() {
-    updateSlideSettings();
-    moveSlide();
-    updateSlideButtons();
-    
-    // 터치 이벤트 처리 (모바일)
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    const container = document.querySelector('.ad-banner-container');
-    if (!container) return;
-    
-    container.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-    
-    container.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
+// 인증 상태 확인
+function checkAuthState() {
+    onAuthStateChanged(auth, async (user) => {
+        const adminMenu = document.querySelector('.admin-menu');
+        const advertiseMenu = document.querySelector('.advertise-menu');
+        const logoutMenu = document.querySelector('.logout-menu');
         
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0 && currentSlide < maxSlide) {
-                slideAds('next');
-            } else if (diff < 0 && currentSlide > 0) {
-                slideAds('prev');
+        if (user) {
+            // 로그인 상태
+            if (advertiseMenu) advertiseMenu.style.display = 'block';
+            if (logoutMenu) logoutMenu.style.display = 'block';
+            
+            // 관리자 여부 확인
+            const isAdmin = await checkIsAdmin(user.uid);
+            if (adminMenu) {
+                adminMenu.style.display = isAdmin ? 'block' : 'none';
             }
-        }
-    }
-}
-
-// 보호된 페이지 확인
-function isProtectedPage() {
-    const protectedPaths = [
-        '/admin/',
-        '/advertise/',
-        '/community/html/write.html',
-        '/community/html/edit.html'
-    ];
-    
-    const currentPath = window.location.pathname;
-    return protectedPaths.some(path => currentPath.includes(path));
-}
-
-// 활성 메뉴 설정
-function setActiveMenu() {
-    const currentPath = window.location.pathname;
-    const menuLinks = document.querySelectorAll('nav a');
-    
-    menuLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        
-        if (href && currentPath.includes(href) && href !== '#' && href !== '/') {
-            link.classList.add('active');
-        } else if (href === '/' && (currentPath === '/' || currentPath === '/index.html')) {
-            link.classList.add('active');
         } else {
-            link.classList.remove('active');
+            // 로그아웃 상태
+            if (adminMenu) adminMenu.style.display = 'none';
+            if (advertiseMenu) advertiseMenu.style.display = 'none';
+            if (logoutMenu) logoutMenu.style.display = 'none';
         }
     });
 }
 
-// 사용자 인증 상태 확인 및 메뉴 표시
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // 로그인한 경우 로그아웃 메뉴 표시
-        showLogoutMenu();
-        
-        // 관리자 여부 확인
-        const isAdmin = await checkAdminStatus(user.uid);
-        if (isAdmin) {
-            showAdminMenu();
-        }
-        
-        // 기업회원 여부 확인 (business_users)
-        const isBusinessUser = await checkBusinessUserStatus(user.uid);
-        if (isBusinessUser) {
-            showAdvertiseMenu();
-        }
-        
-        // 파트너회원 여부 확인 (partner_users)
-        const isPartnerUser = await checkPartnerUserStatus(user.uid);
-        if (isPartnerUser) {
-            showAdvertiseMenu();
-        }
-    } else {
-        // 로그인하지 않은 경우
-        hideLogoutMenu();
-        
-        // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
-        if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
-            window.location.href = '/auth/login.html';
-            sessionStorage.setItem('loginRequired', 'true');
-        }
-    }
-});
-
-// 관리자 상태 확인
-async function checkAdminStatus(uid) {
+// 관리자 여부 확인
+async function checkIsAdmin(uid) {
     try {
-        const adminDoc = await getDoc(doc(db, 'admin_users', uid));
+        const userQuery = query(collection(db, 'users'), where('uid', '==', uid));
+        const querySnapshot = await getDocs(userQuery);
         
-        if (adminDoc.exists()) {
-            const adminData = adminDoc.data();
-            // 레벨 10인 경우만 관리자 메뉴 표시
-            return adminData.level === 10;
+        if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            return userData.role === 'admin';
         }
-        
         return false;
     } catch (error) {
         console.error('관리자 확인 오류:', error);
@@ -196,145 +70,193 @@ async function checkAdminStatus(uid) {
     }
 }
 
-// 기업회원 상태 확인
-async function checkBusinessUserStatus(uid) {
+// 현재 페이지 네비게이션 활성화
+function setActiveNavItem() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('nav a');
+    
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href');
+        
+        if (href === currentPath || (currentPath.includes(href) && href !== '/')) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// 광고 로드
+async function loadAdvertisements() {
     try {
-        const businessDoc = await getDoc(doc(db, 'business_users', uid));
-        return businessDoc.exists();
+        const now = new Date();
+        const adsQuery = query(
+            collection(db, 'advertisements'),
+            where('type', '==', 'top'),
+            where('status', '==', 'active'),
+            where('endDate', '>=', now),
+            orderBy('endDate', 'asc'),
+            limit(6)
+        );
+        
+        const querySnapshot = await getDocs(adsQuery);
+        const ads = [];
+        
+        querySnapshot.forEach((doc) => {
+            ads.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // 광고 배너에 데이터 적용
+        displayAdvertisements(ads);
+        
     } catch (error) {
-        console.error('기업회원 확인 오류:', error);
-        return false;
+        console.error('광고 로드 오류:', error);
     }
 }
 
-// 파트너회원 상태 확인
-async function checkPartnerUserStatus(uid) {
-    try {
-        const partnerDoc = await getDoc(doc(db, 'partner_users', uid));
-        return partnerDoc.exists();
-    } catch (error) {
-        console.error('파트너회원 확인 오류:', error);
-        return false;
+// 광고 표시
+function displayAdvertisements(ads) {
+    const banners = document.querySelectorAll('.ad-banner');
+    
+    banners.forEach((banner, index) => {
+        const adContent = banner.querySelector('.ad-content');
+        
+        if (ads[index]) {
+            const ad = ads[index];
+            banner.setAttribute('data-ad-id', ad.id);
+            
+            // 광고 내용 표시
+            adContent.innerHTML = `
+                <a href="${ad.link || '#'}" target="_blank" style="
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    text-decoration: none;
+                    color: inherit;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0.5rem;
+                    text-align: center;
+                ">
+                    <span style="font-size: 14px; font-weight: 500;">${ad.title || ad.businessName}</span>
+                </a>
+            `;
+            
+            // 광고 스타일 적용
+            banner.style.background = ad.backgroundColor || '#f5f5f5';
+            banner.style.color = ad.textColor || '#333';
+            
+        } else {
+            // 빈 슬롯 표시
+            adContent.innerHTML = `
+                <a href="/advertise/html/ad-add.html" style="
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    text-decoration: none;
+                    color: #999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    광고 신청
+                </a>
+            `;
+        }
+    });
+}
+
+// 광고 슬라이드 (PC)
+function slideAds(direction) {
+    if (!adBannerWrapper) return;
+    
+    const totalBanners = document.querySelectorAll('.ad-banner').length;
+    const isMobile = window.innerWidth <= 768;
+    const bannersToShow = isMobile ? 1 : 4;
+    const maxSlide = Math.max(0, totalBanners - bannersToShow);
+    
+    if (direction === 'next') {
+        currentSlide = Math.min(currentSlide + 1, maxSlide);
+    } else {
+        currentSlide = Math.max(currentSlide - 1, 0);
     }
-}
-
-// 관리자 메뉴 표시
-function showAdminMenu() {
-    const adminMenus = document.querySelectorAll('.admin-menu');
     
-    adminMenus.forEach(menu => {
-        menu.style.cssText = 'display: block !important;';
-    });
+    const translateX = currentSlide * (100 / bannersToShow + (isMobile ? 0 : 1));
+    adBannerWrapper.style.transform = `translateX(-${translateX}%)`;
 }
 
-// 광고관리 메뉴 표시
-function showAdvertiseMenu() {
-    const advertiseMenus = document.querySelectorAll('.advertise-menu');
+// 모바일 자동 슬라이드
+function startAutoSlide() {
+    if (slideTimer) clearInterval(slideTimer);
     
-    advertiseMenus.forEach(menu => {
-        menu.style.cssText = 'display: block !important;';
-    });
+    slideTimer = setInterval(() => {
+        const totalBanners = document.querySelectorAll('.ad-banner').length;
+        currentSlide = (currentSlide + 1) % totalBanners;
+        
+        const translateX = currentSlide * 85; // 80% 너비 + 5% 간격
+        adBannerWrapper.style.transform = `translateX(-${translateX}%)`;
+    }, 3000);
 }
 
-// 로그아웃 메뉴 표시
-function showLogoutMenu() {
-    const logoutMenus = document.querySelectorAll('.logout-menu');
-    logoutMenus.forEach(menu => {
-        menu.style.cssText = 'display: block !important;';
-    });
-}
-
-// 로그아웃 메뉴 숨김
-function hideLogoutMenu() {
-    const logoutMenus = document.querySelectorAll('.logout-menu');
-    logoutMenus.forEach(menu => {
-        menu.style.cssText = 'display: none !important;';
-    });
+// 햄버거 메뉴 토글
+function toggleMenu() {
+    const navMenu = document.getElementById('navMenu');
+    const hamburger = document.querySelector('.hamburger-menu');
+    
+    navMenu.classList.toggle('active');
+    hamburger.classList.toggle('active');
+    
+    // 메뉴 열림 시 스크롤 방지
+    if (navMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 }
 
 // 로그아웃 처리
-window.handleLogout = async function() {
-    if (confirm('로그아웃 하시겠습니까?')) {
-        try {
-            await auth.signOut();
-            window.location.href = '/auth/login.html';
-        } catch (error) {
-            console.error('로그아웃 오류:', error);
-            alert('로그아웃 중 오류가 발생했습니다.');
-        }
+async function handleLogout() {
+    try {
+        await auth.signOut();
+        alert('로그아웃되었습니다.');
+        window.location.href = '/';
+    } catch (error) {
+        console.error('로그아웃 오류:', error);
+        alert('로그아웃 중 오류가 발생했습니다.');
     }
 }
 
-// 로고 이미지 변경 함수
-function updateLogo() {
-    const logo = document.getElementById('headerLogo') || document.querySelector('.logo');
-    if (!logo) return;
+// 화면 크기 변경 시 처리
+window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth <= 768;
     
-    if (window.innerWidth <= 768) {
-        logo.src = '/img/m_logo.png';
+    // 로고 변경
+    const logo = document.getElementById('headerLogo');
+    if (logo) {
+        logo.src = isMobile ? '/img/m_logo.png' : '/img/logo.png';
+    }
+    
+    // 모바일 자동 슬라이드 처리
+    if (isMobile) {
+        startAutoSlide();
     } else {
-        logo.src = '/img/logo.png';
+        if (slideTimer) {
+            clearInterval(slideTimer);
+            slideTimer = null;
+        }
     }
-}
-
-// 햄버거 메뉴 기능 초기화
-function initializeHamburgerMenu() {
-    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    
+    // 메뉴 닫기
     const navMenu = document.getElementById('navMenu');
-    
-    if (!hamburgerMenu || !navMenu) return;
-    
-    // 햄버거 메뉴 클릭 이벤트
-    hamburgerMenu.addEventListener('click', function() {
-        this.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-    
-    // 메뉴 항목 클릭 시 메뉴 닫기
-    const menuLinks = navMenu.querySelectorAll('a');
-    menuLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            hamburgerMenu.classList.remove('active');
-            navMenu.classList.remove('active');
-        });
-    });
-    
-    // 초기 로고 설정
-    updateLogo();
-    
-    // 화면 크기 변경 시 메뉴 초기화 및 로고 변경
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            hamburgerMenu.classList.remove('active');
-            navMenu.classList.remove('active');
-        }
-        updateLogo();
-        
-        // 슬라이더 설정 업데이트
-        updateSlideSettings();
-        currentSlide = Math.min(currentSlide, maxSlide);
-        moveSlide();
-        updateSlideButtons();
-    });
-    
-    // 메뉴 외부 클릭 시 닫기
-    document.addEventListener('click', function(event) {
-        if (!navMenu.contains(event.target) && !hamburgerMenu.contains(event.target)) {
-            hamburgerMenu.classList.remove('active');
-            navMenu.classList.remove('active');
-        }
-    });
-}
+    const hamburger = document.querySelector('.hamburger-menu');
+    if (!isMobile && navMenu.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        hamburger.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
 
-// DOM 로드 후 초기화
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeHamburgerMenu();
-        initializeSlider();
-        setActiveMenu();
-    });
-} else {
-    initializeHamburgerMenu();
-    initializeSlider();
-    setActiveMenu();
-}
+// 전역 함수로 노출
+window.slideAds = slideAds;
+window.toggleMenu = toggleMenu;
+window.handleLogout = handleLogout;
