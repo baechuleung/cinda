@@ -19,72 +19,76 @@
         <div class="adult-notice">
             <img src="/img/adult.png" alt="19세 이상" class="adult-icon">
             <p class="adult-text">
-                본 정보 내용은 청소년 유해매체물로서 정보통신망 이용촉진 및 정보보호등의 관한 법률 및 청소년 보호법의 규정에 의하여 <span class="highlight">만 19세 미만의 청소년이</span> 이용할 수 없습니다.
+                저희 밤의 다이어리는 청소년 유해매체물로서 정보통신망 이용촉진 및 정보보호등의 관한 법률 및 청소년 보호법의규정에 의하여 <span class="highlight">만 19세 미만의 청소년이</span> 이용할 수 없습니다.
             </p>
         </div>
         
         <!-- 로그인 영역 -->
-        <div class="login-box">
-            <!-- 회원 로그인 -->
-            <div class="login-section member-login">
-                <h2><span class="red-text">회원</span> <span class="gray-text">로그인</span></h2>
-                
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="email">아이디</label>
-                        <input type="email" id="email" placeholder="이메일을 입력해주세요" autocomplete="email" required>
+        <!-- 비회원 로그인 -->
+        <div class="login-section non-member-login">
+            <h2>비회원 로그인</h2>
+            
+            <div class="auth-methods">
+                <div class="auth-method">
+                    <div class="icon-box">
+                        휴대폰 본인인증
                     </div>
-                    <div class="form-group">
-                        <label for="password">비밀번호</label>
-                        <input type="password" id="password" placeholder="비밀번호를 입력해주세요" required>
-                    </div>
-                    
-                    <div class="form-options">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="autoLogin">
-                            <span class="checkmark"></span>
-                            자동 로그인
-                        </label>
-                        <div class="links">
-                            <a href="#">아이디찾기</a>
-                            <a href="#">비밀번호 찾기</a>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="login-btn">로그인</button>
-                </form>
-                
-                <div id="error-message" class="error-message"></div>
+                </div>
             </div>
             
-            <!-- 구분선 -->
-            <div class="divider"></div>
+            <p class="info-text">
+                * 휴대폰 본인인증시 성인여부 확인 용도로만 사용되며, 입력된 개인정보는 저장되지 않습니다.
+            </p>
+        </div>
+        
+        <!-- 구분선 -->
+        <div class="divider"></div>
+        
+        <!-- 회원 로그인 -->
+        <div class="login-section member-login">
+            <h2>회원 로그인</h2>
             
-            <!-- 비회원 로그인 -->
-            <div class="login-section non-member-login">
-                <h2><span class="red-text">비회원</span> <span class="gray-text">로그인</span></h2>
-                
-                <div class="auth-methods">
-                    <div class="auth-method">
-                        <div class="icon-box">
-                            <img src="/img/phone-icon.png" alt="휴대폰 인증">
-                            <p>휴대폰 본인인증</p>
-                        </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <div class="email-input-group">
+                        <input type="text" id="email-id" placeholder="이메일" required>
+                        <span class="email-at">@</span>
+                        <select id="email-domain" class="email-select">
+                            <option value="naver.com">naver.com</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="daum.net">daum.net</option>
+                            <option value="kakao.com">kakao.com</option>
+                            <option value="hanmail.net">hanmail.net</option>
+                            <option value="nate.com">nate.com</option>
+                        </select>
                     </div>
-                    <div class="auth-method">
-                        <a href="register.html" class="icon-box-link">
-                            <div class="icon-box">
-                                <img src="/img/lock-icon.png" alt="회원가입">
-                                <p>회원가입하기</p>
-                            </div>
-                        </a>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="비밀번호를 입력해주세요" required>
+                </div>
+                
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="autoLogin">
+                        <span class="checkmark"></span>
+                        자동 로그인
+                    </label>
+                    <div class="links">
+                        <a href="#">아이디찾기</a>
+                        <a href="#">비밀번호 찾기</a>
                     </div>
                 </div>
                 
-                <p class="info-text">
-                    휴대폰 본인인증시 성인여부 확인 용도로만 사용되며,<br>
-                    입력된 개인정보는 저장되지 않습니다.
-                </p>
+                <button type="submit" class="login-btn">로그인</button>
+            </form>
+            
+            <div id="error-message" class="error-message"></div>
+            
+            <!-- 회원가입 버튼 -->
+            <div class="signup-section">
+                <a href="register.html" class="signup-btn">
+                    회원가입하기
+                </a>
             </div>
         </div>
     </div>
