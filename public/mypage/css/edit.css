@@ -1,8 +1,8 @@
-/* 파일경로: mypage/css/mypage.css */
-/* 파일이름: mypage.css */
+/* 파일경로: mypage/css/edit.css */
+/* 파일이름: edit.css */
 
-/* 마이페이지 컨테이너 */
-.mypage-container {
+/* 회원정보 수정 컨테이너 */
+.edit-container {
     max-width: 450px;
     margin: 0 auto;
 }
@@ -10,9 +10,6 @@
 /* 프로필 섹션 */
 .profile-section {
     padding: 24px 16px;
-}
-
-.profile-header {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -65,12 +62,13 @@
     font-weight: 700;
 }
 
-/* 섹션 공통 스타일 */
-.activity-section,
-.account-section,
-.member-section {
-    padding: 24px 16px;
-    border-bottom: 1px solid #222;
+/* 폼 섹션 */
+.edit-form {
+    padding: 0 16px 24px 16px;
+}
+
+.form-section {
+    margin-top: 24px;
 }
 
 .section-title {
@@ -80,53 +78,61 @@
     margin-bottom: 16px;
 }
 
-/* 리스트 공통 스타일 */
-.activity-list,
-.account-list,
-.member-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+/* 폼 그룹 */
+.form-group {
+    margin-bottom: 16px;
 }
 
-.activity-item,
-.account-item,
-.member-item {
-    margin-bottom: 4px;
-    padding: 0 5px;
-}
-
-.activity-item:last-child,
-.account-item:last-child,
-.member-item:last-child {
-    margin-bottom: 0;
-}
-
-/* 링크 공통 스타일 */
-.activity-link,
-.account-link,
-.member-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 0;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: none;
-}
-
-.activity-name,
-.account-name,
-.member-name {
+.form-group label {
+    display: block;
     color: #FFF;
     font-size: 14px;
     font-weight: 500;
+    margin-bottom: 8px;
 }
 
-.arrow {
+.form-input {
+    width: 100%;
+    padding: 16px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 23px;
+    color: #FFF;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-input::placeholder {
     color: #666;
-    font-size: 20px;
-    font-weight: 300;
+    font-size: 13px;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #FF6666;
+}
+
+/* 저장 버튼 */
+.save-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: #FF6666;
+    color: #FFF;
+    border: none;
+    border-radius: 23px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 32px;
+    transition: background-color 0.2s ease;
+}
+
+.save-btn:hover {
+    background-color: #FF5555;
+}
+
+.save-btn:active {
+    background-color: #FF4444;
 }
 
 /* Footer 간격 조정 */

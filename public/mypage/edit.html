@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이페이지 - CINDA</title>
+    <title>회원정보 수정 - CINDA</title>
     
     <!-- 헤더 CSS 먼저 로드 -->
     <link rel="stylesheet" href="/css/header.css">
@@ -12,7 +12,7 @@
     <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="css/mypage.css">
+    <link rel="stylesheet" href="/mypage/css/edit.css">
     
     <!-- 전역 설정 스크립트 -->
     <script src="/js/config.js"></script>
@@ -21,70 +21,55 @@
     <!-- 메인 헤더 포함 -->
     <div id="header-container"></div>
     
-    <div class="mypage-container">
+    <div class="edit-container">
         <!-- 프로필 섹션 -->
         <div class="profile-section">
-            <div class="profile-header">
-                <div class="profile-icon">🌙</div>
-                <div class="profile-info">
-                    <div class="profile-status">여성회원</div>
-                    <div class="profile-name">뽀족한 독배기</div>
-                </div>
+            <div class="profile-icon">🌙</div>
+            <div class="profile-info">
+                <div class="profile-status">일반회원</div>
+                <div class="profile-name">뽀족한 독배기</div>
             </div>
         </div>
         
-        <!-- 내 활동 섹션 -->
-        <div class="activity-section">
-            <h2 class="section-title">내 활동</h2>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <a href="#" class="activity-link">
-                        <span class="activity-name">찜 리스트</span>
-                        <span class="arrow">›</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- 계정정보 관리 섹션 -->
-        <div class="account-section">
-            <h2 class="section-title">계정정보 관리</h2>
-            <ul class="account-list">
-                <li class="account-item">
-                    <a href="#" class="account-link">
-                        <span class="account-name">회원정보 수정</span>
-                        <span class="arrow">›</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- 회원관리 섹션 -->
-        <div class="member-section">
-            <h2 class="section-title">회원관리</h2>
-            <ul class="member-list">
-                <li class="member-item">
-                    <a href="#" class="member-link">
-                        <span class="member-name">회원탈퇴</span>
-                        <span class="arrow">›</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <!-- 정보 수정 폼 -->
+        <form id="editForm" class="edit-form">
+            <!-- 계정정보 섹션 -->
+            <div class="form-section">
+                <h2 class="section-title">계정정보</h2>
+                
+                <div class="form-group">
+                    <label for="nickname">닉네임</label>
+                    <input type="text" id="nickname" class="form-input" value="뽀족한 독배기">
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthdate">새 비밀번호</label>
+                    <input type="password" id="birthdate" class="form-input" placeholder="영문, 숫자, 특수문자가 모두 들어간 8~20자">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password-confirm">새 비밀번호 확인</label>
+                    <input type="password" id="password-confirm" class="form-input" placeholder="새 비밀번호 확인을 위해 한번 더 입력해주세요">
+                </div>
+            </div>
+            
+            <!-- 저장 버튼 -->
+            <button type="submit" class="save-btn">저장</button>
+        </form>
     </div>
     
     <!-- Footer 포함 -->
     <div id="footer-container"></div>
 
     <script type="module" src="/js/firebase-config.js"></script>
-    <script type="module" src="js/mypage.js"></script>
+    <script type="module" src="/mypage/js/edit.js"></script>
     <script src="/js/footer.js"></script>
     <script>
         // 메인 헤더 로드 후 페이지 타이틀 설정
         loadHeader('header-container');
         
         // 페이지 타이틀 설정을 위한 전역 변수
-        window.pageTitle = '마이페이지';
+        window.pageTitle = '회원정보수정';
         
         // DOM 로드 후 페이지 타이틀 추가
         document.addEventListener('DOMContentLoaded', function() {
@@ -97,7 +82,7 @@
                     // 페이지 타이틀 요소 생성
                     const pageTitle = document.createElement('h1');
                     pageTitle.className = 'page-title';
-                    pageTitle.textContent = window.pageTitle || '마이페이지';
+                    pageTitle.textContent = window.pageTitle || '회원정보수정';
                     
                     // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
                     backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);

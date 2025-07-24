@@ -23,8 +23,23 @@ async function displayUserInfo(user) {
             
             // 회원 상태 표시
             const profileStatus = document.querySelector('.profile-status');
-            if (profileStatus && userData.memberType) {
-                profileStatus.textContent = userData.memberType;
+            if (profileStatus && userData.userType) {
+                // header.html과 동일한 텍스트 사용
+                const userTypeDisplayText = {
+                    'individual': '여성회원',
+                    'partner': '파트너회원',
+                    'business': '기업회원'
+                };
+                profileStatus.textContent = userTypeDisplayText[userData.userType] || '여성회원';
+                profileStatus.setAttribute('data-type', userData.userType);
+            }
+            
+            // 업소회원이나 제휴업체인 경우 내 활동 섹션 숨기기
+            if (userData.userType === 'business' || userData.userType === 'partner') {
+                const activitySection = document.querySelector('.activity-section');
+                if (activitySection) {
+                    activitySection.style.display = 'none';
+                }
             }
         }
     } catch (error) {
@@ -34,21 +49,12 @@ async function displayUserInfo(user) {
 
 // 페이지 초기화
 function initializePage() {
-    // 즐겨찾기 링크
-    const favoriteLink = document.querySelector('.activity-list .activity-link');
-    if (favoriteLink) {
-        favoriteLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('즐겨찾기 기능은 준비중입니다.');
-        });
-    }
-    
-    // 찜 링크
-    const wishlistLink = document.querySelectorAll('.activity-list .activity-link')[1];
+    // 찜 리스트 링크
+    const wishlistLink = document.querySelector('.activity-list .activity-link');
     if (wishlistLink) {
         wishlistLink.addEventListener('click', (e) => {
             e.preventDefault();
-            alert('찜 기능은 준비중입니다.');
+            alert('찜 리스트 기능은 준비중입니다.');
         });
     }
     
@@ -57,7 +63,7 @@ function initializePage() {
     if (editLink) {
         editLink.addEventListener('click', (e) => {
             e.preventDefault();
-            alert('회원정보 수정 기능은 준비중입니다.');
+            window.location.href = '/mypage/edit.html';
         });
     }
     
