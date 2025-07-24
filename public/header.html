@@ -8,13 +8,13 @@
 </head>
 <body>
     <header>
-        <nav>
-            <a href="/" id="logoLink">
+        <nav id="mainNav">
+            <a href="/main/main.html" id="logoLink" style="display: none;">
                 <img src="/img/logo.png" alt="CINDA" class="logo" id="headerLogo">
             </a>
             
-            <!-- 뒤로가기 버튼 (기본적으로 숨김) -->
-            <button class="back-button" id="backButton" style="display: none;" onclick="goBack()">
+            <!-- 뒤로가기 버튼 (기본적으로 표시) -->
+            <button class="back-button" id="backButton" onclick="goBack()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 18L9 12L15 6" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -27,16 +27,56 @@
                 <span></span>
             </button>
             
+            <!-- 메뉴 오버레이 -->
+            <div class="menu-overlay" id="menuOverlay"></div>
+            
             <!-- 메뉴 리스트 -->
             <ul id="navMenu">
-                <li><a href="/realtime-status/html/realtime-status.html">실시간 현황판</a></li>
-                <li><a href="/community/html/list.html">신다수다방</a></li>
-                <li><a href="#">채용정보</a></li>
-                <li><a href="#">제휴서비스</a></li>
-                <li><a href="#">내 정보</a></li>
-                <li class="advertise-menu" style="display: none;"><a href="/advertise/html/ad-add.html">광고관리</a></li>
-                <li class="admin-menu" style="display: none;"><a href="/admin/realtime-status/html/list.html">관리자</a></li>
-                <li class="logout-menu" style="display: none;"><a href="#" onclick="handleLogout()">로그아웃</a></li>
+                <!-- 메뉴 헤더 영역 -->
+                <div class="menu-header">
+                    <div class="user-info">
+                        <div class="user-icon">🌙</div>
+                        <div class="user-details">
+                            <span class="user-status">일반회원</span>
+                            <div class="user-name">뺏츠한 뚝배기</div>
+                        </div>
+                        <a href="/mypage/html/mypage.html" class="my-page-btn">마이페이지</a>
+                    </div>
+                </div>
+                
+                <!-- 밤다 서비스 섹션 -->
+                <div class="menu-section">
+                    <h3 class="menu-section-title">밤다 서비스</h3>
+                    <li><a href="/realtime-status/html/realtime-status.html">채용정보 <span class="arrow">›</span></a></li>
+                    <li><a href="/community/html/list.html">반티완티<span class="arrow">›</span></a></li>
+                    <li><a href="#">제휴서비스 <span class="arrow">›</span></a></li>
+                    <li class="advertise-menu" style="display: none;">
+                        <a href="/advertise/html/ad-add.html">
+                            공고관리 
+                            <span class="business-badge">업소회원전용</span>
+                            <span class="arrow">›</span>
+                        </a>
+                    </li>
+                </div>
+                
+                <!-- 고객센터 섹션 -->
+                <div class="menu-section">
+                    <h3 class="menu-section-title">고객센터</h3>
+                    <li><a href="#">1:1 고객센터 <span class="arrow">›</span></a></li>
+                    <li><a href="#">FAQ <span class="arrow">›</span></a></li>
+                </div>
+                
+                <!-- 밤의 다이어리 섹션 -->
+                <div class="menu-section">
+                    <h3 class="menu-section-title">밤의 다이어리</h3>
+                    <li><a href="#">공지사항 <span class="arrow">›</span></a></li>
+                    <li><a href="#">이벤트 <span class="arrow">›</span></a></li>
+                    <li><a href="#">약관 및 정책 <span class="arrow">›</span></a></li>
+                </div>
+                
+                <!-- 관리자 메뉴 (조건부 표시) -->
+                <li class="admin-menu" style="display: none;"><a href="/admin/realtime-status/html/list.html">관리자 <span class="arrow">›</span></a></li>
+                <li class="logout-menu" style="display: none;"><a href="#" onclick="handleLogout()">로그아웃 <span class="arrow">›</span></a></li>
             </ul>
         </nav>
     </header>

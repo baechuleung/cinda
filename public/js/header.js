@@ -30,6 +30,20 @@ function randomizeBanners() {
     banners.forEach(banner => wrapper.appendChild(banner));
 }
 
+// 슬라이드 이동
+function moveSlide() {
+    const wrapper = document.querySelector('.ad-banner-wrapper');
+    const container = document.querySelector('.ad-banner-container');
+    if (!wrapper || !container) return;
+    
+    // 실제 컨테이너 너비 가져오기
+    const actualWidth = container.clientWidth;
+    
+    // 현재 슬라이드 위치 계산
+    const moveDistance = currentSlide * actualWidth;
+    wrapper.style.transform = `translateX(-${moveDistance}px)`;
+}
+
 // 컨테이너 너비 설정
 function setupContainerWidth() {
     const container = document.querySelector('.ad-banner-container');
@@ -38,50 +52,18 @@ function setupContainerWidth() {
     
     if (!container || !wrapper || !banners.length) return;
     
-    const viewportWidth = window.innerWidth;
+    // 컨테이너의 실제 너비 가져오기
+    containerWidth = container.clientWidth;
     
-    if (viewportWidth > 470) {
-        // 470px 초과: 기존 방식
-        containerWidth = container.clientWidth;
-        
-        banners.forEach((banner, index) => {
-            banner.style.width = containerWidth + 'px';
-            if (index < banners.length - 1) {
-                banner.style.marginRight = gap + 'px';
-            } else {
-                banner.style.marginRight = '0';
-            }
-        });
-        
-        const totalWidth = (containerWidth * banners.length) + (gap * (banners.length - 1));
-        wrapper.style.width = totalWidth + 'px';
-    } else {
-        // 470px 이하: CSS가 처리하므로 JS에서는 스타일 제거
-        banners.forEach(banner => {
-            banner.style.width = '';
-            banner.style.marginRight = '';
-        });
-        wrapper.style.width = '';
-    }
-}
-
-// 슬라이드 이동
-function moveSlide() {
-    const wrapper = document.querySelector('.ad-banner-wrapper');
-    if (!wrapper) return;
+    // 각 배너의 너비를 컨테이너 너비로 설정
+    banners.forEach((banner) => {
+        banner.style.width = containerWidth + 'px';
+        banner.style.marginRight = '0';
+    });
     
-    const viewportWidth = window.innerWidth;
-    
-    if (viewportWidth <= 470) {
-        // 470px 이하: 퍼센트로 이동
-        const movePercentage = currentSlide * 100;
-        wrapper.style.transform = `translateX(-${movePercentage}%)`;
-    } else {
-        // 470px 초과: 픽셀로 이동
-        if (containerWidth === 0) return;
-        const moveDistance = currentSlide * (containerWidth + gap);
-        wrapper.style.transform = `translateX(-${moveDistance}px)`;
-    }
+    // wrapper의 전체 너비 설정
+    const totalWidth = containerWidth * banners.length;
+    wrapper.style.width = totalWidth + 'px';
 }
 
 // 자동 슬라이드
@@ -166,7 +148,7 @@ function initializeSlider() {
         resizeTimeout = setTimeout(() => {
             setupContainerWidth();
             moveSlide();
-        }, 250);
+        }, 100); // 더 빠른 반응을 위해 250ms에서 100ms로 변경
     });
 }
 
@@ -175,23 +157,31 @@ window.goBack = function() {
     window.history.back();
 }
 
-// 메인 페이지 여부 확인 및 뒤로가기 버튼 표시
-function checkMainPage() {
+// 로고 표시 페이지 확인
+function checkLogoDisplay() {
     const currentPath = window.location.pathname;
-    const mainPage = '/realtime-status/html/realtime-status.html';
+    const logoPages = [
+        '/main/main.html',
+        '/',
+        '/index.html'
+    ];
+    
     const logoLink = document.getElementById('logoLink');
     const backButton = document.getElementById('backButton');
     
     if (!logoLink || !backButton) return;
     
-    if (currentPath !== mainPage && currentPath !== '/' && currentPath !== '/index.html') {
-        // 메인 페이지가 아닌 경우: 로고 숨기고 뒤로가기 버튼 표시
-        logoLink.style.display = 'none';
-        backButton.style.display = 'flex';
+    // 로고를 표시할 페이지인지 확인
+    const showLogo = logoPages.includes(currentPath);
+    
+    if (showLogo) {
+        // 로고 표시, 뒤로가기 숨김
+        logoLink.style.cssText = 'display: block !important;';
+        backButton.style.cssText = 'display: none !important;';
     } else {
-        // 메인 페이지인 경우: 로고 표시하고 뒤로가기 버튼 숨김
-        logoLink.style.display = 'block';
-        backButton.style.display = 'none';
+        // 로고 숨김, 뒤로가기 표시 (기본 상태 유지)
+        logoLink.style.cssText = 'display: none !important;';
+        backButton.style.cssText = 'display: flex !important;';
     }
 }
 
@@ -226,11 +216,49 @@ function setActiveMenu() {
     });
 }
 
+// 사용자 상태 표시 텍스트 매핑
+const userTypeDisplayText = {
+    'individual': '여성회원',
+    'partner': '제휴업체',
+    'business': '업소회원'
+};
+
+// 사용자 정보 업데이트 함수
+async function updateUserInfo(uid) {
+    try {
+        // users 컬렉션에서 사용자 정보 가져오기
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            
+            // 사용자 상태 업데이트
+            const userStatusElement = document.querySelector('.user-status');
+            const userNameElement = document.querySelector('.user-name');
+            
+            if (userStatusElement && userData.userType) {
+                userStatusElement.textContent = userTypeDisplayText[userData.userType] || '일반회원';
+                // data-type 속성 추가하여 CSS에서 색상 적용
+                userStatusElement.setAttribute('data-type', userData.userType);
+            }
+            
+            if (userNameElement && userData.nickname) {
+                userNameElement.textContent = userData.nickname;
+            }
+        }
+    } catch (error) {
+        console.error('사용자 정보 가져오기 오류:', error);
+    }
+}
+
 // 사용자 인증 상태 확인 및 메뉴 표시
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         // 로그인한 경우 로그아웃 메뉴 표시
         showLogoutMenu();
+        
+        // 사용자 정보 업데이트
+        await updateUserInfo(user.uid);
         
         // 관리자 여부 확인
         const isAdmin = await checkAdminStatus(user.uid);
@@ -238,13 +266,13 @@ onAuthStateChanged(auth, async (user) => {
             showAdminMenu();
         }
         
-        // 기업회원 여부 확인 (business_users)
+        // 기업회원 여부 확인 (users 컬렉션의 userType 확인)
         const isBusinessUser = await checkBusinessUserStatus(user.uid);
         if (isBusinessUser) {
             showAdvertiseMenu();
         }
         
-        // 파트너회원 여부 확인 (partner_users)
+        // 파트너회원 여부 확인 (users 컬렉션의 userType 확인)
         const isPartnerUser = await checkPartnerUserStatus(user.uid);
         if (isPartnerUser) {
             showAdvertiseMenu();
@@ -252,6 +280,19 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         // 로그인하지 않은 경우
         hideLogoutMenu();
+        
+        // 기본값으로 설정
+        const userStatusElement = document.querySelector('.user-status');
+        const userNameElement = document.querySelector('.user-name');
+        
+        if (userStatusElement) {
+            userStatusElement.textContent = '일반회원';
+            userStatusElement.setAttribute('data-type', 'individual'); // 기본값은 여성회원 색상
+        }
+        
+        if (userNameElement) {
+            userNameElement.textContent = '뺏츠한 뚝배기';
+        }
         
         // 보호된 페이지에 있고 로그인 페이지가 아닌 경우 리다이렉트
         if (isProtectedPage() && !window.location.pathname.includes('/auth/login.html')) {
@@ -282,8 +323,12 @@ async function checkAdminStatus(uid) {
 // 기업회원 상태 확인
 async function checkBusinessUserStatus(uid) {
     try {
-        const businessDoc = await getDoc(doc(db, 'business_users', uid));
-        return businessDoc.exists();
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            return userData.userType === 'business';
+        }
+        return false;
     } catch (error) {
         console.error('기업회원 확인 오류:', error);
         return false;
@@ -293,8 +338,12 @@ async function checkBusinessUserStatus(uid) {
 // 파트너회원 상태 확인
 async function checkPartnerUserStatus(uid) {
     try {
-        const partnerDoc = await getDoc(doc(db, 'partner_users', uid));
-        return partnerDoc.exists();
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            return userData.userType === 'partner';
+        }
+        return false;
     } catch (error) {
         console.error('파트너회원 확인 오류:', error);
         return false;
@@ -353,7 +402,7 @@ function updateLogo() {
     const logo = document.getElementById('headerLogo') || document.querySelector('.logo');
     if (!logo) return;
     
-    // 470px 고정이므로 항상 모바일 로고 사용
+    // 450px 고정이므로 항상 모바일 로고 사용
     logo.src = '/img/m_logo.png';
 }
 
@@ -361,13 +410,15 @@ function updateLogo() {
 function initializeHamburgerMenu() {
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     const navMenu = document.getElementById('navMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
     
-    if (!hamburgerMenu || !navMenu) return;
+    if (!hamburgerMenu || !navMenu || !menuOverlay) return;
     
     // 햄버거 메뉴 클릭 이벤트
     hamburgerMenu.addEventListener('click', function() {
         this.classList.toggle('active');
         navMenu.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
     });
     
     // 메뉴 항목 클릭 시 메뉴 닫기
@@ -376,18 +427,18 @@ function initializeHamburgerMenu() {
         link.addEventListener('click', function() {
             hamburgerMenu.classList.remove('active');
             navMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
         });
     });
     
     // 초기 로고 설정
     updateLogo();
     
-    // 메뉴 외부 클릭 시 닫기
-    document.addEventListener('click', function(event) {
-        if (!navMenu.contains(event.target) && !hamburgerMenu.contains(event.target)) {
-            hamburgerMenu.classList.remove('active');
-            navMenu.classList.remove('active');
-        }
+    // 오버레이 클릭 시 메뉴 닫기
+    menuOverlay.addEventListener('click', function() {
+        hamburgerMenu.classList.remove('active');
+        navMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
     });
 }
 
@@ -397,13 +448,13 @@ if (document.readyState === 'loading') {
         initializeHamburgerMenu();
         initializeSlider();
         setActiveMenu();
-        checkMainPage();
+        checkLogoDisplay();
     });
 } else {
     initializeHamburgerMenu();
     initializeSlider();
     setActiveMenu();
-    checkMainPage();
+    checkLogoDisplay();
 }
 
 // 페이지 전환 시 자동 슬라이드 정리

@@ -1,3 +1,6 @@
+/* 파일 경로: public/auth/css/register-individual.css */
+/* 파일 이름: register-individual.css */
+
 /* 모달 스타일 */
 .modal {
     display: none;
@@ -58,7 +61,7 @@
 }
 
 .checkbox-status {
-    color: #fff;
+    color: #DF2B66;
     font-size: 14px;
     font-weight: 500;
 }
@@ -81,21 +84,13 @@
     margin: 0 auto;
 }
 
-.register-form h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #fff;
-    font-size: 24px;
-    font-weight: 600;
-}
-
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
     color: #fff;
     font-size: 14px;
     font-weight: 500;
@@ -113,12 +108,13 @@
 .form-group input,
 .form-group select {
     width: 100%;
-    padding: 0.875rem 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    height: 45px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 23px;
     font-size: 14px;
-    transition: border-color 0.3s ease;
-    background-color: #fff;
+    background-color: #29262F;
+    color: #fff;
 }
 
 .form-group input::placeholder {
@@ -128,11 +124,10 @@
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #007bff;
 }
 
 .form-group input:disabled {
-    background-color: #f8f9fa;
+    background-color: #3a373f;
     color: #999;
 }
 
@@ -146,30 +141,33 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.875rem 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: #fff;
+    height: 45px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 23px;
+    background: #29262F;
     cursor: pointer;
-    transition: border-color 0.3s ease;
-}
-
-.dropdown-selected:hover {
-    border-color: #007bff;
 }
 
 .dropdown-selected.active {
-    border-color: #007bff;
-    border-radius: 8px 8px 0 0;
+    border-radius: 23px 23px 0 0;
 }
 
 .selected-text {
     font-size: 14px;
-    color: #333;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdown-arrow path {
+    stroke: #fff;
 }
 
 .dropdown-arrow {
     transition: transform 0.3s ease;
+    flex-shrink: 0;
 }
 
 .dropdown-selected.active .dropdown-arrow {
@@ -181,34 +179,13 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: #fff;
-    border: 1px solid #007bff;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
+    background: #29262F;
+    border: none;
+    border-radius: 0 0 23px 23px;
     max-height: 350px;
     overflow: hidden;
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-search {
-    padding: 0.75rem;
-    border-bottom: 1px solid #e0e0e0;
-    background: #f8f9fa;
-}
-
-.dropdown-search-input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
-    background: #fff;
-}
-
-.dropdown-search-input:focus {
-    outline: none;
-    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dropdown-options {
@@ -217,27 +194,19 @@
 }
 
 .dropdown-option {
-    padding: 0.75rem 1rem;
+    padding: 12px 16px;
     font-size: 14px;
-    color: #333;
+    color: #fff;
     cursor: pointer;
-    transition: background 0.2s ease;
 }
 
 .dropdown-option:hover {
-    background: #f8f9fa;
+    background: #4a474f;
 }
 
 .dropdown-option.selected {
-    background: #e7f5ff;
-    color: #1971c2;
-}
-
-.dropdown-option.special {
-    border-top: 1px solid #e0e0e0;
-    background: #fffbf5;
-    color: #ff6b00;
-    font-weight: 500;
+    background: #4a474f;
+    color: #fff;
 }
 
 .dropdown-option.no-results {
@@ -253,7 +222,7 @@
 /* 이메일 드롭다운 */
 .input-with-dropdown {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     align-items: center;
 }
 
@@ -264,15 +233,10 @@
 .at-symbol {
     color: #fff;
     font-weight: 500;
-    padding: 0 0.25rem;
+    padding: 0 4px;
 }
 
 .email-domain-dropdown {
-    flex: 1.5;
-    min-width: 160px;
-}
-
-#emailDomainDirect {
     flex: 1.5;
     min-width: 160px;
 }
@@ -284,7 +248,7 @@
 
 .show-password {
     position: absolute;
-    right: 1rem;
+    right: 16px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
@@ -300,7 +264,7 @@
 
 /* 도움말 텍스트 */
 .helper-text {
-    margin-top: 0.5rem;
+    margin-top: 8px;
     font-size: 12px;
     color: #fff;
 }
@@ -310,7 +274,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
 }
 
 .label-with-status label {
@@ -321,12 +285,12 @@
 .section-title {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 1rem;
-    margin-top: 2rem;
+    margin-bottom: 16px;
+    margin-top: 32px;
     color: #fff;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .section-title input[type="checkbox"] {
@@ -380,18 +344,18 @@ input[type="checkbox"]:checked::before {
 
 .terms-group {
     background-color: transparent;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 2rem;
+    padding: 16px;
+    margin-bottom: 32px;
 }
 
 .term-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .term-item:last-child {
@@ -401,7 +365,7 @@ input[type="checkbox"]:checked::before {
 .term-left {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
 }
 
 .term-left label {
@@ -413,8 +377,8 @@ input[type="checkbox"]:checked::before {
 
 .view-btn {
     background: none;
-    border: 1px solid #ddd;
-    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 12px;
     border-radius: 4px;
     font-size: 12px;
     color: #fff;
@@ -423,31 +387,27 @@ input[type="checkbox"]:checked::before {
 }
 
 .view-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: transparent;
     border-color: #fff;
 }
 
 /* 제출 버튼 */
 .submit-btn {
     width: 100%;
-    padding: 1rem;
-    background-color: #007bff;
+    padding: 16px;
+    background-color: #DF2B66;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 23px;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
-    background-color: #0056b3;
-}
-
 .error-message {
     color: #f66;
-    margin-top: 1rem;
+    margin-top: 16px;
     font-size: 14px;
     text-align: center;
 }

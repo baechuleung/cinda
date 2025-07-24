@@ -1,0 +1,114 @@
+/* main/css/main.css */
+
+/* 메인 컨테이너 */
+.main-container {
+    padding: 32px 16px;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 밤다 서비스 타이틀 */
+.service-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.service-title img {
+    width: 24px;
+    height: 24px;
+}
+
+.service-title span {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* 서비스 카드 섹션 */
+.service-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 서비스 카드 공통 스타일 */
+.service-card {
+    width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    background: #29262F;
+    padding: 24px;
+    border: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* 카드 왼쪽 콘텐츠 영역 */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.card-header h3 {
+    color: #fff;
+    font-size: 18px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.card-badge {
+    background-color: #ff4757;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.card-description {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.card-description .icon {
+    font-size: 20px;
+}
+
+/* 카드 버튼 */
+.card-button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card-button img {
+    width: auto;
+    height: 30px;
+}
+
+.card-button:hover {
+    transform: scale(1.05);
+}

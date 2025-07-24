@@ -1,4 +1,4 @@
-// 파일 경로: public/js/auth/register-individual.js
+// 파일 경로: /public/auth/js/register-individual.js
 // 파일 이름: register-individual.js
 
 import { auth, db } from '../../js/firebase-config.js';
@@ -10,8 +10,6 @@ function initDropdowns() {
     const emailDropdownSelected = document.getElementById('emailDropdownSelected');
     const emailDropdownMenu = document.getElementById('emailDropdownMenu');
     const emailDropdownOptions = document.querySelectorAll('#emailDropdownOptions .dropdown-option');
-    const emailDropdownSearch = document.getElementById('emailDropdownSearch');
-    const emailDomainDirect = document.getElementById('emailDomainDirect');
 
     // 이메일 드롭다운 토글
     emailDropdownSelected.addEventListener('click', function() {
@@ -31,28 +29,13 @@ function initDropdowns() {
             // 현재 선택한 옵션에 selected 클래스 추가
             this.classList.add('selected');
             
-            emailDropdownSelected.querySelector('.selected-text').textContent = text;
-            
-            if (value === 'direct') {
-                emailDomainDirect.style.display = 'block';
-                emailDropdownSelected.parentElement.style.display = 'none';
-            } else {
-                emailDomainDirect.style.display = 'none';
-                emailDropdownSelected.parentElement.style.display = 'flex';
+            if (value) {
+                emailDropdownSelected.querySelector('.selected-text').textContent = text;
             }
             
             emailDropdownMenu.style.display = 'none';
             emailDropdownSelected.classList.remove('active');
             updateEmail();
-        });
-    });
-
-    // 이메일 검색
-    emailDropdownSearch.addEventListener('input', function() {
-        const searchValue = this.value.toLowerCase();
-        emailDropdownOptions.forEach(option => {
-            const text = option.textContent.toLowerCase();
-            option.style.display = text.includes(searchValue) ? 'block' : 'none';
         });
     });
 
@@ -69,15 +52,12 @@ function initDropdowns() {
 function updateEmail() {
     const emailId = document.getElementById('emailId').value;
     const selectedOption = document.querySelector('#emailDropdownOptions .dropdown-option.selected');
-    const directDomain = document.getElementById('emailDomainDirect').value;
     
     let domain = '';
     
     if (selectedOption) {
         const selectedDomain = selectedOption.dataset.value;
-        if (selectedDomain === 'direct') {
-            domain = directDomain;
-        } else if (selectedDomain) {
+        if (selectedDomain) {
             domain = selectedDomain;
         }
     }
@@ -91,7 +71,6 @@ function updateEmail() {
 
 // 이메일 입력 이벤트
 document.getElementById('emailId').addEventListener('input', updateEmail);
-document.getElementById('emailDomainDirect').addEventListener('input', updateEmail);
 
 // 비밀번호 유효성 검사
 function validatePassword(password) {
@@ -157,8 +136,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             displayName: nickname
         });
         
-        // Firestore에 여성회원 정보 저장
-        await setDoc(doc(db, 'individual_users', user.uid), {
+        // Firestore의 users 컬렉션에 여성회원 정보 저장
+        await setDoc(doc(db, 'users', user.uid), {
             uid: user.uid,
             email: email,
             nickname: nickname,
@@ -174,7 +153,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         
         // 성공 시 리다이렉트
         alert('회원가입이 완료되었습니다.');
-        window.location.href = '/realtime-status/realtime-status.html';
+        window.location.href = '/main/main.html';
         
     } catch (error) {
         console.error('Registration error:', error);

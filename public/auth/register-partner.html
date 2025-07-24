@@ -9,12 +9,24 @@
     <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/header.css">
     <link rel="stylesheet" href="/auth/css/register-partner.css">
 </head>
 <body>
+    <!-- 헤더 -->
+    <header>
+        <nav>
+            <button class="back-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h1 class="page-title">파트너 가입</h1>
+        </nav>
+    </header>
+
     <div class="register-container">
         <div class="register-form">
-            <h2>파트너 가입</h2>
             <form id="registerForm">
                 <!-- 이메일 -->
                 <div class="form-group">
@@ -30,9 +42,6 @@
                                 </svg>
                             </div>
                             <div class="dropdown-menu" id="emailDropdownMenu" style="display: none;">
-                                <div class="dropdown-search">
-                                    <input type="text" id="emailDropdownSearch" class="dropdown-search-input" placeholder="이메일 검색">
-                                </div>
                                 <div class="dropdown-options" id="emailDropdownOptions">
                                     <div class="dropdown-option" data-value="">도메인 선택</div>
                                     <div class="dropdown-option" data-value="naver.com">naver.com</div>
@@ -40,13 +49,13 @@
                                     <div class="dropdown-option" data-value="daum.net">daum.net</div>
                                     <div class="dropdown-option" data-value="hanmail.net">hanmail.net</div>
                                     <div class="dropdown-option" data-value="nate.com">nate.com</div>
-                                    <div class="dropdown-option" data-value="direct">직접 입력</div>
+                                    <div class="dropdown-option" data-value="kakao.com">kakao.com</div>
                                 </div>
                             </div>
                         </div>
-                        <input type="text" id="emailDomainDirect" placeholder="도메인 입력" style="display: none;">
                     </div>
                     <input type="hidden" id="email" name="email" required>
+                    <div class="helper-text">* 비밀번호 분실 시, 임시비밀번호를 받을 수 있는 이메일을 입력해주세요.</div>
                 </div>
 
                 <!-- 비밀번호 -->
@@ -114,32 +123,10 @@
                     <input type="hidden" id="partnerCategory" name="partnerCategory" required>
                 </div>
 
-                <!-- 담당자명 -->
-                <div class="form-group">
-                    <div class="label-with-status">
-                        <label for="managerName">담당자명</label>
-                        <span class="checkbox-status">✓ 인증완료</span>
-                    </div>
-                    <input type="text" id="managerName" value="홍길동" disabled>
-                </div>
-
-                <!-- 생년월일 -->
-                <div class="form-group">
-                    <div class="label-with-status">
-                        <label for="birthdate">생년월일</label>
-                        <span class="checkbox-status">✓ 인증완료</span>
-                    </div>
-                    <input type="text" id="birthdate" value="1999년 02월 12일" disabled>
-                </div>
-
-                <!-- 휴대폰 번호 -->
-                <div class="form-group">
-                    <div class="label-with-status">
-                        <label for="phone">휴대폰 번호</label>
-                        <span class="checkbox-status">✓ 인증완료</span>
-                    </div>
-                    <input type="tel" id="phone" value="010-1234-5678" disabled>
-                </div>
+                <!-- 숨겨진 필드들 (DB 저장용) -->
+                <input type="hidden" id="managerName" value="홍길동">
+                <input type="hidden" id="birthdate" value="1999년 02월 12일">
+                <input type="hidden" id="phone" value="010-1234-5678">
 
                 <!-- 전체동의 -->
                 <div class="section-title">
@@ -194,6 +181,11 @@
     <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="/auth/js/register-partner.js"></script>
     <script>
+        // 뒤로가기 버튼 기능
+        document.querySelector('.back-button').addEventListener('click', function() {
+            history.back();
+        });
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirmPassword');

@@ -1,4 +1,5 @@
 // 파일 경로: /public/advertise/js/ad-add.js
+// 파일 이름: ad-add.js
 
 import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -57,35 +58,34 @@ document.addEventListener('DOMContentLoaded', function() {
         
         currentUser = user;
         
-        // 파트너회원인지 확인
+        // users 컬렉션에서 사용자 정보 확인
         try {
-            const partnerDoc = await getDoc(doc(db, 'partner_users', user.uid));
-            if (partnerDoc.exists()) {
-                businessData = partnerDoc.data();
-                userType = 'partner';
-                console.log('파트너회원 확인됨');
-            }
-        } catch (error) {
-            console.log('파트너회원 확인 중 오류:', error);
-        }
-        
-        // 파트너회원이 아니면 업소회원인지 확인
-        if (!userType) {
-            try {
-                const businessDoc = await getDoc(doc(db, 'business_users', user.uid));
-                if (businessDoc.exists()) {
-                    businessData = businessDoc.data();
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                businessData = userData; // users 컬렉션의 데이터를 businessData로 사용
+                
+                // userType이 partner 또는 business인지 확인
+                if (userData.userType === 'partner') {
+                    userType = 'partner';
+                    console.log('파트너회원 확인됨');
+                } else if (userData.userType === 'business') {
                     userType = 'business';
                     console.log('업소회원 확인됨');
+                } else {
+                    // partner나 business가 아닌 경우
+                    alert('기업회원만 이용할 수 있습니다.');
+                    window.location.href = '/index.html';
+                    return;
                 }
-            } catch (error) {
-                console.log('업소회원 확인 중 오류:', error);
+            } else {
+                alert('사용자 정보를 찾을 수 없습니다.');
+                window.location.href = '/index.html';
+                return;
             }
-        }
-        
-        // 어느 회원도 아닌 경우
-        if (!userType) {
-            alert('기업회원만 이용할 수 있습니다.');
+        } catch (error) {
+            console.error('사용자 정보 확인 중 오류:', error);
+            alert('사용자 정보 확인 중 오류가 발생했습니다.');
             window.location.href = '/index.html';
             return;
         }

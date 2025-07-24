@@ -1,61 +1,67 @@
+/* 파일경로: /css/footer.css */
+/* 파일이름: footer.css */
+
 /* Footer 스타일 */
 footer {
-    background-color: #fff;
-    border-top: 1px solid #e0e0e0;
-    padding: 1rem 0;
+    padding: 16px 0;
     width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
 }
 
 .footer-container {
-    max-width: 1400px;
+    max-width: 450px;
     margin: 0 auto;
-    padding: 0 2rem;
-    text-align: center;
+    padding: 0 16px;
+    text-align: left;
 }
 
 /* Footer 네비게이션 */
 .footer-nav {
-    margin-bottom: 0.75rem;
-    line-height: 1.8;
+    margin-bottom: 12px;
 }
 
 .footer-nav a {
-    color: #666;
+    color: #FFF;
     text-decoration: none;
-    font-size: 14px;
-    padding: 0 0.5rem;
+    font-size: 10px;
+    font-weight: 700;
+    padding-right: 8px;
     transition: color 0.3s ease;
 }
 
 .footer-nav a:hover {
-    color: #333;
+    color: #f0f0f0;
 }
 
 .footer-nav .footer-divider {
-    color: #ddd;
-    font-size: 12px;
+    color: #FFF;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 /* Footer 정보 */
 .footer-info {
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
 
 .footer-info p {
-    color: #999;
-    font-size: 13px;
+    color: #A5A5A5;
+    font-size: 10px;
+    font-weight: 500;
     line-height: 1.6;
     margin: 0;
 }
 
 /* Copyright */
 .footer-copyright {
-    margin-top: 0.5rem;
+    margin-top: 8px;
 }
 
 .footer-copyright p {
-    color: #999;
-    font-size: 12px;
+    color: #A5A5A5;
+    font-size: 10px;
+    font-weight: 500;
     margin: 0;
 }
 
@@ -129,108 +135,4 @@ footer {
     height: 70vh;
     border: none;
     border-radius: 12px;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    footer {
-        padding: 0.75rem 0;
-    }
-    
-    .footer-container {
-        padding: 0 1rem;
-        text-align: left;
-    }
-    
-    .footer-nav {
-        margin-bottom: 0.5rem;
-        line-height: 1.6;
-        text-align: left;
-    }
-    
-    .footer-nav a {
-        font-size: 13px;
-        padding: 0 0.375rem;
-    }
-    
-    .footer-nav .footer-divider {
-        display: inline;
-    }
-    
-    .footer-info {
-        margin-bottom: 0.375rem;
-    }
-    
-    .footer-info p {
-        font-size: 12px;
-        line-height: 1.8;
-        text-align: left;
-    }
-    
-    .footer-copyright {
-        margin-top: 0.375rem;
-    }
-    
-    .footer-copyright p {
-        font-size: 11px;
-        text-align: left;
-    }
-    
-    /* 모달 반응형 */
-    .terms-modal-content {
-        margin: 10% auto;
-        width: 95%;
-    }
-    
-    #termsFrame {
-        height: 60vh;
-    }
-}
-
-@media (max-width: 480px) {
-    footer {
-        padding: 0.5rem 0;
-    }
-    
-    .footer-nav {
-        margin-bottom: 0.375rem;
-        line-height: 1.5;
-    }
-    
-    .footer-nav a {
-        font-size: 12px;
-        padding: 0 0.25rem;
-    }
-    
-    .footer-nav .footer-divider {
-        font-size: 11px;
-    }
-    
-    .footer-info p {
-        font-size: 11px;
-        word-break: keep-all;
-    }
-    
-    .footer-copyright p {
-        font-size: 10px;
-    }
-    
-    /* 모달 반응형 */
-    .terms-modal-content {
-        margin: 20% auto;
-        width: 98%;
-        max-height: 90vh;
-    }
-    
-    .terms-modal-close {
-        right: 10px;
-        top: 5px;
-        width: 30px;
-        height: 30px;
-        font-size: 24px;
-    }
-    
-    #termsFrame {
-        height: 75vh;
-    }
 }

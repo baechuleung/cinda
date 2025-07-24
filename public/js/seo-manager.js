@@ -145,11 +145,11 @@ class SEOManager {
     getUrlList() {
         return [
             { url: '/', priority: '1.0', changefreq: 'weekly' },
-            { url: '/html/auth/login.html', priority: '0.8', changefreq: 'monthly' },
-            { url: '/html/auth/register.html', priority: '0.8', changefreq: 'monthly' },
-            { url: '/html/auth/register-individual.html', priority: '0.7', changefreq: 'monthly' },
-            { url: '/html/auth/register-business.html', priority: '0.7', changefreq: 'monthly' },
-            { url: '/html/auth/register-partner.html', priority: '0.7', changefreq: 'monthly' },
+            { url: '/auth/login.html', priority: '0.8', changefreq: 'monthly' },
+            { url: '/auth/register.html', priority: '0.8', changefreq: 'monthly' },
+            { url: '/auth/register-individual.html', priority: '0.7', changefreq: 'monthly' },
+            { url: '/auth/register-business.html', priority: '0.7', changefreq: 'monthly' },
+            { url: '/auth/register-partner.html', priority: '0.7', changefreq: 'monthly' },
             { url: '/dashboard.html', priority: '0.9', changefreq: 'daily' }
         ];
     }
