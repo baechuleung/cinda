@@ -8,43 +8,8 @@ import { initGeneralAdForm, updateGeneralAdAmount, submitGeneralAdForm } from '/
 import { initJobAdForm, updateJobAdAmount, submitJobAdForm } from '/advertise/js/ad-form-job.js';
 
 let currentUser = null;
-let selectedAdType = null;
-let selectedAdCategory = null; // 'general' or 'job'
 let businessData = null;
 let userType = null; // 'partner' or 'business'
-
-// 광고 유형별 가격 정보
-const adPrices = {
-    top: 500000,
-    realtime: 600000,
-    vip: 300000,
-    premium: 150000,
-    basic: 70000,
-    inquiry: 400000,
-    partnership: 150000
-};
-
-// 광고 유형별 이름
-const adTypeNames = {
-    top: '신다 홈페이지 TOP 광고',
-    realtime: '신다 실시간 현황판',
-    vip: 'VIP 채용관',
-    premium: 'Premium 채용관',
-    basic: 'Basic 채용관',
-    inquiry: '신다 수다방 게시물 하단 광고',
-    partnership: '신다샵 제휴서비스 입점'
-};
-
-// 광고 카테고리 분류
-const adCategories = {
-    top: 'general',
-    inquiry: 'general',
-    partnership: 'general',
-    realtime: 'job',
-    vip: 'job',
-    premium: 'job',
-    basic: 'job'
-};
 
 // DOM이 로드될 때까지 대기
 document.addEventListener('DOMContentLoaded', function() {
@@ -90,45 +55,33 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // 회원 유형에 따라 광고 섹션 표시/숨김
-        updateAdvertiseSections();
+        // URL 파라미터에서 광고 정보 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const adType = urlParams.get('type');
+        const adName = urlParams.get('name');
+        const adPrice = urlParams.get('price');
+        const adCategory = urlParams.get('category');
+        
+        if (adType && adName && adPrice && adCategory) {
+            // 광고 정보 설정
+            const selectedAdType = {
+                type: adType,
+                name: decodeURIComponent(adName),
+                price: parseInt(adPrice)
+            };
+            
+            // 해당 폼 로드
+            loadAdForm(adType, selectedAdType, adCategory);
+        } else {
+            // 광고 정보가 없거나 잘못된 경우
+            document.getElementById('ad-form-container').innerHTML = 
+                '<div class="no-data">광고 정보가 올바르지 않습니다.</div>';
+        }
     });
 });
 
-// 광고 섹션 업데이트 함수
-function updateAdvertiseSections() {
-    // body에 회원 유형 클래스 추가
-    if (userType === 'partner') {
-        document.body.classList.add('partner-user');
-        console.log('파트너회원 UI 설정 완료');
-    } else if (userType === 'business') {
-        document.body.classList.add('business-user');
-        console.log('업소회원 UI 설정 완료');
-    }
-}
-
-// 광고 옵션 선택
-window.selectOption = async function(type) {
-    // 즉시 UI 업데이트
-    // 기존 선택 해제
-    document.querySelectorAll('.ad-option-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    
-    // 새로운 선택 - 즉시 적용
-    const selectedCard = document.querySelector(`[data-type="${type}"]`);
-    if (selectedCard) {
-        selectedCard.classList.add('selected');
-    }
-    
-    selectedAdType = {
-        type: type,
-        name: adTypeNames[type],
-        price: adPrices[type]
-    };
-    selectedAdCategory = adCategories[type];
-    
-    // 해당 폼 로드 및 표시
+// 광고 폼 로드 함수
+async function loadAdForm(type, selectedAdType, selectedAdCategory) {
     const formContainer = document.getElementById('ad-form-container');
     if (!formContainer) return;
     
@@ -143,15 +96,15 @@ window.selectOption = async function(type) {
             formContainer.innerHTML = formHtml;
             
             // 폼 초기화
-            initGeneralAdForm(businessData, selectedAdType, adPrices[type]);
+            initGeneralAdForm(businessData, selectedAdType, selectedAdType.price);
             
             // 이벤트 리스너 설정
             document.getElementById('duration1')?.addEventListener('change', () => {
-                updateGeneralAdAmount(adPrices[type]);
+                updateGeneralAdAmount(selectedAdType.price);
             });
             
             // 폼 제출 설정
-            submitGeneralAdForm(currentUser, selectedAdType, adPrices[type]);
+            submitGeneralAdForm(currentUser, selectedAdType, selectedAdType.price);
             
         } else {
             // 채용관 광고 폼 로드
@@ -160,29 +113,20 @@ window.selectOption = async function(type) {
             formContainer.innerHTML = formHtml;
             
             // 폼 초기화
-            initJobAdForm(businessData, selectedAdType, adPrices[type]);
+            initJobAdForm(businessData, selectedAdType, selectedAdType.price);
             
             // 이벤트 리스너 설정
             document.getElementById('duration2')?.addEventListener('change', () => {
-                updateJobAdAmount(adPrices[type]);
+                updateJobAdAmount(selectedAdType.price);
             });
             
             // 폼 제출 설정
-            submitJobAdForm(currentUser, selectedAdType, adPrices[type]);
+            submitJobAdForm(currentUser, selectedAdType, selectedAdType.price);
         }
     } catch (error) {
         console.error('폼 로드 오류:', error);
         alert('신청서 로드 중 오류가 발생했습니다.');
     }
-};
+}
 
-// 전역 함수로 금액 업데이트 함수 노출
-window.updateTotalAmount = function() {
-    if (!selectedAdType) return;
-    
-    if (selectedAdCategory === 'general') {
-        updateGeneralAdAmount(adPrices[selectedAdType.type]);
-    } else {
-        updateJobAdAmount(adPrices[selectedAdType.type]);
-    }
-};
+// 전역 함수로 금액 업데이트 함수 노출 - 제거됨
