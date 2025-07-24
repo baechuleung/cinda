@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - CINDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/mypage.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="mypage-container">
+        <!-- 프로필 섹션 -->
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-icon">🌙</div>
+                <div class="profile-info">
+                    <div class="profile-status">일반회원</div>
+                    <div class="profile-name">뽀족한 독배기</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 내 활동 섹션 -->
+        <div class="activity-section">
+            <h2 class="section-title">내 활동</h2>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <a href="#" class="activity-link">
+                        <span class="activity-name">즐겨찾기</span>
+                        <span class="arrow">›</span>
+                    </a>
+                </li>
+                <li class="activity-item">
+                    <a href="#" class="activity-link">
+                        <span class="activity-name">찜</span>
+                        <span class="arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 계정정보 관리 섹션 -->
+        <div class="account-section">
+            <h2 class="section-title">계정정보 관리</h2>
+            <ul class="account-list">
+                <li class="account-item">
+                    <a href="#" class="account-link">
+                        <span class="account-name">회원정보 수정</span>
+                        <span class="arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 회원관리 섹션 -->
+        <div class="member-section">
+            <h2 class="section-title">회원관리</h2>
+            <ul class="member-list">
+                <li class="member-item">
+                    <a href="#" class="member-link">
+                        <span class="member-name">회원탈퇴</span>
+                        <span class="arrow">›</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="/js/firebase-config.js"></script>
+    <script type="module" src="js/mypage.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드
+        loadHeader('header-container');
+    </script>
+</body>
+</html>

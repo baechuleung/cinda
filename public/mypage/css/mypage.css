@@ -1,0 +1,147 @@
+/* 파일경로: mypage/css/mypage.css */
+/* 파일이름: mypage.css */
+
+/* 마이페이지 컨테이너 */
+.mypage-container {
+    max-width: 450px;
+    margin: 0 auto;
+    padding-top: 90px;
+    min-height: 100vh;
+    background-color: #000;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+    padding: 24px 16px;
+    border-bottom: 1px solid #222;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-icon {
+    width: 56px;
+    height: 56px;
+    background-color: #FFD700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-status {
+    background-color: #E91E63;
+    color: #FFF;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.profile-name {
+    color: #FFF;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* 섹션 공통 스타일 */
+.activity-section,
+.account-section,
+.member-section {
+    padding: 24px 16px;
+    border-bottom: 1px solid #222;
+}
+
+.section-title {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+/* 리스트 공통 스타일 */
+.activity-list,
+.account-list,
+.member-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item,
+.account-item,
+.member-item {
+    margin-bottom: 8px;
+}
+
+.activity-item:last-child,
+.account-item:last-child,
+.member-item:last-child {
+    margin-bottom: 0;
+}
+
+/* 링크 공통 스타일 */
+.activity-link,
+.account-link,
+.member-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: #111;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.activity-link:hover,
+.account-link:hover,
+.member-link:hover {
+    background-color: #1a1a1a;
+}
+
+.activity-name,
+.account-name,
+.member-name {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.arrow {
+    color: #666;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+/* Footer 간격 조정 */
+#footer-container {
+    margin-top: 48px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .mypage-container {
+        padding-top: 70px;
+    }
+    
+    .profile-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+    }
+    
+    .profile-name {
+        font-size: 16px;
+    }
+}
