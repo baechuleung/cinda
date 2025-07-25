@@ -21,7 +21,7 @@ function setActiveTab() {
 async function loadAdHeader(containerId = 'ad-header-container') {
     try {
         // 헤더 HTML 로드
-        const response = await fetch('/advertise/html/ad-header.html');
+        const response = await fetch('/advertise/ad-header.html');
         const text = await response.text();
         
         // 헤더 내용 삽입
