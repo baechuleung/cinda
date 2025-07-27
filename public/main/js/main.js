@@ -1,4 +1,5 @@
-// main/js/main.js
+// 파일경로: /main/js/main.js
+// 파일이름: main.js
 
 import { auth } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -75,8 +76,8 @@ function initializePage() {
     const vantaBtn = document.querySelector('.vanta .card-button');
     if (vantaBtn) {
         vantaBtn.addEventListener('click', function() {
-            // 반타원타 페이지로 이동
-            window.location.href = '/vanta.html';
+            // TC계산기 Pro 모드로 이동
+            window.location.href = '/tc-calculate/pro-tc.html';
         });
     }
     

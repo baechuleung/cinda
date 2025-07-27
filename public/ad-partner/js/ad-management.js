@@ -145,27 +145,39 @@ function displayAdDetail() {
     const infoDiv = document.createElement('div');
     infoDiv.className = 'ad-detail-info';
     
-    // 주소 (상단) - region1/region2 형식으로 표시
-    const addressDiv = document.createElement('div');
-    addressDiv.className = 'ad-detail-address';
+    // 첫 번째 줄: 업체명 + 지역
+    const firstLineDiv = document.createElement('div');
+    firstLineDiv.className = 'ad-detail-first-line';
+    
+    // 업체명
+    const businessNameSpan = document.createElement('span');
+    businessNameSpan.className = 'ad-detail-business-name';
+    businessNameSpan.textContent = adData.businessName || '';
+    
+    // 지역
+    const addressSpan = document.createElement('span');
+    addressSpan.className = 'ad-detail-address';
     const region1 = adData.region1 || '';
     const region2 = adData.region2 || '';
     const regionText = region1 && region2 ? `${region1}/${region2}` : (region1 || region2 || '지역 정보 없음');
-    addressDiv.textContent = regionText;
+    addressSpan.textContent = regionText;
     
-    // 업체명 (중간)
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'ad-detail-title';
-    titleDiv.textContent = adData.businessName || '';
+    firstLineDiv.appendChild(businessNameSpan);
+    firstLineDiv.appendChild(addressSpan);
     
-    // 업종 (하단)
+    // 두 번째 줄: 프로모션 제목
+    const promotionTitleDiv = document.createElement('div');
+    promotionTitleDiv.className = 'ad-detail-promotion-title';
+    promotionTitleDiv.textContent = adData.promotionTitle || '프로모션 제목';
+    
+    // 세 번째 줄: 업종
     const businessTypeDiv = document.createElement('div');
     businessTypeDiv.className = 'ad-detail-business-type';
     businessTypeDiv.textContent = adData.businessType || '';
     
     // 정보 영역에 추가
-    infoDiv.appendChild(addressDiv);
-    infoDiv.appendChild(titleDiv);
+    infoDiv.appendChild(firstLineDiv);
+    infoDiv.appendChild(promotionTitleDiv);
     infoDiv.appendChild(businessTypeDiv);
     
     // 카드에 추가
@@ -177,6 +189,9 @@ function displayAdDetail() {
 function displayStats() {
     // 추천수
     document.getElementById('recommendCount').textContent = `${(adData.recommendCount || 0).toLocaleString()} 회`;
+    
+    // 찜수
+    document.getElementById('likeCount').textContent = `${(adData.likeCount || 0).toLocaleString()} 회`;
     
     // 클릭수
     document.getElementById('clickCount').textContent = `${(adData.clickCount || 0).toLocaleString()} 회`;

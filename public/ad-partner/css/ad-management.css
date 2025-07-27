@@ -94,6 +94,23 @@
     justify-content: space-between;
 }
 
+/* 첫 번째 줄: 업체명 + 지역 */
+.ad-detail-first-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.ad-detail-business-name {
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 150%;
+}
+
 .ad-detail-address {
     border-radius: 5px;
     background: #F4F4F4;
@@ -105,7 +122,8 @@
     max-width: fit-content;
 }
 
-.ad-detail-title {
+/* 두 번째 줄: 프로모션 제목 */
+.ad-detail-promotion-title {
     color: #FFF;
     font-family: Pretendard;
     font-size: 14px;
@@ -116,8 +134,9 @@
     text-align: left;
 }
 
+/* 세 번째 줄: 업종 */
 .ad-detail-business-type {
-    color: #6850FF;
+    color: #FFF;
     font-family: Pretendard;
     font-size: 14px;
     font-style: normal;

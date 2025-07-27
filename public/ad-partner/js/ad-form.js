@@ -361,14 +361,15 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
             businessWebsite: document.getElementById('businessWebsite').value,
             businessHours: document.getElementById('businessHours').value,
             adType: 'partner',
+            promotionTitle: document.getElementById('promotionTitle').value,
             adDetailContent: document.getElementById('adDetailContent').value,
-            duration: 1, // 기본 1개월로 설정
             social: {
                 kakao: document.getElementById('kakaoId').value || ''
             },
             // 카운터 필드 추가
             recommendCount: 0,  // 추천수
             clickCount: 0,      // 클릭수
+            likeCount: 0,       // 찜수
             status: 'pending',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
@@ -437,4 +438,22 @@ window.cancelForm = function() {
 // 페이지 로드시 실행
 window.addEventListener('DOMContentLoaded', function() {
     console.log('제휴 신청 페이지 로드 완료');
+    
+    // 프로모션 제목 글자 수 카운터
+    const promotionTitleInput = document.getElementById('promotionTitle');
+    const titleCharCount = document.getElementById('titleCharCount');
+    
+    if (promotionTitleInput && titleCharCount) {
+        promotionTitleInput.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            titleCharCount.textContent = currentLength;
+            
+            // 글자 수가 30자에 가까워지면 색상 변경
+            if (currentLength >= 25) {
+                titleCharCount.style.color = '#ff6666';
+            } else {
+                titleCharCount.style.color = '#999';
+            }
+        });
+    }
 });
