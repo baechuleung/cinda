@@ -1,0 +1,88 @@
+<!-- 파일경로: /ad-business/ad-list.html -->
+<!-- 파일이름: ad-list.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공고 관리 - CINDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/ad-list.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="container">
+        <!-- 탭 버튼 -->
+        <div class="tab-container">
+            <button class="tab-btn active">등록된 공고</button>
+            <button class="tab-btn" onclick="location.href='ad-form.html'">공고추가</button>
+        </div>
+
+        <!-- 필터 섹션 -->
+        <div class="filter-section">
+            <div class="status-filter-buttons">
+                <button class="status-filter-btn active" data-status="">전체</button>
+                <button class="status-filter-btn" data-status="pending">승인대기</button>
+                <button class="status-filter-btn" data-status="active">진행중</button>
+                <button class="status-filter-btn" data-status="expired">만료</button>
+                <button class="status-filter-btn" data-status="rejected">반려</button>
+            </div>
+        </div>
+
+        <!-- 공고 목록 -->
+        <div class="ad-list" id="adList">
+            <!-- 공고 카드들이 여기에 동적으로 추가됩니다 -->
+        </div>
+
+        <!-- 데이터 없음 메시지 -->
+        <div id="noDataMessage" class="no-data" style="display: none;">
+            <p>신청한 공고가 없습니다.</p>
+            <button class="add-btn" onclick="location.href='ad-form.html'">공고 신청하기</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/ad-list.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드 후 페이지 타이틀 설정
+        loadHeader('header-container');
+        
+        // 페이지 타이틀 설정을 위한 전역 변수
+        window.pageTitle = '공고관리';
+        
+        // DOM 로드 후 페이지 타이틀 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // header.js가 로드되기를 기다림
+            const checkInterval = setInterval(function() {
+                const backButton = document.querySelector('.back-button');
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                
+                if (backButton && hamburgerMenu && !document.querySelector('.page-title')) {
+                    // 페이지 타이틀 요소 생성
+                    const pageTitle = document.createElement('h1');
+                    pageTitle.className = 'page-title';
+                    pageTitle.textContent = window.pageTitle || '공고관리';
+                    
+                    // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
+                    backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);
+                    
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            
+            // 5초 후에는 체크 중지
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        });
+    </script>
+</body>
+</html>

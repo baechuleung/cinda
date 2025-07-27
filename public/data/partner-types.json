@@ -1,0 +1,24 @@
+{
+  "partnerTypes": [
+    {
+      "code": "beauty",
+      "name": "미용/뷰티"
+    },
+    {
+      "code": "plastic_surgery",
+      "name": "성형"
+    },
+    {
+      "code": "luxury_rental",
+      "name": "명품렌탈"
+    },
+    {
+      "code": "loan",
+      "name": "대출"
+    },
+    {
+      "code": "etc",
+      "name": "기타"
+    }
+  ]
+}

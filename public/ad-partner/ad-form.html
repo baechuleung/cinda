@@ -1,0 +1,263 @@
+<!-- 파일경로: /ad-partner/ad-form.html -->
+<!-- 파일이름: ad-form.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제휴 신청 - BAMDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/ad-form.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="container">
+        <!-- 탭 버튼 -->
+        <div class="tab-container">
+            <button class="tab-btn" onclick="location.href='ad-management.html'">제휴관리</button>
+            <button class="tab-btn active">제휴추가</button>
+        </div>
+
+        <!-- 제휴 신청 폼 -->
+        <form id="adForm" class="ad-form">
+            <!-- 제휴업체 기본정보 입력 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <div class="icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                            <path d="M13.0815 1.51219C13.6451 -0.4009 16.3549 -0.400898 16.9185 1.51219L17.2652 2.68913C17.6624 4.03737 19.2898 4.56613 20.4036 3.70884L21.3759 2.96048C22.9563 1.74403 25.1485 3.33679 24.48 5.21579L24.0687 6.37175C23.5976 7.69596 24.6034 9.08027 26.0084 9.04139L27.2348 9.00745C29.2284 8.95229 30.0658 11.5294 28.4205 12.6566L27.4083 13.3501C26.2488 14.1444 26.2488 15.8556 27.4083 16.6499L28.4205 17.3434C30.0658 18.4706 29.2284 21.0477 27.2348 20.9925L26.0084 20.9586C24.6034 20.9197 23.5976 22.304 24.0687 23.6283L24.48 24.7842C25.1485 26.6632 22.9563 28.256 21.3759 27.0395L20.4036 26.2912C19.2898 25.4339 17.6624 25.9626 17.2652 27.3109L16.9185 28.4878C16.3549 30.4009 13.6451 30.4009 13.0815 28.4878L12.7348 27.3109C12.3376 25.9626 10.7102 25.4339 9.59644 26.2912L8.62415 27.0395C7.0437 28.256 4.85145 26.6632 5.51998 24.7842L5.93126 23.6283C6.4024 22.304 5.39664 20.9197 3.99165 20.9586L2.76517 20.9925C0.771554 21.0477 -0.0658097 18.4706 1.57949 17.3434L2.59168 16.6499C3.75119 15.8556 3.75119 14.1444 2.59168 13.3501L1.57949 12.6566C-0.0658102 11.5294 0.771558 8.95229 2.76518 9.00745L3.99165 9.04139C5.39664 9.08027 6.4024 7.69596 5.93126 6.37175L5.51998 5.21579C4.85145 3.33679 7.04371 1.74403 8.62415 2.96048L9.59644 3.70884C10.7102 4.56613 12.3376 4.03737 12.7348 2.68912L13.0815 1.51219Z" fill="#6850FF"/>
+                        </svg>
+                        <span class="icon-number">1</span>
+                    </div>
+                    제휴업체 기본정보 입력
+                </h2>
+                
+                <div class="form-group">
+                    <label>업체명</label>
+                    <input type="text" id="businessName" placeholder="업체명을 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label>담당자명</label>
+                    <input type="text" id="contactName" placeholder="담당자명을 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label>연락처</label>
+                    <input type="tel" id="contactPhone" placeholder="연락처를 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label>업종</label>
+                    <div class="custom-dropdown" id="businessTypeDropdown">
+                        <div class="dropdown-selected" id="businessTypeSelected">
+                            <span class="selected-text">업종을 선택하세요</span>
+                            <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 1L6 6L11 1" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="dropdown-menu" id="businessTypeMenu" style="display: none;">
+                            <div class="dropdown-options" id="businessTypeOptions">
+                                <!-- 업종 목록은 JavaScript로 동적 로드 -->
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="businessType" required>
+                </div>
+
+                <!-- 업체 주소 -->
+                <!-- 도시/지역 -->
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>도시선택</label>
+                        <div class="custom-dropdown" id="region1Dropdown">
+                            <div class="dropdown-selected" id="region1Selected">
+                                <span class="selected-text">도시선택</span>
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L6 6L11 1" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-menu" id="region1Menu" style="display: none;">
+                                <div class="dropdown-options" id="region1Options">
+                                    <!-- 지역1 목록은 JavaScript로 동적 로드 -->
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="region1" required>
+                    </div>
+                    
+                    <div class="form-group half">
+                        <label>지역선택</label>
+                        <div class="custom-dropdown" id="region2Dropdown">
+                            <div class="dropdown-selected" id="region2Selected">
+                                <span class="selected-text">지역선택</span>
+                                <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L6 6L11 1" stroke="#999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="dropdown-menu" id="region2Menu" style="display: none;">
+                                <div class="dropdown-options" id="region2Options">
+                                    <div class="dropdown-option disabled">도시를 먼저 선택하세요</div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="region2" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>상세 주소</label>
+                    <input type="text" id="businessAddress" placeholder="상세 주소를 입력하세요" required>
+                </div>
+
+                <!-- 홈페이지 -->
+                <div class="form-group">
+                    <label>홈페이지</label>
+                    <input type="url" id="businessWebsite" placeholder="홈페이지 URL을 입력하세요">
+                </div>
+
+                <!-- 소셜 연락처 -->
+                <div class="form-group">
+                    <label>카카오톡</label>
+                    <input type="text" id="kakaoId" placeholder="ID 혹은 링크를 입력하세요">
+                </div>
+
+                <!-- 영업시간 -->
+                <div class="form-group">
+                    <label>영업시간</label>
+                    <input type="text" id="businessHours" placeholder="예: 평일 09:00-18:00, 주말 휴무" required>
+                </div>
+            </div>
+
+            <!-- 구분선 -->
+            <div class="section-divider"></div>
+
+            <!-- 상세내용 및 이미지 업로드 -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <div class="icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                            <path d="M13.0815 1.51219C13.6451 -0.4009 16.3549 -0.400898 16.9185 1.51219L17.2652 2.68913C17.6624 4.03737 19.2898 4.56613 20.4036 3.70884L21.3759 2.96048C22.9563 1.74403 25.1485 3.33679 24.48 5.21579L24.0687 6.37175C23.5976 7.69596 24.6034 9.08027 26.0084 9.04139L27.2348 9.00745C29.2284 8.95229 30.0658 11.5294 28.4205 12.6566L27.4083 13.3501C26.2488 14.1444 26.2488 15.8556 27.4083 16.6499L28.4205 17.3434C30.0658 18.4706 29.2284 21.0477 27.2348 20.9925L26.0084 20.9586C24.6034 20.9197 23.5976 22.304 24.0687 23.6283L24.48 24.7842C25.1485 26.6632 22.9563 28.256 21.3759 27.0395L20.4036 26.2912C19.2898 25.4339 17.6624 25.9626 17.2652 27.3109L16.9185 28.4878C16.3549 30.4009 13.6451 30.4009 13.0815 28.4878L12.7348 27.3109C12.3376 25.9626 10.7102 25.4339 9.59644 26.2912L8.62415 27.0395C7.0437 28.256 4.85145 26.6632 5.51998 24.7842L5.93126 23.6283C6.4024 22.304 5.39664 20.9197 3.99165 20.9586L2.76517 20.9925C0.771554 21.0477 -0.0658097 18.4706 1.57949 17.3434L2.59168 16.6499C3.75119 15.8556 3.75119 14.1444 2.59168 13.3501L1.57949 12.6566C-0.0658102 11.5294 0.771558 8.95229 2.76518 9.00745L3.99165 9.04139C5.39664 9.08027 6.4024 7.69596 5.93126 6.37175L5.51998 5.21579C4.85145 3.33679 7.04371 1.74403 8.62415 2.96048L9.59644 3.70884C10.7102 4.56613 12.3376 4.03737 12.7348 2.68912L13.0815 1.51219Z" fill="#6850FF"/>
+                        </svg>
+                        <span class="icon-number">2</span>
+                    </div>
+                    상세내용 및 이미지 업로드
+                </h2>
+
+                <!-- 업체 대표 이미지 업로드 -->
+                <div class="form-group">
+                    <label>업체 대표 이미지 업로드</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="businessImage" accept="image/*">
+                        <span class="image-select-btn" onclick="document.getElementById('businessImage').click()">이미지 선택</span>
+                        <span class="image-file-name">선택된 파일 없음</span>
+                    </div>
+                    <div class="upload-info">
+                        대표 이미지 권장 사이즈 (1:1) 최대1000px x 1000px, 최대 5MB
+                    </div>
+                </div>
+
+                <!-- 상세페이지 이미지 업로드 -->
+                <div class="form-group">
+                    <label>상세페이지 이미지 업로드</label>
+                    <div class="upload-option">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="imageCreationRequest">
+                            <span class="checkbox-mark"></span>
+                            <span class="checkbox-text">상세페이지 디자인 의뢰비용 +50,000원</span>
+                        </label>
+                    </div>
+                    <div class="image-upload-wrapper" id="detailImageUpload">
+                        <input type="file" id="detailImage" accept="image/*">
+                        <span class="image-select-btn" onclick="document.getElementById('detailImage').click()">이미지 선택</span>
+                        <span class="image-file-name">선택된 파일 없음</span>
+                    </div>
+                    <div class="upload-info">
+                        대표 이미지 권장 사이즈 가로 최대 1200px 이내, 최대 5MB
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>제휴 상세내용</label>
+                    <textarea id="adDetailContent" rows="4" placeholder="제휴의 상세 내용을 간단히 작성해주세요"></textarea>
+                </div>
+            </div>
+
+            <!-- 제출 버튼 -->
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="cancelForm()">취소</button>
+                <button type="submit" class="submit-btn">제휴 신청</button>
+            </div>
+        </form>
+
+        <!-- 제휴 신청 완료 팝업 -->
+        <div id="paymentPopup" class="popup-overlay" style="display: none;">
+            <div class="popup-container">
+                <h2 class="popup-title">제휴 신청 완료</h2>
+                <p class="popup-subtitle">제휴 신청이 성공적으로 접수되었습니다.</p>
+                
+                <div class="notice-info">
+                    <p>제휴 검수 후 1~2일 이내에 연락드립니다.</p>
+                    <p>제휴 관련 문의는 <strong>1:1 고객센터</strong>로 문의 주세요.</p>
+                </div>
+                
+                <div class="notice-list">
+                    <p>&lt;밤의 다이어리 제휴 진행 절차&gt;</p>
+                    <ol>
+                        <li>제휴 신청서 작성 후 검수</li>
+                        <li>콘텐츠, 업종, 이미지 등이 당사 운영정책에 적합한지 내부적으로 검토합니다.</li>
+                        <li>검수 통과일로부터 1~2일 이내 제휴가 시작됩니다.</li>
+                        <li>제휴 내용이 운영정책에 맞지 않아 승인이 거절되는 경우, 별도로 안내드립니다.</li>
+                    </ol>
+                </div>
+                
+                <button type="button" class="popup-confirm-btn" onclick="closePaymentPopup()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/ad-form.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드 후 페이지 타이틀 설정
+        loadHeader('header-container');
+        
+        // 페이지 타이틀 설정을 위한 전역 변수
+        window.pageTitle = '제휴신청';
+        
+        // DOM 로드 후 페이지 타이틀 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // header.js가 로드되기를 기다림
+            const checkInterval = setInterval(function() {
+                const backButton = document.querySelector('.back-button');
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                
+                if (backButton && hamburgerMenu && !document.querySelector('.page-title')) {
+                    // 페이지 타이틀 요소 생성
+                    const pageTitle = document.createElement('h1');
+                    pageTitle.className = 'page-title';
+                    pageTitle.textContent = window.pageTitle || '제휴신청';
+                    
+                    // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
+                    backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);
+                    
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            
+            // 5초 후에는 체크 중지
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        });
+    </script>
+</body>
+</html>

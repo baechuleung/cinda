@@ -242,8 +242,13 @@ async function updateUserInfo(uid) {
                 userStatusElement.setAttribute('data-type', userData.userType);
             }
             
-            if (userNameElement && userData.nickname) {
-                userNameElement.textContent = userData.nickname;
+            // 사용자 이름 업데이트 - userType이 partner인 경우 companyName 사용
+            if (userNameElement) {
+                if (userData.userType === 'partner' && userData.companyName) {
+                    userNameElement.textContent = userData.companyName;
+                } else if (userData.nickname) {
+                    userNameElement.textContent = userData.nickname;
+                }
             }
         }
     } catch (error) {
@@ -275,7 +280,7 @@ onAuthStateChanged(auth, async (user) => {
         // 파트너회원 여부 확인 (users 컬렉션의 userType 확인)
         const isPartnerUser = await checkPartnerUserStatus(user.uid);
         if (isPartnerUser) {
-            showAdvertiseMenu();
+            showPartnerMenu();
         }
     } else {
         // 로그인하지 않은 경우
@@ -359,11 +364,20 @@ function showAdminMenu() {
     });
 }
 
-// 광고관리 메뉴 표시
+// 광고관리 메뉴 표시 (업소회원용)
 function showAdvertiseMenu() {
     const advertiseMenus = document.querySelectorAll('.advertise-menu');
     
     advertiseMenus.forEach(menu => {
+        menu.style.cssText = 'display: block !important;';
+    });
+}
+
+// 제휴관리 메뉴 표시 (파트너회원용)
+function showPartnerMenu() {
+    const partnerMenus = document.querySelectorAll('.partner-menu');
+    
+    partnerMenus.forEach(menu => {
         menu.style.cssText = 'display: block !important;';
     });
 }

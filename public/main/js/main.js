@@ -6,7 +6,8 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/fi
 // 임시 접근 제한 - 특정 UID들만 허용 (배열로 변경)
 const TEMP_ALLOWED_UIDS = [
     '1o2hBje7h4cjeTFPehPrjHbfsHF2', // 첫 번째 사용자 UID
-    'HS0tMiQ3IOaPoCNP0WXVxJd5UNp2' // 두 번째 사용자 UID
+    'HS0tMiQ3IOaPoCNP0WXVxJd5UNp2',
+    'NTdxyeSnCJdF324O94dloPJeIHq2' // 두 번째 사용자 UID
 ];
 
 // 원본 HTML 저장 (body는 HTML에서 display:none 상태)
@@ -85,6 +86,15 @@ function initializePage() {
         partnershipBtn.addEventListener('click', function() {
             // 제휴서비스 페이지로 이동
             window.location.href = '/partnership.html';
+        });
+    }
+    
+    // 오늘의 운세 바로가기 버튼
+    const fortuneBtn = document.querySelector('.fortune .card-button');
+    if (fortuneBtn) {
+        fortuneBtn.addEventListener('click', function() {
+            // 오늘의 운세 페이지로 이동
+            window.location.href = '/fortune.html';
         });
     }
     

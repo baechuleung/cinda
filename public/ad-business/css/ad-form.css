@@ -1,0 +1,880 @@
+/* 파일경로: /ad-business/css/ad-form.css */
+/* 파일이름: ad-form.css */
+
+.container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 탭 컨테이너 */
+.tab-container {
+    height: 55px;
+    display: flex;
+    background: #29262F;
+    border-radius: 30px;
+    padding: 4px;
+    margin: 16px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background-color: transparent;
+    color: #999;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: #131217;
+    color: #ffffff;
+}
+
+.form-section {
+    padding: 16px;
+    margin-bottom: 0;
+}
+
+/* 섹션 구분선 */
+.section-divider {
+    width: 100%;
+    height: 10px;
+    background: #202020;
+    margin: 0;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-wrapper {
+    position: relative;
+    width: 30px;
+    height: 30px;
+}
+
+.icon-wrapper svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.icon-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    height: 45px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 23px;
+    background: #29262F;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    height: auto;
+    padding: 12px 20px;
+    min-height: 100px;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #999;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.form-group select {
+    padding: 0 20px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 20px center;
+    padding-right: 40px;
+}
+
+/* 폼 행 (반반 레이아웃) */
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-group.half {
+    flex: 1;
+}
+
+/* 커스텀 드롭다운 */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-selected {
+    width: 100%;
+    height: 45px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 23px;
+    background: #29262F;
+    color: #ffffff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropdown-selected.active {
+    border-radius: 23px 23px 0 0;
+}
+
+.dropdown-selected .selected-text {
+    color: #999;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.dropdown-selected.has-value .selected-text {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-selected.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    right: 0;
+    background: #29262F;
+    border-radius: 0 0 23px 23px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.dropdown-option {
+    padding: 12px 20px;
+    color: #999;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dropdown-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.dropdown-option.selected {
+    background: rgba(254, 48, 113, 0.2);
+    color: #FE3071;
+}
+
+/* 스크롤바 스타일 */
+.dropdown-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-option.disabled {
+    color: #666;
+    cursor: not-allowed;
+}
+
+.dropdown-option.disabled:hover {
+    background: transparent;
+    color: #666;
+}
+
+/* 라디오 그룹 */
+.radio-group {
+    display: flex;
+    gap: 0;
+    margin-top: 8px;
+}
+
+.radio-label {
+    flex: 1;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px 0;
+}
+
+.radio-label input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #666;
+    border-radius: 50%;
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.radio-label input[type="radio"]:checked {
+    border-color: #FE3071;
+}
+
+.radio-label input[type="radio"]:checked::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #FE3071;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.radio-text {
+    color: #FFF;
+    font-size: 14px;
+}
+
+/* 시간 입력 */
+.time-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.time-input-wrapper {
+    flex: 1;
+    position: relative;
+    height: 45px;
+}
+
+.time-separator {
+    color: #999;
+    font-size: 20px;
+    font-weight: 300;
+    padding: 0 4px;
+}
+
+/* 커스텀 시간 선택기 */
+.custom-time-picker {
+    width: 100%;
+    height: 45px;
+    position: relative;
+    cursor: pointer;
+}
+
+.time-display {
+    width: 100%;
+    height: 45px;
+    padding: 0 50px 0 20px;
+    border: none;
+    border-radius: 23px;
+    background: #29262F;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.time-display::placeholder {
+    color: #999;
+}
+
+.time-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* 시간 선택 팝업 */
+.time-picker-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.time-picker-container {
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.time-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.time-picker-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.time-close-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.time-close-btn:hover {
+    color: #ffffff;
+}
+
+.time-picker-body {
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.time-column {
+    flex: 1;
+}
+
+.time-column h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #999;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+.time-options {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #29262F;
+}
+
+.time-option {
+    padding: 12px;
+    text-align: center;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 16px;
+}
+
+.time-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.time-option.selected {
+    background: #FE3071;
+    color: #ffffff;
+}
+
+/* 스크롤바 스타일 */
+.time-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+.time-options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.time-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.time-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.time-picker-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid #333;
+}
+
+.time-cancel-btn,
+.time-confirm-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-cancel-btn {
+    background: transparent;
+    color: #999;
+    border: 1px solid #333;
+}
+
+.time-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.time-confirm-btn {
+    background: #FE3071;
+    color: #ffffff;
+}
+
+.time-confirm-btn:hover {
+    background: #e02862;
+}
+
+.add-time-btn {
+    padding: 0 20px;
+    height: 45px;
+    background-color: #FE3071;
+    color: #ffffff;
+    border: none;
+    border-radius: 23px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.add-time-btn:hover {
+    background-color: #e02862;
+}
+
+/* 근무시간 리스트 */
+.work-time-list {
+    margin-top: 12px;
+}
+
+.work-time-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #29262F;
+    border-radius: 23px;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.work-time-text {
+    flex: 1;
+}
+
+.remove-time-btn {
+    background: none;
+    border: none;
+    color: #FE3071;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+.remove-time-btn:hover {
+    color: #e02862;
+}
+
+/* 급여 입력 필드 */
+#salary {
+    padding-right: 40px;
+}
+
+.salary-wrapper {
+    position: relative;
+}
+
+.salary-wrapper::after {
+    content: '원';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* 태그 버튼 */
+.tag-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.tag-btn {
+    padding: 10px 20px;
+    border: 1px solid #FFF;
+    background-color: transparent;
+    color: #FFFFFF;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tag-btn:hover {
+    background-color: rgba(254, 48, 113, 0.1);
+    border-color: #FE3071;
+    color: #FE3071;
+}
+
+.tag-btn.active {
+    border: 2px solid #FE3071;
+    color: #FE3071;
+    background-color: transparent;
+    padding: 9px 19px; /* 2px 테두리 보정 */
+}
+
+/* 이미지 업로드 스타일 */
+.image-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.image-upload-wrapper input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.image-select-btn {
+    padding: 12px 24px;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.image-select-btn:hover {
+    background: #f8f8f8;
+    border-color: #FE3071;
+}
+
+.image-file-name {
+    color: #999;
+    font-size: 14px;
+    flex: 1;
+}
+
+.upload-info {
+    font-size: 13px;
+    color: #999;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* 커스텀 체크박스 */
+.upload-option {
+    margin-bottom: 16px;
+}
+
+.custom-checkbox {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 8px;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.checkbox-mark {
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid #fff !important;
+    border-radius: 3px !important;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    background: transparent !important;
+    display: inline-block !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkbox-mark {
+    background-color: #FE3071;
+    border-color: #FE3071;
+}
+
+.custom-checkbox input[type="checkbox"]:checked + .checkbox-mark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.checkbox-text {
+    color: #FE3071;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 상세 이미지 업로드 숨김/표시 */
+#detailImageUpload {
+    transition: all 0.3s ease;
+}
+
+#detailImageUpload.hidden {
+    display: none;
+}
+
+/* 기간 선택 버튼 */
+.duration-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.duration-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #333;
+    background-color: transparent;
+    color: #999;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.duration-btn.active {
+    background-color: #FE3071;
+    color: #ffffff;
+    border-color: #FE3071;
+}
+
+/* 폼 액션 버튼 */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+}
+
+.cancel-btn,
+.submit-btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn {
+    background-color: transparent;
+    color: #999;
+    border: 1px solid #333;
+}
+
+.submit-btn {
+    background-color: #FE3071;
+    color: #ffffff;
+}
+
+/* 팝업 스타일 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.popup-container {
+    background-color: #1a1a1a;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.popup-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.popup-subtitle {
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.notice-info {
+    background-color: #000;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+}
+
+.notice-info p {
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.notice-info p:last-child {
+    margin-bottom: 0;
+}
+
+.notice-info strong {
+    color: #ff1493;
+}
+
+.notice-list {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 24px;
+}
+
+.notice-list p {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.notice-list ol {
+    padding-left: 20px;
+}
+
+.notice-list li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.popup-confirm-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: #ff1493;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}

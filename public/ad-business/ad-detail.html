@@ -1,0 +1,113 @@
+<!-- 파일경로: /ad-business/ad-detail.html -->
+<!-- 파일이름: ad-detail.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공고 상세 - CINDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/ad-detail.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="container">
+        <!-- 등록된 공고 섹션 -->
+        <div class="section-header">
+            <h2>등록된 공고</h2>
+        </div>
+        
+        <!-- 공고 카드 -->
+        <div class="ad-detail-card" id="adDetailCard">
+            <!-- 동적으로 생성됩니다 -->
+        </div>
+        
+        <!-- 공고현황 섹션 -->
+        <div class="section-header">
+            <h2>공고현황</h2>
+        </div>
+        
+        <!-- 통계 정보 -->
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-icon">👍</div>
+                <div class="stat-info">
+                    <span class="stat-label">추천</span>
+                    <span class="stat-value" id="recommendCount">0 회</span>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">👆</div>
+                <div class="stat-info">
+                    <span class="stat-label">클릭 수</span>
+                    <span class="stat-value" id="clickCount">0 회</span>
+                </div>
+            </div>
+            
+            <div class="stat-item">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-info">
+                    <span class="stat-label">승인상태</span>
+                    <span class="stat-value" id="approvalStatus">광고중</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 디바이더 -->
+        <div class="divider"></div>
+        
+        <!-- 공고연장하기 -->
+        <div class="action-section">
+            <span class="extend-btn" id="extendBtn">
+                <span>공고연장하기</span>
+                <span class="arrow">&gt;</span>
+            </span>
+        </div>
+    </div>
+
+    <script type="module" src="js/ad-detail.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드 후 페이지 타이틀 설정
+        loadHeader('header-container');
+        
+        // 페이지 타이틀 설정을 위한 전역 변수
+        window.pageTitle = '공고상세';
+        
+        // DOM 로드 후 페이지 타이틀 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // header.js가 로드되기를 기다림
+            const checkInterval = setInterval(function() {
+                const backButton = document.querySelector('.back-button');
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                
+                if (backButton && hamburgerMenu && !document.querySelector('.page-title')) {
+                    // 페이지 타이틀 요소 생성
+                    const pageTitle = document.createElement('h1');
+                    pageTitle.className = 'page-title';
+                    pageTitle.textContent = window.pageTitle || '공고상세';
+                    
+                    // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
+                    backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);
+                    
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            
+            // 5초 후에는 체크 중지
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        });
+    </script>
+</body>
+</html>

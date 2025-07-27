@@ -1,0 +1,247 @@
+/* 파일경로: /ad-business/css/ad-list.css */
+/* 파일이름: ad-list.css */
+
+.container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 탭 컨테이너 */
+.tab-container {
+    height: 55px;
+    display: flex;
+    background: #29262F;
+    border-radius: 30px;
+    padding: 4px;
+    margin: 16px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background-color: transparent;
+    color: #999;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: #131217;
+    color: #ffffff;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    padding: 0 16px 16px;
+}
+
+/* 상태 필터 버튼들 */
+.status-filter-buttons {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0;
+}
+
+.status-filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #333;
+    background-color: #1a1a1a;
+    color: #999;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.status-filter-btn.active {
+    background-color: #FE3071;
+    color: #ffffff;
+    border-color: #FE3071;
+}
+
+.status-filter-btn:hover {
+    background-color: #333;
+    color: #ffffff;
+}
+
+.status-filter-btn.active:hover {
+    background-color: #e02862;
+}
+
+/* 공고 목록 */
+.ad-list {
+    padding: 16px;
+}
+
+/* 공고 카드 */
+.ad-card {
+    border-radius: 10px;
+    background: #29262F;
+    padding: 16px;
+    margin-bottom: 16px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ad-card-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.ad-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 16px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.ad-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ad-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+}
+
+.ad-info {
+    flex: 1;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ad-contact-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.ad-contact-name {
+    color: #FFF;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 150%; /* 21px */
+}
+
+.ad-location {
+    border-radius: 5px;
+    background: #F4F4F4;
+    color: #333333;
+    font-size: 12px;
+    padding: 4px 8px;
+    display: inline-block;
+}
+
+.ad-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.ad-price {
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: 500;
+    margin: 0;
+}
+
+.ad-price .salary-type {
+    color: #F66;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ad-action {
+    margin-left: 16px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.action-btn.active {
+    background: #28a745;
+    color: #ffffff;
+}
+
+.action-btn.pending {
+    background: #ffc107;
+    color: #000000;
+}
+
+.action-btn.inactive {
+    background: #6c757d;
+    color: #ffffff;
+}
+
+.action-btn.rejected {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+/* 데이터 없음 메시지 */
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.no-data p {
+    font-size: 16px;
+    color: #999;
+    margin-bottom: 24px;
+}
+
+.add-btn {
+    padding: 16px 32px;
+    background-color: #FE3071;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background-color: #e02862;
+}
