@@ -95,7 +95,7 @@ function initializePage() {
     if (fortuneBtn) {
         fortuneBtn.addEventListener('click', function() {
             // 오늘의 운세 페이지로 이동
-            window.location.href = '/fortune.html';
+            window.location.href = '/fortune/fortune.html';
         });
     }
     
