@@ -335,6 +335,12 @@ nav ul.active {
     flex-shrink: 0;
 }
 
+/* 홈 섹션 - 하단 border만 있음 */
+.home-section {
+    padding: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
 /* 메뉴 섹션 */
 .menu-section {
     padding: 24px 0;
@@ -381,6 +387,14 @@ nav li a .arrow {
 nav li a.active {
     background-color: rgba(255,102,102,0.1);
     color: #FF6666;
+}
+
+/* 홈 아이콘 스타일 */
+.home-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    color: rgba(255,255,255,0.8);
 }
 
 /* 업소회원전용 배지 스타일 */
