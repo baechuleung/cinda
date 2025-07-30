@@ -1,0 +1,291 @@
+/* 파일 경로: fortune/css/fortune.css */
+/* 파일 이름: fortune.css */
+
+.fortune-container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 날짜 섹션 */
+.fortune-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+#currentDate {
+    color: #FFF;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    text-align: left;
+}
+
+.sub-title {
+    color: #FFF;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    text-align: right;
+}
+
+/* 폼 스타일 */
+.fortune-form {
+    padding: 20px;
+    border-radius: 20px;
+    background: #171717;
+    margin: 16px;
+}
+
+.form-section {
+    margin-bottom: 15px;
+}
+
+/* 폼 라벨 */
+.form-label {
+    display: block;
+    font-size: 14px;
+    color: #FFF;
+    margin: 0 20px 8px 20px;
+    font-weight: 500;
+}
+
+/* 생년월일 입력 */
+.birth-date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.birth-date-inputs input[type="number"] {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #222;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    appearance: textfield;
+}
+
+.birth-date-inputs input[type="number"]::-webkit-outer-spin-button,
+.birth-date-inputs input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.birth-date-inputs input[type="number"]:focus {
+    outline: none;
+    border-color: #ff6b6b;
+}
+
+.birth-date-inputs input[type="number"]::placeholder {
+    color: #666;
+    font-size: 14px;
+}
+
+.date-separator {
+    color: #fff;
+    font-size: 14px;
+}
+
+/* 양력/음력 버튼 */
+.calendar-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.calendar-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calendar-btn:hover {
+    border-color: #ff6b6b;
+}
+
+.calendar-btn.active {
+    background: #ff6b6b;
+    color: white;
+    border-color: #ff6b6b;
+}
+
+/* 성별 버튼 */
+.gender-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.gender-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gender-btn:hover {
+    border-color: #ff6b6b;
+}
+
+.gender-btn.active {
+    background: #ff6b6b;
+    color: white;
+    border-color: #ff6b6b;
+}
+
+/* 시간 선택 */
+.form-section select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
+}
+
+.form-section select option {
+    background: #222;
+    color: #fff;
+}
+
+/* 제출 버튼 */
+.fortune-submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.fortune-submit-btn:hover {
+    background: #ff5252;
+}
+
+.fortune-submit-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+/* 결과 영역 */
+.fortune-result {
+    margin-top: 20px;
+}
+
+
+
+.result-content {
+    margin: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #fff;
+}
+
+/* 운세 섹션 */
+.fortune-section {
+    margin-bottom: 10px;
+    padding: 15px;
+    background: #222;
+    border-radius: 12px;
+}
+
+.fortune-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.fortune-section p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+
+
+/* 조언 섹션 - 오늘의 운세 한줄요약 */
+.advice {
+    background: #fff;
+    border: none;
+    text-align: center;
+}
+
+.advice h3 {
+    color: #FE3071;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.advice img {
+    width: 40px;
+    height: 40px;
+    margin: 10px 0;
+}
+
+.advice p {
+    color: #353535;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+/* 드레스 코드 섹션 */
+.dress-code {
+    background: #f8f4ff;
+    border: 1px solid #d4c5f9;
+}
+
+.dress-code h3 {
+    color: #7c3aed;
+}
+
+.dress-code p {
+    color: #4c1d95;
+    font-weight: 500;
+}
+.loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #333;
+    border-top: 3px solid #ff6b6b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

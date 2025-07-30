@@ -372,6 +372,15 @@ nav li a {
     transition: all 0.3s ease;
 }
 
+/* 홈으로가기 링크만 특별 처리 */
+.home-section li a {
+    justify-content: flex-start;
+}
+
+.home-section li a .arrow {
+    margin-left: auto;
+}
+
 nav li a:hover {
     background-color: rgba(255,255,255,0.05);
     color: #fff;

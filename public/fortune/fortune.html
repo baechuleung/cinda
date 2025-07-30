@@ -21,33 +21,32 @@
     <!-- 메인 헤더 포함 -->
     <div id="header-container"></div>
     
-    <div class="container">
-        <div class="fortune-wrapper">
-            <div class="fortune-header">
-                <a href="javascript:history.back()" class="back-button">
-                    <img src="/img/main/back_icon.png" alt="뒤로가기">
-                </a>
-                <h1>오늘의 운세보기</h1>
-                <div></div>
-            </div>
+    <div class="fortune-container">
             
             <div class="fortune-date">
                 <p id="currentDate">2025년 7월 28일 월요일</p>
-                <p class="sub-title">꽃비란 수비님</p>
+                <p class="sub-title" id="userName">사용자님</p>
             </div>
+            
+            <label class="form-label">사주정보 입력</label>
             
             <div class="fortune-form">
                 <div class="form-section">
-                    <label>사주정보 입력</label>
-                    <input type="text" id="birthInfo" placeholder="성년월일" value="941009:00:01:01">
-                    <div class="info-text">
-                        <span class="red">태어난</span>
-                        <span class="blue">양력</span>
+                    <div class="birth-date-inputs">
+                        <input type="number" id="yearInput" placeholder="년도" min="1940" max="2025">
+                        <span class="date-separator">년</span>
+                        <input type="number" id="monthInput" placeholder="월" min="1" max="12">
+                        <span class="date-separator">월</span>
+                        <input type="number" id="dayInput" placeholder="일" min="1" max="31">
+                        <span class="date-separator">일</span>
+                    </div>
+                    <div class="calendar-buttons">
+                        <button class="calendar-btn active" data-calendar="solar">양력</button>
+                        <button class="calendar-btn" data-calendar="lunar">음력</button>
                     </div>
                 </div>
                 
                 <div class="form-section">
-                    <label>성별</label>
                     <div class="gender-buttons">
                         <button class="gender-btn" data-gender="male">남자</button>
                         <button class="gender-btn" data-gender="female">여자</button>
@@ -55,7 +54,6 @@
                 </div>
                 
                 <div class="form-section">
-                    <label>태어난 시간</label>
                     <select id="birthTime">
                         <option value="">시간무관</option>
                         <option value="00">자시 (23:00~01:00)</option>
@@ -78,10 +76,6 @@
             
             <!-- 결과 표시 영역 -->
             <div class="fortune-result" id="fortuneResult" style="display: none;">
-                <div class="result-header">
-                    <h2>오늘의 운세</h2>
-                    <p class="result-date" id="resultDate"></p>
-                </div>
                 <div class="result-content" id="resultContent">
                     <!-- GPT 응답이 여기에 표시됩니다 -->
                 </div>

@@ -4,6 +4,16 @@
 import { auth } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
+// 임시 접근 제한 - 특정 UID들만 허용 (배열로 변경)
+const TEMP_ALLOWED_UIDS = [
+    '1o2hBje7h4cjeTFPehPrjHbfsHF2', // 첫 번째 사용자 UID
+    'HS0tMiQ3IOaPoCNP0WXVxJd5UNp2',
+    'NTdxyeSnCJdF324O94dloPJeIHq2' // 두 번째 사용자 UID
+];
+
+// 원본 HTML 저장 (body는 HTML에서 display:none 상태)
+let originalContent = '';
+
 // loadHeader 함수를 전역에 정의
 window.loadHeader = function(containerId) {
     fetch('/header.html')
@@ -22,22 +32,33 @@ window.loadHeader = function(containerId) {
 
 // DOM 로드 전에 실행
 document.addEventListener('DOMContentLoaded', function() {
+    // 원본 내용 저장
+    originalContent = document.body.innerHTML;
+    
+    // 즉시 준비중 메시지로 변경
+    document.body.innerHTML = '<h1 style="text-align:center; margin-top:100px;color:#fff">양아치처럼 사이트 훔쳐보지 마세요!</h1>';
+    document.body.style.display = 'block'; // 준비중 메시지는 보이도록
+    
     // 인증 상태 확인
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // 로그인한 사용자
-            console.log('로그인한 사용자:', user.email);
+        if (user && TEMP_ALLOWED_UIDS.includes(user.uid)) {
+            // 허용된 사용자만 원본 페이지 복원
+            console.log('허용된 사용자:', user.email);
+            document.body.innerHTML = originalContent;
             document.body.style.display = 'block';
             
-            // 헤더 로드
+            // 헤더 재로드
             window.loadHeader('header-container');
+            
+            // 푸터 재로드
+            const footerScript = document.createElement('script');
+            footerScript.src = '/js/footer.js';
+            document.body.appendChild(footerScript);
             
             // 페이지 기능 초기화
             initializePage();
-        } else {
-            // 로그인하지 않은 사용자는 로그인 페이지로 리다이렉트
-            window.location.href = '/login.html';
         }
+        // else는 필요 없음 - 이미 준비중 메시지가 표시됨
     });
 });
 
