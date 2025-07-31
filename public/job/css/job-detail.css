@@ -1,0 +1,294 @@
+/* 파일경로: /job/css/job-detail.css */
+/* 파일이름: job-detail.css */
+
+.job-container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 감싸는 컨테이너 */
+.job-cards-container {
+    padding: 8px 16px;
+}
+
+/* 업체 정보 섹션 */
+.business-info-section {
+    padding: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* 업체 이미지 */
+.business-image-wrapper {
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px solid #333333;
+    overflow: hidden;
+}
+
+.business-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    background: #29262F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.business-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 정보 영역 */
+.business-info-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100px; /* 이미지와 동일한 높이 명시 */
+}
+
+/* 첫 번째 줄 - 담당자명, 지역 */
+.info-first-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 아이콘 섹션 */
+.icon-section {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-name {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.region-tag {
+    display: inline-flex;
+    border-radius: 5px;
+    background: #F4F4F4;
+    padding: 2px 8px;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 12px;
+}
+
+/* 두 번째 줄 - 업체명 - 업종 */
+.info-second-line {
+    color: #FFF;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+/* 세 번째 줄 - 급여 정보 */
+.info-third-line {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.salary-type {
+    color: #F66;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.salary-amount {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* 아이콘 버튼 */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.thumb-btn {
+    color: #999;
+}
+
+.thumb-btn.recommended {
+    color: #4267B2;
+}
+
+.thumb-btn.recommended svg {
+    fill: #4267B2;
+}
+
+.heart-btn {
+    color: #999;
+}
+
+.heart-btn.favorited {
+    color: #FF6B6B;
+}
+
+.heart-btn.favorited svg {
+    fill: #FF6B6B;
+}
+
+/* 섹션 구분선 */
+.section-divider {
+    width: 100%;
+    height: 10px;
+    background: #202020;
+    margin: 0;
+}
+
+/* 공통 섹션 스타일 */
+.job-section {
+    padding: 24px 16px;
+}
+
+/* 상세 섹션 */
+.detail-section {
+    padding: 24px 16px 0 16px;
+}
+
+.section-title {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* 정보 아이템 */
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.info-label {
+    color: #999;
+    font-size: 14px;
+    min-width: 80px;
+}
+
+.info-value {
+    color: #FFF;
+    font-size: 14px;
+    flex: 1;
+}
+
+/* 근무시간 리스트 */
+.work-time-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.work-time-item {
+    color: #FFF;
+    font-size: 14px;
+}
+
+/* 복지 태그 */
+.welfare-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.welfare-tag {
+    padding: 6px 12px;
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 30px;
+    border: 1px solid #656565;
+}
+
+/* 상세 내용 */
+.detail-content {
+    color: #FFF;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin-bottom: 20px;
+}
+
+/* 상세 이미지 (전체화면) */
+.detail-image-full {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.detail-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 액션 버튼 */
+.action-buttons {
+    position: sticky;
+    bottom: 0;
+    padding: 16px;
+    border-top: 1px solid #222;
+}
+
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.contact-icon-btn {
+    width: 60px;
+    height: 60px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.contact-icon-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}

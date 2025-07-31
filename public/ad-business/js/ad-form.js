@@ -414,9 +414,21 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
                 kakao: document.getElementById('kakaoId').value || '',
                 telegram: document.getElementById('telegramId').value || ''
             },
-            // 카운터 필드 추가
-            recommendCount: 0,  // 추천수
-            clickCount: 0,      // 클릭수
+            // 통계 데이터를 맵 형태로 구성
+            statistics: {
+                recommend: {
+                    count: 0,
+                    users: []  // 추천한 회원 uid 배열
+                },
+                click: {
+                    count: 0,
+                    users: []  // 클릭한 회원의 {uid, date} 객체 배열 (월별 리셋용)
+                },
+                favorite: {
+                    count: 0,
+                    users: []  // 즐겨찾기한 회원 uid 배열
+                }
+            },
             status: 'pending',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()

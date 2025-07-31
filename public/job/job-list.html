@@ -1,0 +1,129 @@
+<!-- 파일경로: /job/job-list.html -->
+<!-- 파일이름: job-list.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채용정보 - CINDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/job-list.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="job-container">
+        <!-- 필터 섹션 -->
+        <div class="filter-section">
+            <!-- 첫 번째 줄: 지역1, 지역2, 업종 -->
+            <div class="filter-first-row">
+                <div class="filter-dropdown" id="region1Filter">
+                    <div class="dropdown-selected" id="region1Selected">
+                        <span class="selected-text">도시선택</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="region1Menu">
+                        <div class="dropdown-options" id="region1Options">
+                            <!-- 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-dropdown" id="region2Filter">
+                    <div class="dropdown-selected" id="region2Selected">
+                        <span class="selected-text">지역선택</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="region2Menu">
+                        <div class="dropdown-options" id="region2Options">
+                            <div class="dropdown-option disabled">도시를 먼저 선택하세요</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-dropdown" id="categoryFilter">
+                    <div class="dropdown-selected" id="categorySelected">
+                        <span class="selected-text">전체업종</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="categoryMenu">
+                        <div class="dropdown-options" id="categoryOptions">
+                            <!-- 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 두 번째 줄: 매장명 검색 -->
+            <div class="filter-second-row">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" id="searchInput" placeholder="매장명 입력">
+                </div>
+            </div>
+        </div>
+        
+        <!-- 채용정보 카드 리스트 -->
+        <div class="job-cards-container">
+            <div class="results-header">
+                <div class="results-count" id="resultsCount">검색결과 총 <span>0</span>개</div>
+            </div>
+            <div class="job-list" id="jobList">
+                <!-- 동적으로 생성됩니다 -->
+            </div>
+        </div>
+        
+        <!-- 빈 상태 메시지 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <p>등록된 채용정보가 없습니다.</p>
+        </div>
+    </div>
+
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
+    <!-- Firebase -->
+    <script type="module" src="/js/firebase-config.js"></script>
+    <!-- 채용정보 리스트 스크립트 -->
+    <script type="module" src="js/job-list.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드 후 페이지 타이틀 설정
+        loadHeader('header-container');
+        
+        // 페이지 타이틀 설정을 위한 전역 변수
+        window.pageTitle = '채용정보';
+        
+        // DOM 로드 후 페이지 타이틀 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // header.js가 로드되기를 기다림
+            const checkInterval = setInterval(function() {
+                const backButton = document.querySelector('.back-button');
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                
+                if (backButton && hamburgerMenu && !document.querySelector('.page-title')) {
+                    // 페이지 타이틀 요소 생성
+                    const pageTitle = document.createElement('h1');
+                    pageTitle.className = 'page-title';
+                    pageTitle.textContent = window.pageTitle || '채용정보';
+                    
+                    // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
+                    backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);
+                    
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            
+            // 5초 후에는 체크 중지
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        });
+    </script>
+</body>
+</html>

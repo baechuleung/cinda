@@ -47,7 +47,7 @@ function initializePage() {
     const recruitmentBtn = document.querySelector('.recruitment .card-button');
     if (recruitmentBtn) {
         recruitmentBtn.addEventListener('click', function() {
-            window.location.href = '/realtime-status/html/realtime-status.html';
+            window.location.href = '/job/job-list.html';
         });
     }
     
