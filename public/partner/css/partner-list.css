@@ -179,11 +179,10 @@
 
 /* 제휴서비스 카드 */
 .partner-card {
-    margin-bottom: 0;
     cursor: pointer;
     overflow: hidden;
-    position: relative;
     padding: 16px 0;
+    margin: 8px 0;
 }
 
 /* 카드 구분선 */
@@ -197,7 +196,7 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    height: 100px; /* 고정 높이 설정 */
+    height: 80px; /* 고정 높이 설정 */
 }
 
 /* 업체 이미지 */
@@ -209,8 +208,8 @@
 }
 
 .business-image {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     background: #29262F;
     display: flex;
@@ -225,10 +224,10 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100px;
+    height: 80px;
 }
 
-/* 첫 번째 줄 - 담당자명, 지역 */
+/* 첫 번째 줄 - 업체명, 지역 */
 .info-first-line {
     display: flex;
     align-items: center;
@@ -237,8 +236,8 @@
 
 .contact-name {
     color: #FFF;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .region-tag {
@@ -252,25 +251,25 @@
     font-size: 12px;
 }
 
-/* 두 번째 줄 - 업체명 - 업종 */
+/* 두 번째 줄 - 프로모션 정보 */
 .info-second-line {
-    color: #FFF;
-    font-size: 13px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-}
-
-/* 세 번째 줄 - 할인 정보 */
-.info-third-line {
     display: flex;
     align-items: flex-end;
     gap: 6px;
 }
 
+/* 세 번째 줄 - 업체명 - 업종 */
+.info-third-line {
+    color: #FFF;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
 .discount-type {
     color: #F66;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
 }
 
@@ -285,7 +284,7 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     align-items: center;
     justify-content: center;
 }
@@ -303,8 +302,8 @@
 }
 
 .icon-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
 }
 
 .icon-btn:hover {
@@ -333,6 +332,14 @@
 
 .heart-btn.favorited svg {
     fill: #FF6B6B;
+}
+
+.share-btn {
+    color: #999;
+}
+
+.share-btn:hover svg {
+    stroke: #4267B2;
 }
 
 /* 빈 상태 */

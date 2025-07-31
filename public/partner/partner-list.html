@@ -89,10 +89,42 @@
         </div>
     </div>
     
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
     <!-- Firebase SDK -->
     <script type="module" src="js/partner-list.js"></script>
-    
-    <!-- 헤더 스크립트 -->
-    <script src="/js/header.js"></script>
+    <script src="/js/footer.js"></script>
+    <script>
+        // 메인 헤더 로드 후 페이지 타이틀 설정
+        loadHeader('header-container');
+        
+        // 페이지 타이틀 설정을 위한 전역 변수
+        window.pageTitle = '제휴서비스';
+        
+        // DOM 로드 후 페이지 타이틀 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // header.js가 로드되기를 기다림
+            const checkInterval = setInterval(function() {
+                const backButton = document.querySelector('.back-button');
+                const hamburgerMenu = document.querySelector('.hamburger-menu');
+                
+                if (backButton && hamburgerMenu && !document.querySelector('.page-title')) {
+                    // 페이지 타이틀 요소 생성
+                    const pageTitle = document.createElement('h1');
+                    pageTitle.className = 'page-title';
+                    pageTitle.textContent = window.pageTitle || '제휴서비스';
+                    
+                    // 뒤로가기 버튼과 햄버거 메뉴 사이에 삽입
+                    backButton.parentNode.insertBefore(pageTitle, hamburgerMenu);
+                    
+                    clearInterval(checkInterval);
+                }
+            }, 100);
+            
+            // 5초 후에는 체크 중지
+            setTimeout(() => clearInterval(checkInterval), 5000);
+        });
+    </script>
 </body>
 </html>

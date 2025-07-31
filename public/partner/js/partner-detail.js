@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 async function loadPartnerDetail() {
     try {
         // Firestore에서 제휴서비스 가져오기
-        const partnerDoc = await getDoc(doc(db, 'users', userId, 'ad_business', partnerId));
+        const partnerDoc = await getDoc(doc(db, 'users', userId, 'ad_partner', partnerId));
         
         if (!partnerDoc.exists()) {
             alert('제휴서비스를 찾을 수 없습니다.');
@@ -78,55 +78,40 @@ function displayPartnerDetail() {
     }
     
     // 업체 정보 섹션 (리스트와 동일한 구조)
-    // 첫 번째 줄: 담당자명, 지역
-    document.getElementById('contactNameTop').textContent = partnerData.contactName || '담당자';
+    // 첫 번째 줄: 업체명, 지역
+    document.getElementById('businessNameTop').textContent = partnerData.businessName || '업체명';
     
     const regionText = partnerData.region1 && partnerData.region2 ?
         `${partnerData.region1}/${partnerData.region2}` : (partnerData.region1 || partnerData.region2 || '지역정보없음');
     document.getElementById('regionTag').textContent = regionText;
     
-    // 두 번째 줄: 업체명 - 업종
-    document.getElementById('businessNameType').textContent = 
-        `${partnerData.businessName || '업체명'} - ${partnerData.businessType || '업종'}`;
+    // 두 번째 줄: 할인 정보
+    document.getElementById('discountAmount').textContent = partnerData.promotionTitle || '프로모션 정보 없음';
     
-    // 세 번째 줄: 할인 정보
-    document.getElementById('discountType').textContent = partnerData.discountType || '할인';
-    document.getElementById('discountAmount').textContent = `${partnerData.discountRate || '0'}%`;
+    // 세 번째 줄: 업종
+    document.getElementById('businessType').textContent = partnerData.businessType || '업종';
     
-    // 제휴정보 섹션
+    // 제휴 업체 정보 섹션
+    // 주소
+    const businessAddress = document.getElementById('businessAddress');
+    businessAddress.textContent = partnerData.businessAddress || '주소 정보가 없습니다.';
+    
     // 영업시간
     const businessHoursList = document.getElementById('businessHoursList');
     businessHoursList.innerHTML = '';
     
-    if (partnerData.businessHours && partnerData.businessHours.length > 0) {
-        partnerData.businessHours.forEach(hours => {
-            const item = document.createElement('div');
-            item.className = 'business-hours-item';
-            item.textContent = hours;
-            businessHoursList.appendChild(item);
-        });
+    if (partnerData.businessHours) {
+        const item = document.createElement('div');
+        item.className = 'business-hours-item';
+        item.textContent = partnerData.businessHours;
+        businessHoursList.appendChild(item);
     } else {
         businessHoursList.innerHTML = '<div class="business-hours-item">영업시간 정보가 없습니다.</div>';
     }
     
-    // 혜택 태그
-    const benefitTags = document.getElementById('benefitTags');
-    benefitTags.innerHTML = '';
-    
-    if (partnerData.benefits && partnerData.benefits.length > 0) {
-        partnerData.benefits.forEach(benefit => {
-            const tag = document.createElement('span');
-            tag.className = 'benefit-tag';
-            tag.textContent = benefit;
-            benefitTags.appendChild(tag);
-        });
-    } else {
-        benefitTags.innerHTML = '<span style="color: #999;">혜택 정보가 없습니다.</span>';
-    }
-    
-    // 상세 내용
+    // 프로모션 내용
     const detailContent = document.getElementById('detailContent');
-    detailContent.textContent = partnerData.detailContent || '상세 내용이 없습니다.';
+    detailContent.textContent = partnerData.adDetailContent || '프로모션 내용이 없습니다.';
     
     // 상세 이미지
     if (partnerData.detailImageUrl) {
@@ -146,6 +131,7 @@ function addIconButtons() {
     // 추천 버튼 이벤트
     const recommendBtn = document.getElementById('recommendBtn');
     const favoriteBtn = document.getElementById('favoriteBtn');
+    const shareBtn = document.getElementById('shareBtn');
     
     // 초기 상태 확인
     checkIfRecommended(partnerId, userId).then(isRecommended => {
@@ -166,6 +152,21 @@ function addIconButtons() {
     favoriteBtn.addEventListener('click', async () => {
         const isFavorited = await toggleFavorite(partnerId, userId);
         updateFavoriteIcon(isFavorited);
+    });
+    
+    // 공유 버튼 클릭 이벤트
+    shareBtn.addEventListener('click', async () => {
+        const shareUrl = `${window.location.origin}/partner/partner-detail.html?id=${partnerId}&userId=${userId}`;
+        
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            
+            // 복사 완료 알림
+            showCopyAlert('링크가 복사되었습니다!');
+        } catch (err) {
+            console.error('복사 실패:', err);
+            alert('링크 복사에 실패했습니다.');
+        }
     });
     
     // 상태 실시간 감시
@@ -229,8 +230,8 @@ function setupContactButtons() {
     // 전화 버튼
     const phoneBtn = document.getElementById('phoneBtn');
     phoneBtn.addEventListener('click', function() {
-        if (partnerData.contactNumber) {
-            window.location.href = `tel:${partnerData.contactNumber}`;
+        if (partnerData.contactPhone) {
+            window.location.href = `tel:${partnerData.contactPhone}`;
         } else {
             alert('연락처 정보가 없습니다.');
         }

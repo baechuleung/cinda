@@ -20,7 +20,7 @@ export async function toggleFavorite(partnerId, userId) {
     }
     
     try {
-        const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+        const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
         const isFavorited = await checkIfFavorited(partnerId, userId);
         
         if (isFavorited) {
@@ -50,7 +50,7 @@ export async function checkIfFavorited(partnerId, userId) {
     if (!currentUser) return false;
     
     return new Promise((resolve) => {
-        const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+        const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
         const unsubscribe = onSnapshot(partnerRef, (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
@@ -72,7 +72,7 @@ export async function recordClick(partnerId, userId) {
     }
     
     try {
-        const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+        const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
         
         // 현재 문서 데이터 가져오기
         const partnerDoc = await getDoc(partnerRef);
@@ -129,7 +129,7 @@ export function watchFavoriteStatus(partnerId, userId, callback) {
         return () => {};
     }
     
-    const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+    const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
     
     const unsubscribe = onSnapshot(partnerRef, (doc) => {
         if (doc.exists()) {
@@ -152,7 +152,7 @@ export async function toggleRecommend(partnerId, userId) {
     }
     
     try {
-        const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+        const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
         const isRecommended = await checkIfRecommended(partnerId, userId);
         
         if (isRecommended) {
@@ -182,7 +182,7 @@ export async function checkIfRecommended(partnerId, userId) {
     if (!currentUser) return false;
     
     return new Promise((resolve) => {
-        const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+        const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
         const unsubscribe = onSnapshot(partnerRef, (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
@@ -203,7 +203,7 @@ export function watchRecommendStatus(partnerId, userId, callback) {
         return () => {};
     }
     
-    const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+    const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
     
     const unsubscribe = onSnapshot(partnerRef, (doc) => {
         if (doc.exists()) {
@@ -222,7 +222,7 @@ export function watchRecommendStatus(partnerId, userId, callback) {
 export async function getStatistics(partnerId, userId) {
     try {
         return new Promise((resolve) => {
-            const partnerRef = doc(db, 'users', userId, 'ad_business', partnerId);
+            const partnerRef = doc(db, 'users', userId, 'ad_partner', partnerId);
             const unsubscribe = onSnapshot(partnerRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();

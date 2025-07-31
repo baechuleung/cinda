@@ -366,10 +366,14 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
             social: {
                 kakao: document.getElementById('kakaoId').value || ''
             },
-            // 카운터 필드 추가
-            recommendCount: 0,  // 추천수
-            clickCount: 0,      // 클릭수
-            likeCount: 0,       // 찜수
+            // 통계 필드 추가
+            statistics: {
+                recommend: { count: 0, users: [] },
+                click: { count: 0, users: [] },
+                favorite: { count: 0, users: [] }
+            },
+            // 가중치 점수 (기본값 0)
+            weighted_score: 0,
             status: 'pending',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()

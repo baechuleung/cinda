@@ -7,8 +7,8 @@ import { toggleFavorite, checkIfFavorited, watchFavoriteStatus, toggleRecommend,
 
 let allPartners = [];
 let filteredPartners = [];
-let region1Data = null;
-let region2Data = null;
+let region1Data = [];
+let region2Data = {};
 let selectedRegion1 = '';
 let selectedRegion2 = '';
 let selectedCategory = '전체업종';
@@ -26,7 +26,8 @@ async function loadRegionData() {
     try {
         // region1 데이터 로드
         const region1Response = await fetch('/data/region1.json');
-        region1Data = await region1Response.json();
+        const region1Json = await region1Response.json();
+        region1Data = region1Json.regions;
         
         // region2 데이터 로드
         const region2Response = await fetch('/data/region2.json');
@@ -55,21 +56,21 @@ function loadRegion1() {
     region1Options.appendChild(allOption);
     
     // 지역1 옵션 추가
-    Object.entries(region1Data).forEach(([code, name]) => {
+    region1Data.forEach(region => {
         const option = document.createElement('div');
         option.className = 'dropdown-option';
-        option.textContent = name;
-        option.dataset.value = code;
+        option.textContent = region.name;
+        option.dataset.value = region.name;
         option.addEventListener('click', function() {
-            selectRegion1(code, name, region2Data[code]);
+            selectRegion1(region.name, region.name, region.code);
         });
         region1Options.appendChild(option);
     });
 }
 
 // 지역1 선택
-function selectRegion1(code, name, region2List) {
-    selectedRegion1 = code;
+function selectRegion1(value, name, code) {
+    selectedRegion1 = value;
     document.querySelector('#region1Selected .selected-text').textContent = name;
     
     // 지역2 초기화
@@ -77,8 +78,8 @@ function selectRegion1(code, name, region2List) {
     document.querySelector('#region2Selected .selected-text').textContent = '지역선택';
     
     // 지역2 옵션 업데이트
-    if (code && region2List) {
-        loadRegion2(region2List);
+    if (code && region2Data[code]) {
+        loadRegion2(region2Data[code]);
     } else {
         const region2Options = document.getElementById('region2Options');
         region2Options.innerHTML = '<div class="dropdown-option disabled">먼저 도시를 선택해주세요</div>';
@@ -126,8 +127,8 @@ function selectRegion2(code, name) {
 // 업종 로드
 async function loadBusinessTypes() {
     try {
-        const response = await fetch('/data/business_types.json');
-        const businessTypes = await response.json();
+        const response = await fetch('/data/partner-types.json');
+        const data = await response.json();
         
         const categoryOptions = document.getElementById('categoryOptions');
         categoryOptions.innerHTML = '';
@@ -143,13 +144,13 @@ async function loadBusinessTypes() {
         categoryOptions.appendChild(allOption);
         
         // 업종 옵션 추가
-        businessTypes.forEach(type => {
+        data.partnerTypes.forEach(type => {
             const option = document.createElement('div');
             option.className = 'dropdown-option';
-            option.textContent = type;
-            option.dataset.value = type;
+            option.textContent = type.name;
+            option.dataset.value = type.name;
             option.addEventListener('click', function() {
-                selectCategory(type);
+                selectCategory(type.name);
             });
             categoryOptions.appendChild(option);
         });
@@ -238,7 +239,7 @@ async function loadPartnerList() {
         
         // collectionGroup을 사용하여 weighted_score 필드로만 정렬
         const partnersQuery = query(
-            collectionGroup(db, 'ad_business'),
+            collectionGroup(db, 'ad_partner'),
             orderBy('weighted_score', 'desc'),
             limit(3000)  // 3000개까지 가져오기
         );
@@ -254,8 +255,8 @@ async function loadPartnerList() {
                 ...doc.data()
             };
             
-            // status가 completed 또는 active인 것만 추가
-            if (partnerData.status === 'completed' || partnerData.status === 'active') {
+            // status가 completed, active, pending 중 하나인 것만 추가
+            if (partnerData.status === 'completed' || partnerData.status === 'active' || partnerData.status === 'pending') {
                 allPartners.push(partnerData);
             }
         });
@@ -388,27 +389,27 @@ function createPartnerCard(partner) {
     const infoWrapper = document.createElement('div');
     infoWrapper.className = 'partner-info-wrapper';
     
-    // 첫 번째 줄: 담당자명, 지역
+    // 첫 번째 줄: 업체명, 지역
     const firstLine = document.createElement('div');
     firstLine.className = 'info-first-line';
     const regionText = partner.region1 && partner.region2 ?
         `${partner.region1}/${partner.region2}` : (partner.region1 || partner.region2 || '지역정보없음');
     
-    // 담당자명과 지역을 span으로 분리
+    // 업체명과 지역을 span으로 분리
     firstLine.innerHTML = `
-        <span class="contact-name">${partner.contactName || '담당자'}</span>
+        <span class="contact-name">${partner.businessName || '업체명'}</span>
         <span class="region-tag">${regionText}</span>
     `;
     
-    // 두 번째 줄: 업체명 - 업종
+    // 두 번째 줄: 프로모션 정보
     const secondLine = document.createElement('div');
     secondLine.className = 'info-second-line';
-    secondLine.textContent = `${partner.businessName || '업체명'} - ${partner.businessType || '업종'}`;
+    secondLine.innerHTML = `<span class="discount-type">${partner.promotionTitle || '프로모션 정보'}</span>`;
     
-    // 세 번째 줄: 할인타입 할인율
+    // 세 번째 줄: 업종
     const thirdLine = document.createElement('div');
     thirdLine.className = 'info-third-line';
-    thirdLine.innerHTML = `<span class="discount-type">${partner.discountType || '할인'}</span> <span class="discount-amount">${partner.discountRate || '0'}%</span>`;
+    thirdLine.textContent = `${partner.businessType || '업종'}`;
     
     // 정보 조립
     infoWrapper.appendChild(firstLine);
@@ -441,6 +442,21 @@ function createPartnerCard(partner) {
     favoriteButton.dataset.partnerId = partner.id;
     favoriteButton.dataset.userId = partner.userId;
     
+    // 공유 버튼
+    const shareButton = document.createElement('button');
+    shareButton.className = 'icon-btn share-btn';
+    shareButton.innerHTML = `
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    `;
+    shareButton.dataset.partnerId = partner.id;
+    shareButton.dataset.userId = partner.userId;
+    
     // 초기 상태 확인
     checkIfRecommended(partner.id, partner.userId).then(isRecommended => {
         if (isRecommended) {
@@ -457,6 +473,7 @@ function createPartnerCard(partner) {
     // 아이콘 조립
     iconSection.appendChild(recommendButton);
     iconSection.appendChild(favoriteButton);
+    iconSection.appendChild(shareButton);
     
     // 카드 조립
     cardContent.appendChild(imageWrapper);
@@ -492,6 +509,41 @@ function createPartnerCard(partner) {
             favoriteButton.classList.add('favorited');
         } else {
             favoriteButton.classList.remove('favorited');
+        }
+    });
+    
+    // 공유 클릭 이벤트
+    shareButton.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        const shareUrl = `${window.location.origin}/partner/partner-detail.html?id=${partner.id}&userId=${partner.userId}`;
+        
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            
+            // 복사 완료 알림
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 10000;
+                font-size: 14px;
+            `;
+            alertDiv.textContent = '링크가 복사되었습니다!';
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 2000);
+        } catch (err) {
+            console.error('복사 실패:', err);
+            alert('링크 복사에 실패했습니다.');
         }
     });
     
