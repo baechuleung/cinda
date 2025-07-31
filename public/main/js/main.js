@@ -65,7 +65,7 @@ function initializePage() {
     if (partnershipBtn) {
         partnershipBtn.addEventListener('click', function() {
             // 제휴서비스 페이지로 이동
-            window.location.href = '/partnership.html';
+            window.location.href = '/partner/partner-list.html';
         });
     }
     

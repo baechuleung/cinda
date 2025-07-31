@@ -1,0 +1,347 @@
+/* 파일경로: /partner/css/partner-list.css */
+/* 파일이름: partner-list.css */
+
+.partner-container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    padding: 16px;
+    margin-bottom: 8px;
+}
+
+/* 첫 번째 줄 - 지역1, 지역2, 업종 */
+.filter-first-row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+/* 두 번째 줄 - 매장명 검색 */
+.filter-second-row {
+    width: 100%;
+}
+
+/* 필터 드롭다운 - auth 폴더와 동일한 스타일 */
+.filter-dropdown {
+    position: relative;
+    flex: 1;
+    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+    display: block; /* 블록 요소로 명시 */
+}
+
+.dropdown-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 45px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    background: #29262F;
+    cursor: pointer;
+    font-size: 14px;
+    color: #FFF;
+}
+
+.dropdown-selected.active {
+    border-radius: 10px 10px 0 0;
+}
+
+.selected-text {
+    font-size: 14px;
+    color: #FFF;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1; /* 텍스트가 가용 공간을 모두 사용 */
+    text-align: left;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #999;
+    margin-left: 8px; /* 텍스트와 화살표 사이 간격 */
+}
+
+.dropdown-selected.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #29262F;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    max-height: 350px;
+    overflow: hidden;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.dropdown-options {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.dropdown-option {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.dropdown-option:hover {
+    background: #4a474f;
+}
+
+.dropdown-option.selected {
+    background: #4a474f;
+    color: #FFF;
+}
+
+.dropdown-option.disabled {
+    color: #666;
+    cursor: default;
+    font-style: italic;
+}
+
+.dropdown-option.disabled:hover {
+    background: transparent;
+}
+
+/* 검색 박스 */
+.search-box {
+    width: 100%;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    height: 45px;
+    padding: 0 16px 0 40px;
+    background: #29262F;
+    border: none;
+    border-radius: 10px;
+    color: #FFF;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.search-input::placeholder {
+    color: #666;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 16px;
+}
+
+/* 감싸는 컨테이너 */
+.partner-cards-container {
+    padding: 8px 16px;
+}
+
+/* 결과 헤더 */
+.results-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* 결과 카운트 */
+.results-count {
+    color: #999;
+    font-size: 14px;
+}
+
+.results-count span {
+    color: #FFF;
+    font-weight: 500;
+}
+
+/* 제휴서비스 카드 */
+.partner-card {
+    margin-bottom: 0;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    padding: 16px 0;
+}
+
+/* 카드 구분선 */
+.card-divider {
+    height: 1px;
+    background: #3C3C3C;
+}
+
+/* 카드 내용 */
+.partner-card-content {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 100px; /* 고정 높이 설정 */
+}
+
+/* 업체 이미지 */
+.business-image-wrapper {
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px solid #333333;
+    overflow: hidden;
+}
+
+.business-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    background: #29262F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+/* 업체 정보 */
+.partner-info-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100px;
+}
+
+/* 첫 번째 줄 - 담당자명, 지역 */
+.info-first-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-name {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.region-tag {
+    display: inline-flex;
+    border-radius: 5px;
+    background: #F4F4F4;
+    padding: 2px 8px;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 12px;
+}
+
+/* 두 번째 줄 - 업체명 - 업종 */
+.info-second-line {
+    color: #FFF;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+/* 세 번째 줄 - 할인 정보 */
+.info-third-line {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+}
+
+.discount-type {
+    color: #F66;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.discount-amount {
+    color: #FFF;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* 아이콘 섹션 */
+.icon-section {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 아이콘 버튼 */
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    transition: transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1);
+}
+
+.thumb-btn {
+    color: #999;
+}
+
+.thumb-btn.recommended {
+    color: #4267B2;
+}
+
+.thumb-btn.recommended svg {
+    fill: #4267B2;
+}
+
+.heart-btn {
+    color: #999;
+}
+
+.heart-btn.favorited {
+    color: #FF6B6B;
+}
+
+.heart-btn.favorited svg {
+    fill: #FF6B6B;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 60px 16px;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 14px;
+}

@@ -1,0 +1,98 @@
+<!-- 파일경로: /partner/partner-list.html -->
+<!-- 파일이름: partner-list.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제휴서비스 - CINDA</title>
+    
+    <!-- 헤더 CSS 먼저 로드 -->
+    <link rel="stylesheet" href="/css/header.css">
+    
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="css/partner-list.css">
+    
+    <!-- 전역 설정 스크립트 -->
+    <script src="/js/config.js"></script>
+</head>
+<body>
+    <!-- 메인 헤더 포함 -->
+    <div id="header-container"></div>
+    
+    <div class="partner-container">
+        <!-- 필터 섹션 -->
+        <div class="filter-section">
+            <!-- 첫 번째 줄: 지역1, 지역2, 업종 -->
+            <div class="filter-first-row">
+                <div class="filter-dropdown" id="region1Filter">
+                    <div class="dropdown-selected" id="region1Selected">
+                        <span class="selected-text">도시선택</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="region1Menu">
+                        <div class="dropdown-options" id="region1Options">
+                            <!-- 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-dropdown" id="region2Filter">
+                    <div class="dropdown-selected" id="region2Selected">
+                        <span class="selected-text">지역선택</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="region2Menu">
+                        <div class="dropdown-options" id="region2Options">
+                            <div class="dropdown-option disabled">먼저 도시를 선택해주세요</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-dropdown" id="categoryFilter">
+                    <div class="dropdown-selected" id="categorySelected">
+                        <span class="selected-text">전체업종</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="categoryMenu">
+                        <div class="dropdown-options" id="categoryOptions">
+                            <!-- 동적으로 생성됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 두 번째 줄: 매장명 검색 -->
+            <div class="filter-second-row">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="매장명으로 검색">
+                </div>
+            </div>
+        </div>
+        
+        <!-- 결과 섹션 -->
+        <div class="partner-cards-container">
+            <!-- 결과 헤더 -->
+            <div class="results-header">
+                <div class="results-count">총 <span>0</span>개의 제휴서비스</div>
+            </div>
+            
+            <!-- 제휴서비스 리스트 -->
+            <div class="partner-list" id="partnerList">
+                <!-- 동적으로 생성됩니다 -->
+            </div>
+            
+            <!-- 빈 상태 -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <p>등록된 제휴서비스가 없습니다.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module" src="js/partner-list.js"></script>
+    
+    <!-- 헤더 스크립트 -->
+    <script src="/js/header.js"></script>
+</body>
+</html>
