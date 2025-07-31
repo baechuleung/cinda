@@ -507,6 +507,17 @@ function createJobCard(job) {
     favoriteButton.dataset.jobId = job.id;
     favoriteButton.dataset.userId = job.userId;
     
+    // 공유 버튼
+    const shareButton = document.createElement('button');
+    shareButton.className = 'icon-btn share-btn';
+    shareButton.innerHTML = `
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24917 15.0227 5.37061L7.08261 9.34064C6.54305 8.52348 5.59034 8 4.5 8C2.84315 8 1.5 9.34315 1.5 11C1.5 12.6569 2.84315 14 4.5 14C5.59034 14 6.54305 13.4765 7.08261 12.6594L15.0227 16.6294C15.0077 16.7508 15 16.8745 15 17C15 18.6569 16.3431 20 18 20C19.6569 20 21 18.6569 21 17C21 15.3431 19.6569 14 18 14C16.9097 14 15.957 14.5235 15.4174 15.3406L7.47734 11.3706C7.49234 11.2492 7.5 11.1255 7.5 11C7.5 10.8745 7.49234 10.7508 7.47734 10.6294L15.4174 6.65936C15.957 7.47652 16.9097 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    `;
+    shareButton.dataset.jobId = job.id;
+    shareButton.dataset.userId = job.userId;
+    
     // 초기 상태 확인
     checkIfRecommended(job.id, job.userId).then(isRecommended => {
         if (isRecommended) {
@@ -523,6 +534,7 @@ function createJobCard(job) {
     // 아이콘 조립
     iconSection.appendChild(recommendButton);
     iconSection.appendChild(favoriteButton);
+    iconSection.appendChild(shareButton);
     
     // 카드 조립
     cardContent.appendChild(imageWrapper);
@@ -558,6 +570,41 @@ function createJobCard(job) {
             favoriteButton.classList.add('favorited');
         } else {
             favoriteButton.classList.remove('favorited');
+        }
+    });
+    
+    // 공유 클릭 이벤트
+    shareButton.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        const shareUrl = `${window.location.origin}/job/job-detail.html?id=${job.id}&userId=${job.userId}`;
+        
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            
+            // 복사 완료 알림
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                z-index: 10000;
+                font-size: 14px;
+            `;
+            alertDiv.textContent = '링크가 복사되었습니다!';
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 2000);
+        } catch (err) {
+            console.error('복사 실패:', err);
+            alert('링크 복사에 실패했습니다.');
         }
     });
     

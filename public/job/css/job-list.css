@@ -197,7 +197,6 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    height: 100px; /* 고정 높이 설정 */
 }
 
 /* 업체 이미지 */
@@ -209,8 +208,8 @@
 }
 
 .business-image {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     background: #29262F;
     display: flex;
@@ -225,7 +224,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100px;
+    height: 80px;
 }
 
 /* 첫 번째 줄 - 담당자명, 지역 */
@@ -237,7 +236,7 @@
 
 .contact-name {
     color: #FFF;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -255,7 +254,7 @@
 /* 두 번째 줄 - 업체명 - 업종 */
 .info-second-line {
     color: #FFF;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -276,7 +275,7 @@
 
 .salary-amount {
     color: #FFF;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
 }
 
@@ -285,7 +284,7 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     align-items: center;
     justify-content: center;
 }
@@ -333,6 +332,10 @@
 
 .heart-btn.favorited svg {
     fill: #FF6B6B;
+}
+
+.share-btn {
+    color: #999;
 }
 
 /* 빈 상태 */

@@ -140,6 +140,7 @@ function addIconButtons() {
     // 추천 버튼 이벤트
     const recommendBtn = document.getElementById('recommendBtn');
     const favoriteBtn = document.getElementById('favoriteBtn');
+    const shareBtn = document.getElementById('shareBtn');
     
     // 초기 상태 확인
     checkIfRecommended(jobId, userId).then(isRecommended => {
@@ -160,6 +161,21 @@ function addIconButtons() {
     favoriteBtn.addEventListener('click', async () => {
         const isFavorited = await toggleFavorite(jobId, userId);
         updateFavoriteIcon(isFavorited);
+    });
+    
+    // 공유 버튼 클릭 이벤트
+    shareBtn.addEventListener('click', async () => {
+        const shareUrl = `${window.location.origin}/job/job-detail.html?id=${jobId}&userId=${userId}`;
+        
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            
+            // 복사 완료 알림
+            showCopyAlert('링크가 복사되었습니다!');
+        } catch (err) {
+            console.error('복사 실패:', err);
+            alert('링크 복사에 실패했습니다.');
+        }
     });
     
     // 상태 실시간 감시
