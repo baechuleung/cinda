@@ -115,8 +115,8 @@
 
 .setting-btn.active {
     background: transparent;
-    border: 1px solid #FF5E2D;
-    color: #FF5E2D;
+    border: 1px solid #5C82FF;
+    color: #5C82FF;
 }
 
 .setting-input {
@@ -144,7 +144,7 @@
 .save-btn {
     width: 100%;
     height: 50px;
-    background: #FF5E2D;
+    background: #5C82FF;
     border: none;
     border-radius: 8px;
     color: #FFF;
@@ -214,7 +214,7 @@
 
 .time-display:focus {
     outline: none;
-    border-color: #FF5E2D;
+    border-color: #5C82FF;
 }
 
 .time-picker-dropdown {
@@ -224,7 +224,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: #2a2a2a;
-    border: 1px solid #FF5E2D;
+    border: 1px solid #5C82FF;
     border-radius: 12px;
     z-index: 1000;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
@@ -301,7 +301,7 @@
 }
 
 .time-option.selected {
-    background: #FF5E2D;
+    background: #5C82FF;
     color: #FFF;
 }
 
@@ -328,7 +328,7 @@
 .calc-btn {
     width: 100%;
     height: 50px;
-    background: #FF5E2D;
+    background: #5C82FF;
     border: none;
     border-radius: 8px;
     color: #FFF;
@@ -425,11 +425,11 @@
 }
 
 .delete-item-btn:hover {
-    color: #FF5E2D;
+    color: #5C82FF;
 }
 
 .result-item-time {
-    color: #FF5E2D;
+    color: #5C82FF;
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 8px;
@@ -466,7 +466,7 @@
 
 .count-input:focus {
     outline: none;
-    border-color: #FF5E2D;
+    border-color: #5C82FF;
 }
 
 /* 숫자 입력 스피너 제거 */
@@ -511,8 +511,8 @@
 }
 
 .option-checkbox input[type="checkbox"]:checked + .checkbox-custom {
-    background: #FF5E2D;
-    border-color: #FF5E2D;
+    background: #5C82FF;
+    border-color: #5C82FF;
 }
 
 .option-checkbox input[type="checkbox"]:checked + .checkbox-custom::after {
@@ -597,7 +597,7 @@
 }
 
 .share-all-btn {
-    background: #FF5E2D;
+    background: #5C82FF;
     color: #FFF;
 }
 
@@ -606,7 +606,7 @@
 }
 
 .save-result-btn {
-    background: #FF5E2D;
+    background: #5C82FF;
     color: #FFF;
 }
 

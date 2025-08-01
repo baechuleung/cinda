@@ -61,7 +61,7 @@
 }
 
 .checkbox-status {
-    color: #DF2B66;
+    color: #5C82FF;
     font-size: 14px;
     font-weight: 500;
 }
@@ -416,7 +416,7 @@ input[type="checkbox"]:checked::before {
 .submit-btn {
     width: 100%;
     padding: 16px;
-    background-color: #DF2B66;
+    background-color: #5C82FF;
     color: white;
     border: none;
     border-radius: 23px;

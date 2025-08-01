@@ -519,3 +519,8 @@ nav li a.active {
     color: white;
     vertical-align: middle;
 }
+
+/* 로그아웃 메뉴 스타일 */
+.logout-menu {
+    margin-bottom: 50px;
+}

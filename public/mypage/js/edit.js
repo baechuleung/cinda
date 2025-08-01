@@ -6,6 +6,7 @@ import { onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWi
 import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 let currentUser = null;
+let currentUserType = null;
 
 // 사용자 정보 표시
 async function displayUserInfo(user) {
@@ -17,15 +18,32 @@ async function displayUserInfo(user) {
         const userData = userDoc.data();
         
         if (userData) {
-            // 닉네임 표시 및 입력 필드에 설정
+            currentUserType = userData.userType;
+            
+            // 닉네임/회사명 표시 및 입력 필드에 설정
             const profileName = document.querySelector('.profile-name');
             const nicknameInput = document.getElementById('nickname');
+            const nicknameLabel = document.querySelector('label[for="nickname"]');
             
-            if (profileName) {
-                profileName.textContent = userData.nickname || '사용자';
-            }
-            if (nicknameInput) {
-                nicknameInput.value = userData.nickname || '';
+            if (userData.userType === 'partner') {
+                // 제휴업체인 경우
+                if (profileName) {
+                    profileName.textContent = userData.companyName || '제휴업체';
+                }
+                if (nicknameInput) {
+                    nicknameInput.value = userData.companyName || '';
+                }
+                if (nicknameLabel) {
+                    nicknameLabel.textContent = '회사명';
+                }
+            } else {
+                // 일반회원 또는 기업회원인 경우
+                if (profileName) {
+                    profileName.textContent = userData.nickname || '사용자';
+                }
+                if (nicknameInput) {
+                    nicknameInput.value = userData.nickname || '';
+                }
             }
             
             // 회원 상태 표시
@@ -53,9 +71,9 @@ async function handleFormSubmit(e) {
     const newPassword = document.getElementById('birthdate').value;
     const confirmPassword = document.getElementById('password-confirm').value;
     
-    // 닉네임 검증
+    // 닉네임/회사명 검증
     if (!nickname) {
-        alert('닉네임을 입력해주세요.');
+        alert(currentUserType === 'partner' ? '회사명을 입력해주세요.' : '닉네임을 입력해주세요.');
         return;
     }
     
@@ -76,11 +94,18 @@ async function handleFormSubmit(e) {
     }
     
     try {
-        // 닉네임 업데이트
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-            nickname: nickname,
+        // 닉네임/회사명 업데이트
+        const updateData = {
             updatedAt: new Date()
-        });
+        };
+        
+        if (currentUserType === 'partner') {
+            updateData.companyName = nickname;
+        } else {
+            updateData.nickname = nickname;
+        }
+        
+        await updateDoc(doc(db, 'users', currentUser.uid), updateData);
         
         // 비밀번호 업데이트 (입력된 경우)
         if (newPassword) {

@@ -82,7 +82,7 @@
 
 .birth-date-inputs input[type="number"]:focus {
     outline: none;
-    border-color: #ff6b6b;
+    border-color: #5C82FF;
 }
 
 .birth-date-inputs input[type="number"]::placeholder {
@@ -114,13 +114,13 @@
 }
 
 .calendar-btn:hover {
-    border-color: #ff6b6b;
+    border-color: #5C82FF;
 }
 
 .calendar-btn.active {
-    background: #ff6b6b;
+    background: #5C82FF;
     color: white;
-    border-color: #ff6b6b;
+    border-color: #5C82FF;
 }
 
 /* 성별 버튼 */
@@ -142,13 +142,13 @@
 }
 
 .gender-btn:hover {
-    border-color: #ff6b6b;
+    border-color: #5C82FF;
 }
 
 .gender-btn.active {
-    background: #ff6b6b;
+    background: #5C82FF;
     color: white;
-    border-color: #ff6b6b;
+    border-color: #5C82FF;
 }
 
 /* 시간 선택 */
@@ -172,7 +172,7 @@
 .fortune-submit-btn {
     width: 100%;
     padding: 16px;
-    background: #ff6b6b;
+    background: #5C82FF;
     color: white;
     border: none;
     border-radius: 8px;
@@ -280,7 +280,7 @@
     width: 30px;
     height: 30px;
     border: 3px solid #333;
-    border-top: 3px solid #ff6b6b;
+    border-top: 3px solid #5C82FF;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

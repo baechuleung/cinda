@@ -15,10 +15,14 @@ async function displayUserInfo(user) {
         const userData = userDoc.data();
         
         if (userData) {
-            // 닉네임 표시
+            // 닉네임 표시 - partner는 companyName 사용
             const profileName = document.querySelector('.profile-name');
             if (profileName) {
-                profileName.textContent = userData.nickname || '사용자';
+                if (userData.userType === 'partner') {
+                    profileName.textContent = userData.companyName || '제휴업체';
+                } else {
+                    profileName.textContent = userData.nickname || '사용자';
+                }
             }
             
             // 회원 상태 표시
