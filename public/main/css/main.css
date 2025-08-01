@@ -2,8 +2,7 @@
 
 /* 메인 컨테이너 */
 .main-container {
-    padding: 32px 16px;
-    max-width: 450px;
+    padding: 0 16px;
     margin: 0 auto;
 }
 

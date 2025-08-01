@@ -4,14 +4,135 @@
 // Firebase imports
 import { auth, db } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // 광고 슬라이드 관련 변수
 let currentSlide = 0;
-let maxSlide = 9; // 10개 배너 (0-9)
+let maxSlide = 0;
 let autoSlideInterval;
 let containerWidth = 0;
 let gap = 10;
+let adPartners = [];
+let bannerHTML = '';
+
+// banner.html 로드
+async function loadBannerHTML() {
+    try {
+        const response = await fetch('/banner.html');
+        bannerHTML = await response.text();
+    } catch (error) {
+        console.error('배너 HTML 로드 오류:', error);
+        // 폴백 HTML
+        bannerHTML = `
+            <div class="ad-banner-content">
+                <div class="ad-banner-image">
+                    <img id="bannerImage" src="" alt="">
+                </div>
+                <div class="ad-banner-info">
+                    <h3 class="ad-banner-title" id="bannerTitle"></h3>
+                    <p class="ad-banner-subtitle" id="bannerSubtitle"></p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Firebase에서 광고 파트너 데이터 가져오기
+async function loadAdPartners() {
+    try {
+        const usersRef = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersRef);
+        
+        const partners = [];
+        
+        // 모든 사용자의 ad_partner 서브컬렉션 확인
+        for (const userDoc of usersSnapshot.docs) {
+            const adPartnerRef = collection(db, 'users', userDoc.id, 'ad_partner');
+            const adPartnerSnapshot = await getDocs(adPartnerRef);
+            
+            adPartnerSnapshot.forEach(partnerDoc => {
+                const partnerData = partnerDoc.data();
+                if (partnerData.status === 'completed' && partnerData.weighted_score > 0) {
+                    partners.push({
+                        id: partnerDoc.id,
+                        userId: userDoc.id,
+                        ...partnerData
+                    });
+                }
+            });
+        }
+        
+        // weighted_score 내림차순 정렬
+        partners.sort((a, b) => b.weighted_score - a.weighted_score);
+        
+        // 상위 10개만 선택
+        adPartners = partners.slice(0, 10);
+        
+        // 광고 배너 생성
+        if (adPartners.length > 0) {
+            createAdBanners();
+        }
+        
+    } catch (error) {
+        console.error('광고 파트너 데이터 로드 오류:', error);
+    }
+}
+
+// 광고 배너 생성
+function createAdBanners() {
+    const wrapper = document.querySelector('.ad-banner-wrapper');
+    if (!wrapper) return;
+    
+    // 기존 배너 제거
+    wrapper.innerHTML = '';
+    
+    // 광고 파트너 배너 생성
+    adPartners.forEach((partner, index) => {
+        const banner = document.createElement('div');
+        banner.className = 'ad-banner';
+        banner.setAttribute('data-partner-id', partner.id);
+        banner.setAttribute('data-user-id', partner.userId);
+        banner.setAttribute('data-index', index);
+        
+        // 배너 HTML 설정
+        banner.innerHTML = bannerHTML;
+        
+        // 배너 내용 채우기
+        const bannerImage = banner.querySelector('#bannerImage');
+        const bannerTitle = banner.querySelector('#bannerTitle');
+        const bannerSubtitle = banner.querySelector('#bannerSubtitle');
+        const bannerIndicator = banner.querySelector('#bannerIndicator');
+        
+        if (bannerImage) {
+            bannerImage.src = partner.businessImageUrl || '/img/default-business.png';
+            bannerImage.alt = partner.businessName || '업체명';
+        }
+        
+        if (bannerTitle) {
+            bannerTitle.textContent = partner.promotionTitle || '프로모션 진행중';
+        }
+        
+        if (bannerSubtitle) {
+            bannerSubtitle.textContent = `${partner.businessType || '미분류'} • ${partner.businessName || '업체명'}`;
+        }
+        
+        // 인디케이터 업데이트는 나중에 처리
+        
+        // 클릭 이벤트 추가
+        banner.addEventListener('click', () => {
+            // 상세 페이지로 이동
+            window.location.href = `/partner/partner-detail.html?id=${partner.id}&userId=${partner.userId}`;
+        });
+        
+        wrapper.appendChild(banner);
+    });
+    
+    // 최대 슬라이드 수 업데이트
+    maxSlide = adPartners.length - 1;
+    
+    // 슬라이더 초기화
+    initializeSlider();
+}
 
 // 광고 배너 랜덤 배치
 function randomizeBanners() {
@@ -42,6 +163,24 @@ function moveSlide() {
     // 현재 슬라이드 위치 계산
     const moveDistance = currentSlide * actualWidth;
     wrapper.style.transform = `translateX(-${moveDistance}px)`;
+    
+    // 모든 배너의 인디케이터 업데이트
+    updateIndicators();
+}
+
+// 인디케이터 업데이트 함수
+function updateIndicators() {
+    const banners = document.querySelectorAll('.ad-banner');
+    const totalBanners = adPartners.length;
+    
+    banners.forEach((banner, index) => {
+        const indicator = banner.querySelector('#bannerIndicator');
+        if (indicator) {
+            // 랜덤 배치 후의 실제 순서를 가져오기
+            const actualIndex = Array.from(banner.parentElement.children).indexOf(banner);
+            indicator.textContent = `${actualIndex + 1}/${totalBanners}`;
+        }
+    });
 }
 
 // 컨테이너 너비 설정
@@ -70,6 +209,9 @@ function setupContainerWidth() {
 function startAutoSlide() {
     stopAutoSlide(); // 기존 인터벌 정리
     
+    // 광고가 1개 이하면 자동 슬라이드 하지 않음
+    if (adPartners.length <= 1) return;
+    
     autoSlideInterval = setInterval(() => {
         if (currentSlide >= maxSlide) {
             currentSlide = 0;
@@ -90,6 +232,12 @@ function stopAutoSlide() {
 
 // 슬라이더 초기화
 function initializeSlider() {
+    const wrapper = document.querySelector('.ad-banner-wrapper');
+    const container = document.querySelector('.ad-banner-container');
+    
+    // 광고가 없으면 초기화하지 않음
+    if (!wrapper || !container || adPartners.length === 0) return;
+    
     // 배너 랜덤 배치
     randomizeBanners();
     
@@ -99,15 +247,17 @@ function initializeSlider() {
     // 초기 위치
     moveSlide();
     
-    // 자동 슬라이드 시작
-    startAutoSlide();
+    // 인디케이터 업데이트
+    updateIndicators();
+    
+    // 광고가 2개 이상일 때만 자동 슬라이드 시작
+    if (adPartners.length > 1) {
+        startAutoSlide();
+    }
     
     // 터치 이벤트 처리
     let touchStartX = 0;
     let touchEndX = 0;
-    
-    const container = document.querySelector('.ad-banner-container');
-    if (!container) return;
     
     container.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
@@ -118,9 +268,11 @@ function initializeSlider() {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
         
-        setTimeout(() => {
-            startAutoSlide();
-        }, 5000);
+        if (adPartners.length > 1) {
+            setTimeout(() => {
+                startAutoSlide();
+            }, 5000);
+        }
     }, { passive: true });
     
     function handleSwipe() {
@@ -139,7 +291,11 @@ function initializeSlider() {
     
     // 마우스 호버 시 자동 슬라이드 중지
     container.addEventListener('mouseenter', stopAutoSlide);
-    container.addEventListener('mouseleave', startAutoSlide);
+    container.addEventListener('mouseleave', () => {
+        if (adPartners.length > 1) {
+            startAutoSlide();
+        }
+    });
     
     // 윈도우 리사이즈 시 재계산
     let resizeTimeout;
@@ -458,17 +614,21 @@ function initializeHamburgerMenu() {
 
 // DOM 로드 후 초기화
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         initializeHamburgerMenu();
-        initializeSlider();
+        await loadBannerHTML();  // banner.html 로드
+        await loadAdPartners();  // 광고 파트너 데이터 로드
         setActiveMenu();
         checkLogoDisplay();
     });
 } else {
-    initializeHamburgerMenu();
-    initializeSlider();
-    setActiveMenu();
-    checkLogoDisplay();
+    (async () => {
+        initializeHamburgerMenu();
+        await loadBannerHTML();  // banner.html 로드
+        await loadAdPartners();  // 광고 파트너 데이터 로드
+        setActiveMenu();
+        checkLogoDisplay();
+    })();
 }
 
 // 페이지 전환 시 자동 슬라이드 정리
