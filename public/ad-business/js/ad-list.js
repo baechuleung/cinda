@@ -81,9 +81,9 @@ async function loadAdList() {
         
         console.log('현재 사용자:', currentUser.uid);
         
-        // Realtime Database에서 사용자의 공고 목록 가져오기
-        const userAdRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business`);
-        const snapshot = await get(userAdRef);
+        // Realtime Database에서 모든 공고 목록 가져오기
+        const adRef = rtdbRef(rtdb, 'ad_business');
+        const snapshot = await get(adRef);
         
         if (!snapshot.exists()) {
             allAds = [];
@@ -94,12 +94,14 @@ async function loadAdList() {
         allAds = [];
         const adsData = snapshot.val();
         
-        // 객체를 배열로 변환
+        // 현재 사용자의 공고만 필터링
         Object.keys(adsData).forEach(key => {
-            allAds.push({
-                id: key,
-                ...adsData[key]
-            });
+            if (adsData[key].userId === currentUser.uid) {
+                allAds.push({
+                    id: key,
+                    ...adsData[key]
+                });
+            }
         });
         
         // 생성일 기준으로 정렬 (최신순)
@@ -309,7 +311,7 @@ window.cancelAd = async function(id) {
     
     try {
         // Realtime Database에서 삭제
-        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business/${id}`);
+        const adRef = rtdbRef(rtdb, `ad_business/${id}`);
         await remove(adRef);
         
         alert('공고가 취소되었습니다.');

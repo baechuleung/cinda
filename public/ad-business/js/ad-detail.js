@@ -47,7 +47,7 @@ async function loadAdDetail() {
         console.log('공고 ID:', adId);
         
         // Realtime Database에서 공고 정보 가져오기
-        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business/${adId}`);
+        const adRef = rtdbRef(rtdb, `ad_business/${adId}`);
         const snapshot = await get(adRef);
         
         if (!snapshot.exists()) {
@@ -56,9 +56,18 @@ async function loadAdDetail() {
             return;
         }
         
+        const adDataTemp = snapshot.val();
+        
+        // 현재 사용자의 공고인지 확인
+        if (adDataTemp.userId !== currentUser.uid) {
+            alert('권한이 없습니다.');
+            window.location.href = 'ad-list.html';
+            return;
+        }
+        
         adData = {
             id: adId,
-            ...snapshot.val()
+            ...adDataTemp
         };
         
         console.log('공고 데이터:', adData);

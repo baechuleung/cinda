@@ -327,7 +327,7 @@ onAuthStateChanged(auth, async (user) => {
     
     currentUser = user;
     
-    // users 컬렉션에서 사용자 정보 가져오기
+    // Firestore의 users 컬렉션에서 사용자 정보 가져오기 (기존 유지)
     try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists() && userDoc.data().userType === 'business') {
@@ -458,8 +458,12 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
         formData.imageCreationRequested = imageCreationRequested;
         
         // Realtime Database에 저장
-        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business`);
+        const adRef = rtdbRef(rtdb, 'ad_business');
         const newAdRef = push(adRef);
+        
+        // 사용자 ID를 데이터에 포함
+        formData.userId = currentUser.uid;
+        
         await set(newAdRef, formData);
         
         console.log('공고 신청 완료:', newAdRef.key);
@@ -469,7 +473,8 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
         
     } catch (error) {
         console.error('공고 신청 오류:', error);
-        alert('공고 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+        console.error('오류 상세:', JSON.stringify(error, null, 2));
+        alert('공고 신청 중 오류가 발생했습니다. 다시 시도해주세요.\n\n오류: ' + (error.message || '알 수 없는 오류'));
     } finally {
         // 버튼 복원
         const submitBtn = document.querySelector('.submit-btn');
