@@ -1,8 +1,8 @@
 // 파일경로: /partner/js/partner-list.js
 // 파일이름: partner-list.js
 
-import { auth, db } from '/js/firebase-config.js';
-import { collection, query, where, getDocs, doc, collectionGroup, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
+import { ref as rtdbRef, get, query, orderByChild, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 import { toggleFavorite, checkIfFavorited, watchFavoriteStatus, toggleRecommend, checkIfRecommended, watchRecommendStatus } from './partner-interactions.js';
 
 let allPartners = [];
@@ -204,7 +204,7 @@ function setupEventListeners() {
     });
 }
 
-// 제휴서비스 목록 로드
+// 제휴서비스 목록 로드 - Realtime Database에서
 async function loadPartnerList() {
     try {
         const partnerList = document.getElementById('partnerList');
@@ -213,8 +213,7 @@ async function loadPartnerList() {
         partnerList.innerHTML = '<div style="text-align: center; padding: 20px;">로딩중...</div>';
         
         // 인증 상태 확인
-        const user = auth.currentUser;
-        if (!user) {
+        if (!auth.currentUser) {
             console.log('로그인 대기 중...');
             
             // 인증 상태 변경 대기
@@ -237,36 +236,40 @@ async function loadPartnerList() {
         
         allPartners = [];
         
-        // collectionGroup을 사용하여 weighted_score 필드로만 정렬
-        const partnersQuery = query(
-            collectionGroup(db, 'ad_partner'),
-            orderBy('weighted_score', 'desc'),
-            limit(3000)  // 3000개까지 가져오기
-        );
+        // Realtime Database에서 데이터 가져오기
+        const partnersRef = rtdbRef(rtdb, 'ad_partner');
+        const snapshot = await get(partnersRef);
         
-        console.log('쿼리 실행 중...');
-        const snapshot = await getDocs(partnersQuery);
-        console.log('쿼리 완료, 문서 수:', snapshot.size);
-        
-        snapshot.forEach((doc) => {
-            const partnerData = {
-                id: doc.id,
-                userId: doc.ref.parent.parent.id,
-                ...doc.data()
-            };
+        if (snapshot.exists()) {
+            const partnersData = snapshot.val();
             
-            // status가 completed, active, pending 중 하나인 것만 추가
-            if (partnerData.status === 'completed' || partnerData.status === 'active' || partnerData.status === 'pending') {
-                allPartners.push(partnerData);
-            }
-        });
-        
-        // 상위 5개 제휴서비스 로그
-        if (allPartners.length > 0) {
-            console.log('=== 상위 5개 제휴서비스 ===');
-            allPartners.slice(0, 5).forEach((partner, index) => {
-                console.log(`${index + 1}. ${partner.businessName}, ${partner.contactName} - 점수: ${(partner.weighted_score || 0).toFixed(2)}`);
+            // 객체를 배열로 변환
+            Object.keys(partnersData).forEach(key => {
+                const partnerData = {
+                    id: key,
+                    ...partnersData[key]
+                };
+                
+                // status가 completed, active, pending 중 하나인 것만 추가
+                if (partnerData.status === 'completed' || partnerData.status === 'active' || partnerData.status === 'pending') {
+                    allPartners.push(partnerData);
+                }
             });
+            
+            // weighted_score로 정렬 (내림차순)
+            allPartners.sort((a, b) => {
+                const scoreA = a.weighted_score || 0;
+                const scoreB = b.weighted_score || 0;
+                return scoreB - scoreA;
+            });
+            
+            // 상위 5개 제휴서비스 로그
+            if (allPartners.length > 0) {
+                console.log('=== 상위 5개 제휴서비스 ===');
+                allPartners.slice(0, 5).forEach((partner, index) => {
+                    console.log(`${index + 1}. ${partner.businessName}, ${partner.contactName} - 점수: ${(partner.weighted_score || 0).toFixed(2)}`);
+                });
+            }
         }
         
         // 화면에 표시
@@ -280,16 +283,6 @@ async function loadPartnerList() {
         
     } catch (error) {
         console.error('제휴서비스 목록 로드 오류:', error);
-        
-        // 인덱스 오류인 경우
-        if (error.code === 'failed-precondition' && error.message.includes('index')) {
-            console.log('복합 인덱스가 필요합니다. Firebase Console에서 인덱스를 생성해주세요.');
-            console.log('필요한 인덱스: weighted_score(Descending)');
-        }
-        // 권한 오류인 경우
-        else if (error.code === 'permission-denied') {
-            console.log('권한이 없습니다. 로그인 상태를 확인해주세요.');
-        }
         
         document.getElementById('partnerList').innerHTML = 
             '<div style="text-align: center; padding: 20px; color: #999;">제휴서비스를 불러오는데 실패했습니다.<br>로그인 상태를 확인해주세요.</div>';

@@ -1,8 +1,8 @@
 // 파일경로: /job/js/job-detail.js
 // 파일이름: job-detail.js
 
-import { auth, db } from '/js/firebase-config.js';
-import { doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
+import { ref as rtdbRef, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 import { recordClick, toggleFavorite, checkIfFavorited, watchFavoriteStatus, toggleRecommend, checkIfRecommended, watchRecommendStatus, getStatistics } from './job-interactions.js';
 
 let jobData = null;
@@ -38,18 +38,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 // 채용정보 상세 로드
 async function loadJobDetail() {
     try {
-        // Firestore에서 채용정보 가져오기
-        const jobDoc = await getDoc(doc(db, 'users', userId, 'ad_business', jobId));
+        // Realtime Database에서 채용정보 가져오기
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
         
-        if (!jobDoc.exists()) {
+        if (!snapshot.exists()) {
             alert('채용정보를 찾을 수 없습니다.');
             window.location.href = 'job-list.html';
             return;
         }
         
+        const data = snapshot.val();
+        
+        // userId가 일치하는지 확인
+        if (data.userId !== userId) {
+            alert('잘못된 접근입니다.');
+            window.location.href = 'job-list.html';
+            return;
+        }
+        
         jobData = {
-            id: jobDoc.id,
-            ...jobDoc.data()
+            id: jobId,
+            ...data
         };
         
         console.log('채용정보 데이터:', jobData);

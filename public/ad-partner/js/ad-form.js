@@ -1,10 +1,11 @@
 // 파일경로: /ad-partner/js/ad-form.js
 // 파일이름: ad-form.js
 
-import { auth, db, storage } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, push, set, serverTimestamp as rtdbServerTimestamp, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+import { uploadToImageKit } from '/js/imagekit-upload.js';
 
 let currentUser = null;
 let partnerData = null;
@@ -284,7 +285,7 @@ onAuthStateChanged(auth, async (user) => {
     
     currentUser = user;
     
-    // users 컬렉션에서 사용자 정보 가져오기
+    // Firestore의 users 컬렉션에서 사용자 정보 가져오기 (기존 유지)
     try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists() && userDoc.data().userType === 'partner') {
@@ -312,14 +313,22 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// 기존 제휴 확인
+// 기존 제휴 확인 - Realtime Database에서
 async function checkExistingPartnership() {
     try {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const partnershipCollectionRef = collection(userRef, 'ad_partner');
-        const querySnapshot = await getDocs(partnershipCollectionRef);
+        const partnershipsRef = rtdbRef(rtdb, 'ad_partner');
+        const snapshot = await get(partnershipsRef);
         
-        return !querySnapshot.empty; // 문서가 있으면 true, 없으면 false
+        if (snapshot.exists()) {
+            const partnerships = snapshot.val();
+            // 현재 사용자의 제휴가 있는지 확인
+            for (const key in partnerships) {
+                if (partnerships[key].userId === currentUser.uid) {
+                    return true;
+                }
+            }
+        }
+        return false;
     } catch (error) {
         console.error('기존 제휴 확인 오류:', error);
         return false;
@@ -375,8 +384,8 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
             // 가중치 점수 (기본값 0)
             weighted_score: 0,
             status: 'pending',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            createdAt: rtdbServerTimestamp(),
+            updatedAt: rtdbServerTimestamp()
         };
         
         // 이미지 업로드 처리
@@ -384,40 +393,38 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
         const detailImageFile = document.getElementById('detailImage').files[0];
         const imageCreationRequested = document.getElementById('imageCreationRequest').checked;
         
-        // 업체 대표 이미지 업로드
+        // 업체 대표 이미지 업로드 - ImageKit 사용
         if (businessImageFile) {
-            const tempDocId = `${currentUser.uid}_${Date.now()}`;
-            const businessImageRef = ref(storage, `ad_partner/${currentUser.uid}/${tempDocId}/business_${businessImageFile.name}`);
-            const businessSnapshot = await uploadBytes(businessImageRef, businessImageFile);
-            const businessImageUrl = await getDownloadURL(businessSnapshot.ref);
-            
-            formData.businessImageUrl = businessImageUrl;
+            const businessImageResult = await uploadToImageKit(businessImageFile, `ad_partner/${currentUser.uid}`);
+            formData.businessImageUrl = businessImageResult.url;
+            formData.businessImageId = businessImageResult.fileId;
         }
         
-        // 상세페이지 이미지 업로드 (의뢰하지 않은 경우에만)
+        // 상세페이지 이미지 업로드 (의뢰하지 않은 경우에만) - ImageKit 사용
         if (!imageCreationRequested && detailImageFile) {
-            const tempDocId = `${currentUser.uid}_${Date.now()}`;
-            const detailImageRef = ref(storage, `ad_partner/${currentUser.uid}/${tempDocId}/detail_${detailImageFile.name}`);
-            const detailSnapshot = await uploadBytes(detailImageRef, detailImageFile);
-            const detailImageUrl = await getDownloadURL(detailSnapshot.ref);
-            
-            formData.detailImageUrl = detailImageUrl;
+            const detailImageResult = await uploadToImageKit(detailImageFile, `ad_partner/${currentUser.uid}`);
+            formData.detailImageUrl = detailImageResult.url;
+            formData.detailImageId = detailImageResult.fileId;
         }
         
         // 이미지 제작 의뢰 정보 추가
         formData.imageCreationRequested = imageCreationRequested;
         
-        // Firestore에 저장 - users/{userId}/ad_partner 하위 컬렉션에 저장
-        const userRef = doc(db, 'users', currentUser.uid);
-        const docRef = await addDoc(collection(userRef, 'ad_partner'), formData);
-        console.log('제휴 신청 완료:', docRef.id);
+        // Realtime Database에 저장
+        const adRef = rtdbRef(rtdb, 'ad_partner');
+        const newAdRef = push(adRef);
+        
+        await set(newAdRef, formData);
+        
+        console.log('제휴 신청 완료:', newAdRef.key);
         
         // 팝업 표시
         document.getElementById('paymentPopup').style.display = 'flex';
         
     } catch (error) {
         console.error('제휴 신청 오류:', error);
-        alert('제휴 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+        console.error('오류 상세:', JSON.stringify(error, null, 2));
+        alert('제휴 신청 중 오류가 발생했습니다. 다시 시도해주세요.\n\n오류: ' + (error.message || '알 수 없는 오류'));
     } finally {
         // 버튼 복원
         const submitBtn = document.querySelector('.submit-btn');
@@ -440,24 +447,6 @@ window.cancelForm = function() {
 }
 
 // 페이지 로드시 실행
-window.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('제휴 신청 페이지 로드 완료');
-    
-    // 프로모션 제목 글자 수 카운터
-    const promotionTitleInput = document.getElementById('promotionTitle');
-    const titleCharCount = document.getElementById('titleCharCount');
-    
-    if (promotionTitleInput && titleCharCount) {
-        promotionTitleInput.addEventListener('input', function() {
-            const currentLength = this.value.length;
-            titleCharCount.textContent = currentLength;
-            
-            // 글자 수가 30자에 가까워지면 색상 변경
-            if (currentLength >= 25) {
-                titleCharCount.style.color = '#ff6666';
-            } else {
-                titleCharCount.style.color = '#999';
-            }
-        });
-    }
 });

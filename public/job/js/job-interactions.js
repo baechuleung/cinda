@@ -1,8 +1,8 @@
 // 파일경로: /job/js/job-interactions.js
 // 파일이름: job-interactions.js
 
-import { auth, db } from '/js/firebase-config.js';
-import { doc, updateDoc, arrayUnion, arrayRemove, increment, onSnapshot, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
+import { ref as rtdbRef, update, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 let currentUser = null;
@@ -20,21 +20,35 @@ export async function toggleFavorite(jobId, userId) {
     }
     
     try {
-        const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
-        const isFavorited = await checkIfFavorited(jobId, userId);
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
+        
+        if (!snapshot.exists()) {
+            console.error('채용정보가 존재하지 않습니다.');
+            return false;
+        }
+        
+        const jobData = snapshot.val();
+        const favoriteUsers = jobData.statistics?.favorite?.users || [];
+        const currentCount = jobData.statistics?.favorite?.count || 0;
+        
+        const userIndex = favoriteUsers.indexOf(currentUser.uid);
+        const isFavorited = userIndex > -1;
         
         if (isFavorited) {
             // 찜 취소
-            await updateDoc(jobRef, {
-                'statistics.favorite.count': increment(-1),
-                'statistics.favorite.users': arrayRemove(currentUser.uid)
+            favoriteUsers.splice(userIndex, 1);
+            await update(jobRef, {
+                'statistics/favorite/count': currentCount - 1,
+                'statistics/favorite/users': favoriteUsers
             });
             return false;
         } else {
             // 찜 추가
-            await updateDoc(jobRef, {
-                'statistics.favorite.count': increment(1),
-                'statistics.favorite.users': arrayUnion(currentUser.uid)
+            favoriteUsers.push(currentUser.uid);
+            await update(jobRef, {
+                'statistics/favorite/count': currentCount + 1,
+                'statistics/favorite/users': favoriteUsers
             });
             return true;
         }
@@ -49,19 +63,20 @@ export async function toggleFavorite(jobId, userId) {
 export async function checkIfFavorited(jobId, userId) {
     if (!currentUser) return false;
     
-    return new Promise((resolve) => {
-        const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
-        const unsubscribe = onSnapshot(jobRef, (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                const favoriteUsers = data.statistics?.favorite?.users || [];
-                resolve(favoriteUsers.includes(currentUser.uid));
-            } else {
-                resolve(false);
-            }
-            unsubscribe();
-        });
-    });
+    try {
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const favoriteUsers = data.statistics?.favorite?.users || [];
+            return favoriteUsers.includes(currentUser.uid);
+        }
+        return false;
+    } catch (error) {
+        console.error('찜 상태 확인 오류:', error);
+        return false;
+    }
 }
 
 // 클릭 기록
@@ -72,17 +87,15 @@ export async function recordClick(jobId, userId) {
     }
     
     try {
-        const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
         
-        // 현재 문서 데이터 가져오기
-        const jobDoc = await getDoc(jobRef);
-        
-        if (!jobDoc.exists()) {
+        if (!snapshot.exists()) {
             console.error('채용정보가 존재하지 않습니다.');
             return;
         }
         
-        const jobData = jobDoc.data();
+        const jobData = snapshot.val();
         const currentStatistics = jobData.statistics || {
             recommend: { count: 0, users: [] },
             click: { count: 0, users: [] },
@@ -111,9 +124,11 @@ export async function recordClick(jobId, userId) {
         };
         
         // 클릭 추가
-        await updateDoc(jobRef, {
-            'statistics.click.count': increment(1),
-            'statistics.click.users': arrayUnion(clickData)
+        currentStatistics.click.users.push(clickData);
+        currentStatistics.click.count = currentStatistics.click.users.length;
+        
+        await update(jobRef, {
+            'statistics/click': currentStatistics.click
         });
         
         console.log('클릭이 기록되었습니다.');
@@ -129,11 +144,11 @@ export function watchFavoriteStatus(jobId, userId, callback) {
         return () => {};
     }
     
-    const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
+    const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
     
-    const unsubscribe = onSnapshot(jobRef, (doc) => {
-        if (doc.exists()) {
-            const data = doc.data();
+    const unsubscribe = onValue(jobRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
             const favoriteUsers = data.statistics?.favorite?.users || [];
             callback(favoriteUsers.includes(currentUser.uid));
         } else {
@@ -152,21 +167,35 @@ export async function toggleRecommend(jobId, userId) {
     }
     
     try {
-        const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
-        const isRecommended = await checkIfRecommended(jobId, userId);
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
+        
+        if (!snapshot.exists()) {
+            console.error('채용정보가 존재하지 않습니다.');
+            return false;
+        }
+        
+        const jobData = snapshot.val();
+        const recommendUsers = jobData.statistics?.recommend?.users || [];
+        const currentCount = jobData.statistics?.recommend?.count || 0;
+        
+        const userIndex = recommendUsers.indexOf(currentUser.uid);
+        const isRecommended = userIndex > -1;
         
         if (isRecommended) {
             // 추천 취소
-            await updateDoc(jobRef, {
-                'statistics.recommend.count': increment(-1),
-                'statistics.recommend.users': arrayRemove(currentUser.uid)
+            recommendUsers.splice(userIndex, 1);
+            await update(jobRef, {
+                'statistics/recommend/count': currentCount - 1,
+                'statistics/recommend/users': recommendUsers
             });
             return false;
         } else {
             // 추천 추가
-            await updateDoc(jobRef, {
-                'statistics.recommend.count': increment(1),
-                'statistics.recommend.users': arrayUnion(currentUser.uid)
+            recommendUsers.push(currentUser.uid);
+            await update(jobRef, {
+                'statistics/recommend/count': currentCount + 1,
+                'statistics/recommend/users': recommendUsers
             });
             return true;
         }
@@ -181,19 +210,20 @@ export async function toggleRecommend(jobId, userId) {
 export async function checkIfRecommended(jobId, userId) {
     if (!currentUser) return false;
     
-    return new Promise((resolve) => {
-        const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
-        const unsubscribe = onSnapshot(jobRef, (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                const recommendUsers = data.statistics?.recommend?.users || [];
-                resolve(recommendUsers.includes(currentUser.uid));
-            } else {
-                resolve(false);
-            }
-            unsubscribe();
-        });
-    });
+    try {
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const recommendUsers = data.statistics?.recommend?.users || [];
+            return recommendUsers.includes(currentUser.uid);
+        }
+        return false;
+    } catch (error) {
+        console.error('추천 상태 확인 오류:', error);
+        return false;
+    }
 }
 
 // 추천 상태 실시간 감시
@@ -203,11 +233,11 @@ export function watchRecommendStatus(jobId, userId, callback) {
         return () => {};
     }
     
-    const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
+    const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
     
-    const unsubscribe = onSnapshot(jobRef, (doc) => {
-        if (doc.exists()) {
-            const data = doc.data();
+    const unsubscribe = onValue(jobRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
             const recommendUsers = data.statistics?.recommend?.users || [];
             callback(recommendUsers.includes(currentUser.uid));
         } else {
@@ -221,22 +251,18 @@ export function watchRecommendStatus(jobId, userId, callback) {
 // 통계 데이터 가져오기
 export async function getStatistics(jobId, userId) {
     try {
-        return new Promise((resolve) => {
-            const jobRef = doc(db, 'users', userId, 'ad_business', jobId);
-            const unsubscribe = onSnapshot(jobRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    resolve(data.statistics || {
-                        recommend: { count: 0, users: [] },
-                        click: { count: 0, users: [] },
-                        favorite: { count: 0, users: [] }
-                    });
-                } else {
-                    resolve(null);
-                }
-                unsubscribe();
-            });
-        });
+        const jobRef = rtdbRef(rtdb, `ad_business/${jobId}`);
+        const snapshot = await get(jobRef);
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            return data.statistics || {
+                recommend: { count: 0, users: [] },
+                click: { count: 0, users: [] },
+                favorite: { count: 0, users: [] }
+            };
+        }
+        return null;
     } catch (error) {
         console.error('통계 데이터 가져오기 오류:', error);
         return null;

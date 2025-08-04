@@ -6,7 +6,7 @@ import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/fi
 import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Firebase Functions URL (배포 후 실제 URL로 변경)
-const FUNCTIONS_URL = 'https://us-central1-cinda-8b01c.cloudfunctions.net/get_fortune_from_gpt';
+const FUNCTIONS_URL = 'https://get-fortune-from-gpt-enujtcasca-uc.a.run.app';
 
 // 현재 날짜 설정
 function setCurrentDate() {

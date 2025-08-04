@@ -1,9 +1,10 @@
 // 파일경로: /ad-partner/js/ad-management.js
 // 파일이름: ad-management.js
 
-import { auth, db } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 let currentUser = null;
 let adData = null;
@@ -22,7 +23,7 @@ onAuthStateChanged(auth, async (user) => {
     
     currentUser = user;
     
-    // users 컬렉션에서 userType 확인
+    // users 컬렉션에서 userType 확인 (Firestore 유지)
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (!userDoc.exists() || userDoc.data().userType !== 'partner') {
         alert('파트너회원만 이용할 수 있습니다.');
@@ -50,10 +51,10 @@ async function loadAdDetail() {
             adData = firstPartnership;
         } else {
             // ID가 있으면 해당 제휴 데이터 로드
-            const userRef = doc(db, 'users', currentUser.uid);
-            const adDoc = await getDoc(doc(userRef, 'ad_partner', adId));
+            const adRef = rtdbRef(rtdb, `ad_partner/${adId}`);
+            const snapshot = await get(adRef);
             
-            if (!adDoc.exists()) {
+            if (!snapshot.exists()) {
                 // 해당 ID의 문서가 없으면 첫 번째 제휴 데이터 로드
                 const firstPartnership = await getFirstPartnership();
                 if (!firstPartnership) {
@@ -63,10 +64,23 @@ async function loadAdDetail() {
                 adId = firstPartnership.id;
                 adData = firstPartnership;
             } else {
-                adData = {
-                    id: adDoc.id,
-                    ...adDoc.data()
-                };
+                const data = snapshot.val();
+                // 현재 사용자의 제휴인지 확인
+                if (data.userId !== currentUser.uid) {
+                    // 다른 사용자의 제휴인 경우 첫 번째 제휴 데이터 로드
+                    const firstPartnership = await getFirstPartnership();
+                    if (!firstPartnership) {
+                        showNoPartnershipMessage();
+                        return;
+                    }
+                    adId = firstPartnership.id;
+                    adData = firstPartnership;
+                } else {
+                    adData = {
+                        id: adId,
+                        ...data
+                    };
+                }
             }
         }
         
@@ -77,6 +91,9 @@ async function loadAdDetail() {
         displayAdDetail();
         displayStats();
         
+        // 실시간 통계 업데이트 감시
+        watchStatistics();
+        
     } catch (error) {
         console.error('제휴 상세 정보 로드 오류:', error);
         showNoPartnershipMessage();
@@ -86,22 +103,26 @@ async function loadAdDetail() {
 // 첫 번째 제휴 데이터 가져오기
 async function getFirstPartnership() {
     try {
-        const userRef = doc(db, 'users', currentUser.uid);
-        const partnershipCollectionRef = collection(userRef, 'ad_partner');
+        const partnershipsRef = rtdbRef(rtdb, 'ad_partner');
+        const snapshot = await get(partnershipsRef);
         
-        // 최신 순으로 정렬하여 첫 번째 문서 가져오기
-        const querySnapshot = await getDocs(partnershipCollectionRef);
-        
-        if (querySnapshot.empty) {
+        if (!snapshot.exists()) {
             return null;
         }
         
-        // 첫 번째 문서 반환
-        const firstDoc = querySnapshot.docs[0];
-        return {
-            id: firstDoc.id,
-            ...firstDoc.data()
-        };
+        const partnerships = snapshot.val();
+        
+        // 현재 사용자의 제휴만 필터링
+        for (const key in partnerships) {
+            if (partnerships[key].userId === currentUser.uid) {
+                return {
+                    id: key,
+                    ...partnerships[key]
+                };
+            }
+        }
+        
+        return null;
         
     } catch (error) {
         console.error('첫 번째 제휴 데이터 로드 오류:', error);
@@ -124,6 +145,7 @@ function showPartnershipContent() {
 // 제휴 상세 정보 표시
 function displayAdDetail() {
     const adDetailCard = document.getElementById('adDetailCard');
+    adDetailCard.innerHTML = ''; // 기존 내용 제거
     
     // 이미지 영역
     const imageDiv = document.createElement('div');
@@ -187,18 +209,53 @@ function displayAdDetail() {
 
 // 통계 정보 표시
 function displayStats() {
+    if (!adData || !adData.statistics) {
+        // 기본값 표시
+        document.getElementById('recommendCount').textContent = '0 회';
+        document.getElementById('likeCount').textContent = '0 회';
+        document.getElementById('clickCount').textContent = '0 회';
+        document.getElementById('approvalStatus').textContent = getStatusText('pending');
+        return;
+    }
+    
     // 추천수
-    document.getElementById('recommendCount').textContent = `${(adData.recommendCount || 0).toLocaleString()} 회`;
+    const recommendCount = adData.statistics.recommend?.count || 0;
+    document.getElementById('recommendCount').textContent = `${recommendCount.toLocaleString()} 회`;
     
     // 찜수
-    document.getElementById('likeCount').textContent = `${(adData.likeCount || 0).toLocaleString()} 회`;
+    const likeCount = adData.statistics.favorite?.count || 0;
+    document.getElementById('likeCount').textContent = `${likeCount.toLocaleString()} 회`;
     
     // 클릭수
-    document.getElementById('clickCount').textContent = `${(adData.clickCount || 0).toLocaleString()} 회`;
+    const clickCount = adData.statistics.click?.count || 0;
+    document.getElementById('clickCount').textContent = `${clickCount.toLocaleString()} 회`;
     
     // 승인상태
     const statusText = getStatusText(adData.status || 'pending');
     document.getElementById('approvalStatus').textContent = statusText;
+}
+
+// 실시간 통계 업데이트 감시
+function watchStatistics() {
+    if (!adId) return;
+    
+    const adRef = rtdbRef(rtdb, `ad_partner/${adId}/statistics`);
+    
+    onValue(adRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const statistics = snapshot.val();
+            
+            // 통계 업데이트
+            const recommendCount = statistics.recommend?.count || 0;
+            document.getElementById('recommendCount').textContent = `${recommendCount.toLocaleString()} 회`;
+            
+            const likeCount = statistics.favorite?.count || 0;
+            document.getElementById('likeCount').textContent = `${likeCount.toLocaleString()} 회`;
+            
+            const clickCount = statistics.click?.count || 0;
+            document.getElementById('clickCount').textContent = `${clickCount.toLocaleString()} 회`;
+        }
+    });
 }
 
 // 상태 텍스트 변환
@@ -208,7 +265,8 @@ function getStatusText(status) {
         'pending': '승인대기',
         'expired': '만료',
         'rejected': '반려',
-        'approved': '승인완료'
+        'approved': '승인완료',
+        'completed': '제휴중'
     };
     return statusMap[status] || status;
 }

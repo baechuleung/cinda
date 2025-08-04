@@ -1,8 +1,8 @@
 // 파일경로: /job/js/job-list.js
 // 파일이름: job-list.js
 
-import { auth, db } from '/js/firebase-config.js';
-import { collection, query, where, getDocs, doc, collectionGroup, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
+import { ref as rtdbRef, get, query, orderByChild, limitToFirst } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 import { toggleFavorite, checkIfFavorited, watchFavoriteStatus, toggleRecommend, checkIfRecommended, watchRecommendStatus } from './job-interactions.js';
 
 let allJobs = [];
@@ -271,7 +271,7 @@ function setupEventListeners() {
     });
 }
 
-// 채용정보 목록 로드 - weighted_score 필드 사용
+// 채용정보 목록 로드 - Realtime Database에서
 async function loadJobList() {
     try {
         const jobList = document.getElementById('jobList');
@@ -303,36 +303,40 @@ async function loadJobList() {
         
         allJobs = [];
         
-        // collectionGroup을 사용하여 weighted_score 필드로만 정렬
-        const jobsQuery = query(
-            collectionGroup(db, 'ad_business'),
-            orderBy('weighted_score', 'desc'),
-            limit(3000)  // 3000개까지 가져오기
-        );
+        // Realtime Database에서 데이터 가져오기
+        const jobsRef = rtdbRef(rtdb, 'ad_business');
+        const snapshot = await get(jobsRef);
         
-        console.log('쿼리 실행 중...');
-        const snapshot = await getDocs(jobsQuery);
-        console.log('쿼리 완료, 문서 수:', snapshot.size);
-        
-        snapshot.forEach((doc) => {
-            const jobData = {
-                id: doc.id,
-                userId: doc.ref.parent.parent.id,
-                ...doc.data()
-            };
+        if (snapshot.exists()) {
+            const jobsData = snapshot.val();
             
-            // status가 completed 또는 active인 것만 추가
-            if (jobData.status === 'completed' || jobData.status === 'active') {
-                allJobs.push(jobData);
-            }
-        });
-        
-        // 상위 5개 채용정보 로그
-        if (allJobs.length > 0) {
-            console.log('=== 상위 5개 채용정보 ===');
-            allJobs.slice(0, 5).forEach((job, index) => {
-                console.log(`${index + 1}. ${job.businessName}, ${job.contactName} - 점수: ${(job.weighted_score || 0).toFixed(2)}`);
+            // 객체를 배열로 변환
+            Object.keys(jobsData).forEach(key => {
+                const jobData = {
+                    id: key,
+                    ...jobsData[key]
+                };
+                
+                // status가 completed 또는 active인 것만 추가
+                if (jobData.status === 'completed' || jobData.status === 'active') {
+                    allJobs.push(jobData);
+                }
             });
+            
+            // weighted_score로 정렬 (내림차순)
+            allJobs.sort((a, b) => {
+                const scoreA = a.weighted_score || 0;
+                const scoreB = b.weighted_score || 0;
+                return scoreB - scoreA;
+            });
+            
+            // 상위 5개 채용정보 로그
+            if (allJobs.length > 0) {
+                console.log('=== 상위 5개 채용정보 ===');
+                allJobs.slice(0, 5).forEach((job, index) => {
+                    console.log(`${index + 1}. ${job.businessName}, ${job.contactName} - 점수: ${(job.weighted_score || 0).toFixed(2)}`);
+                });
+            }
         }
         
         // 화면에 표시
@@ -346,16 +350,6 @@ async function loadJobList() {
         
     } catch (error) {
         console.error('채용정보 목록 로드 오류:', error);
-        
-        // 인덱스 오류인 경우
-        if (error.code === 'failed-precondition' && error.message.includes('index')) {
-            console.log('복합 인덱스가 필요합니다. Firebase Console에서 인덱스를 생성해주세요.');
-            console.log('필요한 인덱스: weighted_score(Descending)');
-        }
-        // 권한 오류인 경우
-        else if (error.code === 'permission-denied') {
-            console.log('권한이 없습니다. 로그인 상태를 확인해주세요.');
-        }
         
         document.getElementById('jobList').innerHTML = 
             '<div style="text-align: center; padding: 20px; color: #999;">채용정보를 불러오는데 실패했습니다.<br>로그인 상태를 확인해주세요.</div>';

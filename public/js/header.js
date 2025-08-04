@@ -2,9 +2,10 @@
 // 파일 이름: header.js
 
 // Firebase imports
-import { auth, db } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { doc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 // 광고 슬라이드 관련 변수
 let currentSlide = 0;
@@ -37,36 +38,41 @@ async function loadBannerHTML() {
     }
 }
 
-// Firebase에서 광고 파트너 데이터 가져오기
+// Realtime Database에서 광고 파트너 데이터 가져오기
 async function loadAdPartners() {
     try {
-        const usersRef = collection(db, 'users');
-        const usersSnapshot = await getDocs(usersRef);
+        // Realtime Database에서 ad_partner 데이터 가져오기
+        const partnersRef = rtdbRef(rtdb, 'ad_partner');
+        const snapshot = await get(partnersRef);
+        
+        if (!snapshot.exists()) {
+            console.log('광고 파트너 데이터가 없습니다.');
+            return;
+        }
         
         const partners = [];
+        const partnersData = snapshot.val();
         
-        // 모든 사용자의 ad_partner 서브컬렉션 확인
-        for (const userDoc of usersSnapshot.docs) {
-            const adPartnerRef = collection(db, 'users', userDoc.id, 'ad_partner');
-            const adPartnerSnapshot = await getDocs(adPartnerRef);
+        // 객체를 배열로 변환하고 필터링
+        Object.keys(partnersData).forEach(key => {
+            const partnerData = partnersData[key];
             
-            adPartnerSnapshot.forEach(partnerDoc => {
-                const partnerData = partnerDoc.data();
-                if (partnerData.status === 'completed' && partnerData.weighted_score > 0) {
-                    partners.push({
-                        id: partnerDoc.id,
-                        userId: userDoc.id,
-                        ...partnerData
-                    });
-                }
-            });
-        }
+            // status가 completed이고 weighted_score가 0보다 큰 경우만 추가
+            if (partnerData.status === 'completed' && partnerData.weighted_score > 0) {
+                partners.push({
+                    id: key,
+                    ...partnerData
+                });
+            }
+        });
         
         // weighted_score 내림차순 정렬
         partners.sort((a, b) => b.weighted_score - a.weighted_score);
         
         // 상위 10개만 선택
         adPartners = partners.slice(0, 10);
+        
+        console.log(`광고 파트너 ${adPartners.length}개 로드됨`);
         
         // 광고 배너 생성
         if (adPartners.length > 0) {
@@ -382,7 +388,7 @@ const userTypeDisplayText = {
 // 사용자 정보 업데이트 함수
 async function updateUserInfo(uid) {
     try {
-        // users 컬렉션에서 사용자 정보 가져오기
+        // users 컬렉션에서 사용자 정보 가져오기 (Firestore 유지)
         const userDoc = await getDoc(doc(db, 'users', uid));
         
         if (userDoc.exists()) {

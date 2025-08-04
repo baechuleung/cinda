@@ -1,8 +1,8 @@
 // 파일경로: /partner/js/partner-detail.js
 // 파일이름: partner-detail.js
 
-import { auth, db } from '/js/firebase-config.js';
-import { doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
+import { ref as rtdbRef, get, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 import { recordClick, toggleFavorite, checkIfFavorited, watchFavoriteStatus, toggleRecommend, checkIfRecommended, watchRecommendStatus, getStatistics } from './partner-interactions.js';
 
 let partnerData = null;
@@ -38,18 +38,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 // 제휴서비스 상세 로드
 async function loadPartnerDetail() {
     try {
-        // Firestore에서 제휴서비스 가져오기
-        const partnerDoc = await getDoc(doc(db, 'users', userId, 'ad_partner', partnerId));
+        // Realtime Database에서 제휴서비스 가져오기
+        const partnerRef = rtdbRef(rtdb, `ad_partner/${partnerId}`);
+        const snapshot = await get(partnerRef);
         
-        if (!partnerDoc.exists()) {
+        if (!snapshot.exists()) {
             alert('제휴서비스를 찾을 수 없습니다.');
             window.location.href = 'partner-list.html';
             return;
         }
         
+        const data = snapshot.val();
+        
+        // userId가 일치하는지 확인
+        if (data.userId !== userId) {
+            alert('잘못된 접근입니다.');
+            window.location.href = 'partner-list.html';
+            return;
+        }
+        
         partnerData = {
-            id: partnerDoc.id,
-            ...partnerDoc.data()
+            id: partnerId,
+            ...data
         };
         
         console.log('제휴서비스 데이터:', partnerData);
