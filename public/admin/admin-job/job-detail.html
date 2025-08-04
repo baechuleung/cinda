@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공고 상세 정보</title>
+    <link rel="stylesheet" href="/admin/css/common.css">
+    <link rel="stylesheet" href="/admin/admin-job/css/job-detail.css">
+</head>
+<body>
+    <div class="detail-container">
+        <!-- 기본 정보 -->
+        <section class="detail-section">
+            <h3>기본 정보</h3>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <div class="detail-label">업체명</div>
+                    <div class="detail-value" id="businessName">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">업종</div>
+                    <div class="detail-value" id="businessType">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">담당자</div>
+                    <div class="detail-value" id="contactInfo">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">지역</div>
+                    <div class="detail-value" id="region">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">급여</div>
+                    <div class="detail-value" id="salary">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">근무시간</div>
+                    <div class="detail-value" id="workTime">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">복지</div>
+                    <div class="detail-value" id="welfare">-</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SNS 정보 -->
+        <section class="detail-section">
+            <h3>SNS 정보</h3>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <div class="detail-label">카카오톡</div>
+                    <div class="detail-value" id="kakao">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">텔레그램</div>
+                    <div class="detail-value" id="telegram">-</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 상세 내용 -->
+        <section class="detail-section">
+            <h3>상세 내용</h3>
+            <div class="detail-content-box" id="adDetailContent">-</div>
+            <div class="content-images-section">
+                <h4>상세 이미지</h4>
+                <div id="contentImagesContainer" class="content-images-grid">
+                    <p class="no-images">등록된 이미지가 없습니다.</p>
+                </div>
+                <div class="image-upload-controls">
+                    <input type="file" id="contentImageUpload" accept="image/*" multiple style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('contentImageUpload').click()">
+                        이미지 추가
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 배너 이미지 섹션 -->
+        <section class="detail-section">
+            <h3>배너 이미지</h3>
+            <div class="banner-image-container">
+                <div id="currentBannerContainer" class="banner-preview">
+                    <p>등록된 배너가 없습니다.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 통계 정보 -->
+        <section class="detail-section">
+            <h3>통계 정보</h3>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <div class="detail-label">클릭수</div>
+                    <div class="detail-value" id="clickCount">0</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">추천수</div>
+                    <div class="detail-value" id="recommendCount">0</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">즐겨찾기</div>
+                    <div class="detail-value" id="favoriteCount">0</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 기타 정보 -->
+        <section class="detail-section">
+            <h3>기타 정보</h3>
+            <div class="detail-grid">
+                <div class="detail-row">
+                    <div class="detail-label">상태</div>
+                    <div class="detail-value" id="status">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">등록일</div>
+                    <div class="detail-value" id="createdAt">-</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">가중치 점수</div>
+                    <div class="detail-value" id="weightedScore">0</div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script type="module" src="/admin/admin-job/js/job-detail.js"></script>
+</body>
+</html>

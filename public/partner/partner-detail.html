@@ -6,10 +6,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>제휴서비스 상세 - CINDA</title>
+    <title>제휴서비스 상세 - BAMDA</title>
+    
+    <!-- 기본 메타 태그 추가 -->
+    <meta name="description" content="BAMDA 제휴서비스 상세 페이지입니다. 제휴업체의 할인 혜택과 프로모션 정보를 확인하실 수 있습니다.">
+    <meta name="keywords" content="BAMDA, 밤다, 제휴서비스, 할인혜택, 프로모션, 제휴업체">
+    <meta name="author" content="BAMDA Team">
+    
+    <!-- 헤더 프리로드 -->
+    <link rel="preload" href="/header.html" as="fetch" crossorigin>
     
     <!-- 헤더 CSS 먼저 로드 -->
     <link rel="stylesheet" href="/css/header.css">
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="css/partner-detail.css">
@@ -130,6 +141,7 @@
     <div id="footer-container"></div>
 
     <!-- Firebase SDK -->
+    <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="js/partner-detail.js"></script>
     <script src="/js/footer.js"></script>
     <script>

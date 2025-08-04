@@ -1,0 +1,66 @@
+/* 파일 경로: /admin/css/header.css */
+/* 파일 이름: header.css */
+
+.admin-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    padding: 15px 0;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+}
+
+.nav-menu li {
+    margin: 0;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 20px 15px;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.nav-menu a:hover {
+    background-color: #34495e;
+}
+
+.nav-menu a.active {
+    background-color: #1abc9c;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}

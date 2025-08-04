@@ -6,10 +6,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공고 관리 - CINDA</title>
+    <title>공고 관리 - BAMDA</title>
+    
+    <!-- 기본 메타 태그 추가 -->
+    <meta name="description" content="BAMDA 공고 관리 페이지입니다. 등록한 채용공고를 관리하고 진행 상태를 확인하실 수 있습니다.">
+    <meta name="keywords" content="BAMDA, 밤다, 공고관리, 채용관리, 구인광고관리">
+    <meta name="author" content="BAMDA Team">
+    
+    <!-- 헤더 프리로드 -->
+    <link rel="preload" href="/header.html" as="fetch" crossorigin>
     
     <!-- 헤더 CSS 먼저 로드 -->
     <link rel="stylesheet" href="/css/header.css">
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="css/ad-list.css">
@@ -51,6 +62,10 @@
         </div>
     </div>
 
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="js/ad-list.js"></script>
     <script src="/js/footer.js"></script>
     <script>

@@ -1,0 +1,8 @@
+/* 파일 경로: /admin/css/index.css */
+/* 파일 이름: index.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    display: none; /* 체크하는 동안 화면 숨김 */
+}

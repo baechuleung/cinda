@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공고 관리 - 관리자</title>
+    <link rel="stylesheet" href="/admin/css/common.css">
+    <link rel="stylesheet" href="/admin/admin-job/css/job-manage.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    
+    <div class="main-content">
+        <h1 class="page-title">공고 관리</h1>
+        
+        <!-- 검색 및 필터 영역 -->
+        <div class="search-filter-area">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="업소명, 이름, 닉네임, 내용 검색...">
+                <button id="searchBtn" class="btn btn-primary">검색</button>
+            </div>
+            
+            <div class="filter-box">
+                <select id="statusFilter">
+                    <option value="">전체 상태</option>
+                    <option value="pending">심사중</option>
+                    <option value="completed">광고중</option>
+                    <option value="expired">만료</option>
+                </select>
+                
+                <select id="sortBy">
+                    <option value="createdAt">등록일순</option>
+                    <option value="endDate">마감일순</option>
+                    <option value="views">조회수순</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 통계 요약 -->
+        <div class="stats-summary">
+            <div class="stat-card">
+                <h3>전체 공고</h3>
+                <p class="stat-number" id="totalJobs">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>진행중 공고</h3>
+                <p class="stat-number" id="activeJobs">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>마감된 공고</h3>
+                <p class="stat-number" id="expiredJobs">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>오늘 등록</h3>
+                <p class="stat-number" id="todayJobs">0</p>
+            </div>
+        </div>
+        
+        <!-- 공고 목록 테이블 -->
+        <div class="jobs-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>업소명</th>
+                        <th>이름</th>
+                        <th>닉네임</th>
+                        <th>이메일</th>
+                        <th>등록일</th>
+                        <th>마감일</th>
+                        <th>기간</th>
+                        <th>이미지요청</th>
+                        <th>가중치</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody id="jobsTableBody">
+                    <!-- 동적으로 생성됨 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 페이지네이션 -->
+        <div class="pagination" id="pagination">
+            <!-- 동적으로 생성됨 -->
+        </div>
+    </div>
+    
+    <!-- 상세보기 레이어 팝업 -->
+    <div id="jobDetailLayer" class="layer-popup">
+        <div class="layer-content">
+            <div class="layer-header">
+                <h2>공고 상세 정보</h2>
+                <button class="layer-close">&times;</button>
+            </div>
+            <div class="layer-body">
+                <iframe id="detailFrame" src="" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 마감일 선택 모달 -->
+    <div id="endDateModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>마감일 선택</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>광고 마감일을 선택해주세요:</p>
+                <input type="date" id="endDateInput" min="">
+                <div class="modal-buttons">
+                    <button class="btn btn-primary" id="confirmEndDate">확인</button>
+                    <button class="btn btn-secondary" id="cancelEndDate">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="/admin/admin-job/js/job-manage.js"></script>
+</body>
+</html>

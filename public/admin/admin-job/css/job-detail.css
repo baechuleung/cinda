@@ -1,0 +1,267 @@
+/* 파일 경로: /admin/admin-job/css/job-detail.css */
+/* 파일 이름: job-detail.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.detail-section {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.detail-section h3 {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.detail-row {
+    display: flex;
+    padding: 10px 0;
+}
+
+.detail-row.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    font-weight: 600;
+    width: 120px;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    flex: 1;
+    color: #333;
+    word-break: break-word;
+    line-height: 1.5;
+}
+
+.detail-content-box {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #333;
+    min-height: 100px;
+}
+
+/* 이미지 섹션 */
+.banner-image-container {
+    text-align: center;
+}
+
+.banner-preview {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fafafa;
+}
+
+.banner-preview img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+}
+
+.banner-preview p {
+    color: #999;
+    margin: 0;
+}
+
+/* 상세 내용 이미지 섹션 */
+.content-images-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.content-images-section h4 {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.content-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.content-image-item {
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.content-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.content-image-item .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-image-item .delete-btn:hover {
+    background: rgba(192, 57, 43, 0.9);
+}
+
+.no-images {
+    color: #999;
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 40px;
+}
+
+.image-upload-controls {
+    text-align: center;
+}
+
+/* 이미지 모달 */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    cursor: pointer;
+}
+
+.image-modal img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+}
+
+.image-modal .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.image-modal .close-modal:hover {
+    color: #ccc;
+}
+
+#workTime {
+    line-height: 1.8;
+}
+
+/* 상태 스타일 */
+.status-pending {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.status-completed {
+    color: #155724;
+    background-color: #d4edda;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.status-expired {
+    color: #721c24;
+    background-color: #f8d7da;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+/* 버튼 추가 스타일 */
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .detail-container {
+        padding: 20px;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .image-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+    }
+    
+    .detail-label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

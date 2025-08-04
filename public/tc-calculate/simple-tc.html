@@ -8,8 +8,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>티씨계산기 간편모드 - BAMDA</title>
     
+    <!-- 기본 메타 태그 추가 -->
+    <meta name="description" content="BAMDA 반티완티 간편모드입니다. 빠르고 쉽게 TC를 계산할 수 있는 초보자용 계산기입니다.">
+    <meta name="keywords" content="BAMDA, 밤다, 반티완티, TC계산기, 간편모드, 시간계산">
+    <meta name="author" content="BAMDA Team">
+    
+    <!-- 헤더 프리로드 -->
+    <link rel="preload" href="/header.html" as="fetch" crossorigin>
+    
     <!-- 헤더 CSS 먼저 로드 -->
     <link rel="stylesheet" href="/css/header.css">
+    
+    <!-- SEO 태그는 seo-manager.js가 동적으로 삽입 -->
+    <script type="module" src="/js/seo-manager.js"></script>
     
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="css/pro-tc.css">
@@ -106,6 +117,10 @@
         </div>
     </div>
 
+    <!-- Footer 포함 -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="/js/firebase-config.js"></script>
     <script type="module" src="js/simple-tc.js"></script>
     <script src="/js/footer.js"></script>
     <script>
