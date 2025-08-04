@@ -1,9 +1,10 @@
 // 파일경로: /ad-business/js/ad-detail.js
 // 파일이름: ad-detail.js
 
-import { auth, db } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 let currentUser = null;
 let adData = null;
@@ -45,19 +46,19 @@ async function loadAdDetail() {
     try {
         console.log('공고 ID:', adId);
         
-        // Firestore에서 공고 정보 가져오기
-        const userRef = doc(db, 'users', currentUser.uid);
-        const adDoc = await getDoc(doc(userRef, 'ad_business', adId));
+        // Realtime Database에서 공고 정보 가져오기
+        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business/${adId}`);
+        const snapshot = await get(adRef);
         
-        if (!adDoc.exists()) {
+        if (!snapshot.exists()) {
             alert('공고 정보를 찾을 수 없습니다.');
             window.location.href = 'ad-list.html';
             return;
         }
         
         adData = {
-            id: adDoc.id,
-            ...adDoc.data()
+            id: adId,
+            ...snapshot.val()
         };
         
         console.log('공고 데이터:', adData);
@@ -135,10 +136,12 @@ function displayAdDetail() {
 // 통계 정보 표시
 function displayStats() {
     // 추천수
-    document.getElementById('recommendCount').textContent = `${(adData.recommendCount || 0).toLocaleString()} 회`;
+    const recommendCount = adData.statistics?.recommend?.count || 0;
+    document.getElementById('recommendCount').textContent = `${recommendCount.toLocaleString()} 회`;
     
     // 클릭수
-    document.getElementById('clickCount').textContent = `${(adData.clickCount || 0).toLocaleString()} 회`;
+    const clickCount = adData.statistics?.click?.count || 0;
+    document.getElementById('clickCount').textContent = `${clickCount.toLocaleString()} 회`;
     
     // 승인상태
     const statusText = getStatusText(adData.status || 'pending');

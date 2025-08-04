@@ -1,9 +1,10 @@
 // 파일경로: /ad-business/js/ad-list.js
 // 파일이름: ad-list.js
 
-import { auth, db } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { collection, query, where, orderBy, getDocs, doc, getDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, get, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 let currentUser = null;
 let allAds = [];
@@ -80,31 +81,31 @@ async function loadAdList() {
         
         console.log('현재 사용자:', currentUser.uid);
         
-        // Firestore에서 사용자의 공고 목록 가져오기 - users/{userId}/ad_business 서브컬렉션에서
-        const userRef = doc(db, 'users', currentUser.uid);
-        console.log('사용자 참조:', userRef.path);
+        // Realtime Database에서 사용자의 공고 목록 가져오기
+        const userAdRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business`);
+        const snapshot = await get(userAdRef);
         
-        const adCollectionRef = collection(userRef, 'ad_business');
-        console.log('광고 컬렉션 참조:', adCollectionRef.path);
-        
-        // orderBy 없이 먼저 시도
-        const querySnapshot = await getDocs(adCollectionRef);
-        console.log('쿼리 결과:', querySnapshot.size, '개 문서');
+        if (!snapshot.exists()) {
+            allAds = [];
+            displayAds(allAds);
+            return;
+        }
         
         allAds = [];
+        const adsData = snapshot.val();
         
-        querySnapshot.forEach((doc) => {
-            console.log('문서 ID:', doc.id, '데이터:', doc.data());
+        // 객체를 배열로 변환
+        Object.keys(adsData).forEach(key => {
             allAds.push({
-                id: doc.id,
-                ...doc.data()
+                id: key,
+                ...adsData[key]
             });
         });
         
-        // 클라이언트에서 정렬
+        // 생성일 기준으로 정렬 (최신순)
         allAds.sort((a, b) => {
-            const aTime = a.createdAt?.toDate?.() || new Date(0);
-            const bTime = b.createdAt?.toDate?.() || new Date(0);
+            const aTime = a.createdAt || 0;
+            const bTime = b.createdAt || 0;
             return bTime - aTime;
         });
         
@@ -265,7 +266,7 @@ function getStatusText(status) {
 function formatTimestamp(timestamp) {
     if (!timestamp) return '-';
     
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = new Date(timestamp);
     return date.toLocaleDateString('ko-KR');
 }
 
@@ -307,9 +308,9 @@ window.cancelAd = async function(id) {
     }
     
     try {
-        // users/{userId}/ad_business 서브컬렉션에서 삭제
-        const userRef = doc(db, 'users', currentUser.uid);
-        await deleteDoc(doc(userRef, 'ad_business', id));
+        // Realtime Database에서 삭제
+        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business/${id}`);
+        await remove(adRef);
         
         alert('공고가 취소되었습니다.');
         loadAdList();

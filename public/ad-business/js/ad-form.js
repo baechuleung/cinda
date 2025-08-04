@@ -1,10 +1,11 @@
 // 파일경로: /ad-business/js/ad-form.js
 // 파일이름: ad-form.js
 
-import { auth, db, storage } from '/js/firebase-config.js';
+import { auth, db, rtdb } from '/js/firebase-config.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { collection, addDoc, serverTimestamp, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-import { ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { ref as rtdbRef, push, set, serverTimestamp as rtdbServerTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+import { uploadToImageKit } from '/js/imagekit-upload.js';
 
 let currentUser = null;
 let businessData = null;
@@ -430,8 +431,8 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
                 }
             },
             status: 'pending',
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            createdAt: rtdbServerTimestamp(),
+            updatedAt: rtdbServerTimestamp()
         };
         
         // 이미지 업로드 처리
@@ -441,31 +442,27 @@ document.getElementById('adForm').addEventListener('submit', async function(e) {
         
         // 업체 대표 이미지 업로드
         if (businessImageFile) {
-            const tempDocId = `${currentUser.uid}_${Date.now()}`;
-            const businessImageRef = ref(storage, `ad_business/${currentUser.uid}/${tempDocId}/business_${businessImageFile.name}`);
-            const businessSnapshot = await uploadBytes(businessImageRef, businessImageFile);
-            const businessImageUrl = await getDownloadURL(businessSnapshot.ref);
-            
-            formData.businessImageUrl = businessImageUrl;
+            const businessImageResult = await uploadToImageKit(businessImageFile, `ad_business/${currentUser.uid}`);
+            formData.businessImageUrl = businessImageResult.url;
+            formData.businessImageId = businessImageResult.fileId;
         }
         
         // 상세페이지 이미지 업로드 (의뢰하지 않은 경우에만)
         if (!imageCreationRequested && detailImageFile) {
-            const tempDocId = `${currentUser.uid}_${Date.now()}`;
-            const detailImageRef = ref(storage, `ad_business/${currentUser.uid}/${tempDocId}/detail_${detailImageFile.name}`);
-            const detailSnapshot = await uploadBytes(detailImageRef, detailImageFile);
-            const detailImageUrl = await getDownloadURL(detailSnapshot.ref);
-            
-            formData.detailImageUrl = detailImageUrl;
+            const detailImageResult = await uploadToImageKit(detailImageFile, `ad_business/${currentUser.uid}`);
+            formData.detailImageUrl = detailImageResult.url;
+            formData.detailImageId = detailImageResult.fileId;
         }
         
         // 이미지 제작 의뢰 정보 추가
         formData.imageCreationRequested = imageCreationRequested;
         
-        // Firestore에 저장 - users/{userId}/ad_business 하위 컬렉션에 저장
-        const userRef = doc(db, 'users', currentUser.uid);
-        const docRef = await addDoc(collection(userRef, 'ad_business'), formData);
-        console.log('공고 신청 완료:', docRef.id);
+        // Realtime Database에 저장
+        const adRef = rtdbRef(rtdb, `users/${currentUser.uid}/ad_business`);
+        const newAdRef = push(adRef);
+        await set(newAdRef, formData);
+        
+        console.log('공고 신청 완료:', newAdRef.key);
         
         // 팝업 표시
         document.getElementById('paymentPopup').style.display = 'flex';
